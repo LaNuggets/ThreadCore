@@ -5,6 +5,9 @@
 - Creation du shema de la base de données (dbdiagram.io)
 
 23/5:
+- Creation du serveur
+- Creation d'une BDD en sqlite
+- Gestions d'erreur HTTP
 
 24/5:
 
