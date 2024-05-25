@@ -23,10 +23,33 @@ func Connection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	username, email, password := getIdentifier(r)
+
 	err = tmpl.Execute(w, nil)
 	if err != nil {
 		log.Printf("\033[31mError executing template: %v\033[0m", err)
 		http.Error(w, "Internal error", http.StatusInternalServerError)
 		return
 	}
+}
+
+func getIdentifier(r *http.Request) (*string, string, string) {
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	username := r.FormValue("username")
+
+	if username == "" {
+		return nil, email, password
+	} else {
+		return &username, email, password
+	}
+}
+
+func creationProfile() {
+
+	// _, err = db.Exec("INSERT INTO cartes_utilisateurs (nom, prenom, date_naissance, moyenne_generale, photo_profile, classe) VALUES (?, ?, ?, ?, ?, ?)", nom, prenom, date, moyenne, photo, classe)
+	// if err != nil {
+	// 	http.Error(w, "Error inserting data into database", http.StatusInternalServerError)
+	// 	return
+	// }
 }
