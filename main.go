@@ -22,6 +22,7 @@ func main() {
 	http.HandleFunc("/profile", Profile)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/search", Search)
+	http.HandleFunc("/connection", Connection)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/404", http.StatusSeeOther)
