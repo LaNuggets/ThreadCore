@@ -7,6 +7,9 @@
     <title>login|Signup</title>
 </head>
 <body>
+   {{if .ErrorMessage}}
+   <p style="color:red;">{{.ErrorMessage}}</p>
+{{end}}
     <div class="container">
     <div class="wrapper">
         <div class="card-switch">
