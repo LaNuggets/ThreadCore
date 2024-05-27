@@ -10,7 +10,9 @@
 - Gestions d'erreur HTTP
 
 24/5:
-
+- Creation d'un logo
+- Creation de la base de données complete
+- Creation de toute les pages de navigation
 
 27/5:
 
