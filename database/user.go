@@ -29,40 +29,40 @@ func getUserByEmail(db *sql.DB, email string) []user {
 	err = rows.Err()
 	checkErr(err)
 
-	people := make([]user, 0)
+	userList := make([]user, 0)
 
 	for rows.Next() {
-		ourPerson := user{}
-		err = rows.Scan(&ourPerson.id, &ourPerson.profilePicture, &ourPerson.email, &ourPerson.username, &ourPerson.password)
+		user := user{}
+		err = rows.Scan(&user.id, &user.profilePicture, &user.email, &user.username, &user.password)
 		checkErr(err)
 
-		people = append(people, ourPerson)
+		userList = append(userList, user)
 	}
 
 	err = rows.Err()
 	checkErr(err)
 
-	if len(people) > 1 {
+	if len(userList) > 1 {
 		log.Fatal("Error : Found more than 1 user with this email")
 	}
 
-	return people
+	return userList
 }
 
 func getUserById(db *sql.DB, id string) user {
 	rows, _ := db.Query("SELECT * FROM user WHERE id = '" + id + "'")
 	defer rows.Close()
 
-	ourPerson := user{}
+	user := user{}
 
 	for rows.Next() {
-		rows.Scan(&ourPerson.id, &ourPerson.profilePicture, &ourPerson.email, &ourPerson.username, &ourPerson.password)
+		rows.Scan(&user.id, &user.profilePicture, &user.email, &user.username, &user.password)
 	}
 
-	return ourPerson
+	return user
 }
 
-func updateUserInfo(db *sql.DB, user user) int64 {
+func updateUserInfo(db *sql.DB, user user) {
 	stmt, err := db.Prepare("UPDATE user set profilePicture = ?, username = ?, email = ?, password = ? where id = ?")
 	checkErr(err)
 	defer stmt.Close()
@@ -73,10 +73,12 @@ func updateUserInfo(db *sql.DB, user user) int64 {
 	affected, err := res.RowsAffected()
 	checkErr(err)
 
-	return affected
+	if affected > 1 {
+		log.Fatal("Error : More than 1 user was affected")
+	}
 }
 
-func deleteUser(db *sql.DB, userID string) int64 {
+func deleteUser(db *sql.DB, userID string) {
 	stmt, err := db.Prepare("DELETE FROM user where id = ?")
 	checkErr(err)
 	defer stmt.Close()
@@ -87,5 +89,7 @@ func deleteUser(db *sql.DB, userID string) int64 {
 	affected, err := res.RowsAffected()
 	checkErr(err)
 
-	return affected
+	if affected > 1 {
+		log.Fatal("Error : More than 1 user was deleted")
+	}
 }

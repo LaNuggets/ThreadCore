@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Connect to database
-	db, err := sql.Open("sqlite3", "../threadcore.db")
+	db, err := sql.Open("sqlite3", "threadcore.db")
 	fmt.Println("create DB:")
 	checkErr(err)
 	// defer close
