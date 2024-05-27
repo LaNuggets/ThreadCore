@@ -64,9 +64,17 @@ func ChooseCreationOrConnection(email string, password string, username *string)
 }
 
 func creationProfile(email string, password string, username string) {
-
+	//  user := addUserStructValue([]user user ,username string, email string, password string)
+	// addUser(db, user)
 }
 
 func connectionProfile(email string, password string) {
 
 }
+
+// func addUserStructValue([]user user ,username string, email string, password string) []user{
+// 	user.username = username
+// 	user.email = email
+// 	user.password = password
+// 	return user
+// }
