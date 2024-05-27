@@ -7,7 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type user struct {
+type User struct {
 	id             string
 	profilePicture string
 	email          string
@@ -15,24 +15,24 @@ type user struct {
 	password       string
 }
 
-func addUser(db *sql.DB, user user) {
+func AddUser(db *sql.DB, user User) {
 	id := "" // ADD UUID
 	query, _ := db.Prepare("INSERT INTO user (id, profilePicture, email, username, password) VALUES (?, ?, ?, ?, ?)")
 	query.Exec(id, user.profilePicture, user.email, user.username, user.password)
 	defer query.Close()
 }
 
-func getUserByEmail(db *sql.DB, email string) []user {
+func GetUserByEmail(db *sql.DB, email string) []User {
 	rows, err := db.Query("SELECT * FROM user WHERE email='" + email + "'")
 	defer rows.Close()
 
 	err = rows.Err()
 	checkErr(err)
 
-	people := make([]user, 0)
+	people := make([]User, 0)
 
 	for rows.Next() {
-		ourPerson := user{}
+		ourPerson := User{}
 		err = rows.Scan(&ourPerson.id, &ourPerson.profilePicture, &ourPerson.email, &ourPerson.username, &ourPerson.password)
 		checkErr(err)
 
@@ -49,11 +49,11 @@ func getUserByEmail(db *sql.DB, email string) []user {
 	return people
 }
 
-func getUserById(db *sql.DB, id string) user {
+func GetUserById(db *sql.DB, id string) User {
 	rows, _ := db.Query("SELECT * FROM user WHERE id = '" + id + "'")
 	defer rows.Close()
 
-	ourPerson := user{}
+	ourPerson := User{}
 
 	for rows.Next() {
 		rows.Scan(&ourPerson.id, &ourPerson.profilePicture, &ourPerson.email, &ourPerson.username, &ourPerson.password)
@@ -62,7 +62,7 @@ func getUserById(db *sql.DB, id string) user {
 	return ourPerson
 }
 
-func updateUserInfo(db *sql.DB, user user) int64 {
+func UpdateUserInfo(db *sql.DB, user User) int64 {
 	stmt, err := db.Prepare("UPDATE user set profilePicture = ?, username = ?, email = ?, password = ? where id = ?")
 	checkErr(err)
 	defer stmt.Close()
@@ -76,7 +76,7 @@ func updateUserInfo(db *sql.DB, user user) int64 {
 	return affected
 }
 
-func deleteUser(db *sql.DB, userID string) int64 {
+func DeleteUser(db *sql.DB, userID string) int64 {
 	stmt, err := db.Prepare("DELETE FROM user where id = ?")
 	checkErr(err)
 	defer stmt.Close()
