@@ -1,8 +1,6 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -31,9 +29,6 @@ func Connection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// username, email, password := getIdentifier(r)
-	// creationProfile(email, password, username, db ,w, r)
-
 	data := struct {
 		ErrorMessage string
 	}{
@@ -60,36 +55,18 @@ func getIdentifier(r *http.Request) (*string, string, string) {
 	}
 }
 
-func creationProfile(email, password, username, db *sql.DB, w http.ResponseWriter, r *http.Request) {
-
-	checkUsername := `SELECT COUNT(*) as count FROM user WHERE username = ?`
-	checkEmail := `SELECT COUNT(*) as count FROM user WHERE email = ?`
-
-	var countEmail int
-	var countUsername int
-	errUsername := db.QueryRow(checkUsername, username).Scan(&countUsername)
-	if errUsername != nil {
-		log.Fatal("Error cheking database", errUsername)
-	}
-	errEmail := db.QueryRow(checkEmail, email).Scan(&countEmail)
-	if errEmail != nil {
-		log.Fatal("Error cheking database", errEmail)
-	}
-
-	if countUsername == 1 {
-		http.Redirect(w, r, "/connection?error=username_taken", http.StatusFound)
-	} else if countEmail == 1 {
-		http.Redirect(w, r, "/connection?error=email_taken", http.StatusFound)
-	} else if countUsername == 0 && countEmail == 0 {
-		_, err2 := db.Exec("INSERT INTO user(email, username, password) VALUES (?, ?, ?)", email, username, password)
-		if err2 != nil {
-			http.Error(w, "Error inserting data into database", http.StatusInternalServerError)
-			return
-		}
-		fmt.Println("New user added !")
+func ChooseCreationOrConnection(email string, password string, username *string) {
+	if username == nil {
+		connectionProfile(email, password)
+	} else {
+		creationProfile(email, password, *username)
 	}
 }
 
-func connectionProfile(email, password, db *sql.DB, w http.ResponseWriter, r *http.Request) {
+func creationProfile(email string, password string, username string) {
+
+}
+
+func connectionProfile(email string, password string) {
 
 }
