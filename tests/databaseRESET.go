@@ -1,4 +1,4 @@
-package api
+package main
 
 import (
 	"database/sql"
@@ -49,6 +49,8 @@ CREATE TABLE friend_request(user_id INTEGER, request_id INTEGER, PRIMARY KEY(use
 	_, err = db.Exec(createTables)
 	fmt.Println("create table:")
 	checkErr(err)
+
+	fmt.Println("Successfuly created the database!")
 }
 
 func checkErr(err error) {

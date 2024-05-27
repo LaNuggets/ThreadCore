@@ -2,14 +2,13 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type user struct {
-	id             int
+	id             string
 	profilePicture string
 	email          string
 	username       string
@@ -17,65 +16,58 @@ type user struct {
 }
 
 func addUser(db *sql.DB, user user) {
+	id := "" // ADD UUID
 	query, _ := db.Prepare("INSERT INTO user (id, profilePicture, email, username, password) VALUES (?, ?, ?, ?, ?)")
-	query.Exec(user.id, user.profilePicture, user.email, user.username, user.password)
+	query.Exec(id, user.profilePicture, user.email, user.username, user.password)
 	defer query.Close()
 }
 
-func searchForPerson(db *sql.DB, searchString string) []person {
-
-	rows, err := db.Query("SELECT id, first_name, last_name, email, ip_address FROM people WHERE first_name like '%" + searchString + "%' OR last_name like '%" + searchString + "%'")
-
+func getUserByEmail(db *sql.DB, email string) []user {
+	rows, err := db.Query("SELECT * FROM user WHERE email='" + email + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkErr(err)
 
-	people := make([]person, 0)
+	people := make([]user, 0)
 
 	for rows.Next() {
-		ourPerson := person{}
-		err = rows.Scan(&ourPerson.id, &ourPerson.first_name, &ourPerson.last_name, &ourPerson.email, &ourPerson.ip_address)
-		if err != nil {
-			log.Fatal(err)
-		}
+		ourPerson := user{}
+		err = rows.Scan(&ourPerson.id, &ourPerson.profilePicture, &ourPerson.email, &ourPerson.username, &ourPerson.password)
+		checkErr(err)
 
 		people = append(people, ourPerson)
 	}
 
 	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
+	checkErr(err)
+
+	if len(people) > 1 {
+		log.Fatal("Error : Found more than 1 user with this email")
 	}
 
 	return people
 }
 
-func getPersonById(db *sql.DB, ourID string) person {
-
-	fmt.Printf("Value is %v", ourID)
-
-	rows, _ := db.Query("SELECT id, first_name, last_name, email, ip_address FROM people WHERE id = '" + ourID + "'")
+func getUserById(db *sql.DB, id string) user {
+	rows, _ := db.Query("SELECT * FROM user WHERE id = '" + id + "'")
 	defer rows.Close()
 
-	ourPerson := person{}
+	ourPerson := user{}
 
 	for rows.Next() {
-		rows.Scan(&ourPerson.id, &ourPerson.first_name, &ourPerson.last_name, &ourPerson.email, &ourPerson.ip_address)
+		rows.Scan(&ourPerson.id, &ourPerson.profilePicture, &ourPerson.email, &ourPerson.username, &ourPerson.password)
 	}
 
 	return ourPerson
 }
 
-func updatePerson(db *sql.DB, ourPerson person) int64 {
-
-	stmt, err := db.Prepare("UPDATE people set first_name = ?, last_name = ?, email = ?, ip_address = ? where id = ?")
+func updateUserInfo(db *sql.DB, user user) int64 {
+	stmt, err := db.Prepare("UPDATE user set profilePicture = ?, username = ?, email = ?, password = ? where id = ?")
 	checkErr(err)
 	defer stmt.Close()
 
-	res, err := stmt.Exec(ourPerson.first_name, ourPerson.last_name, ourPerson.email, ourPerson.ip_address, ourPerson.id)
+	res, err := stmt.Exec(user.profilePicture, user.username, user.email, user.password, user.id)
 	checkErr(err)
 
 	affected, err := res.RowsAffected()
@@ -84,18 +76,16 @@ func updatePerson(db *sql.DB, ourPerson person) int64 {
 	return affected
 }
 
-func deletePerson(db *sql.DB, idToDelete string) int64 {
-
-	stmt, err := db.Prepare("DELETE FROM people where id = ?")
+func deleteUser(db *sql.DB, userID string) int64 {
+	stmt, err := db.Prepare("DELETE FROM user where id = ?")
 	checkErr(err)
 	defer stmt.Close()
 
-	res, err := stmt.Exec(idToDelete)
+	res, err := stmt.Exec(userID)
 	checkErr(err)
 
 	affected, err := res.RowsAffected()
 	checkErr(err)
 
 	return affected
-
 }
