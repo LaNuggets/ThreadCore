@@ -14,11 +14,16 @@ func main() {
 
 	// Open the database connection in the global varaible DB located in database/DBglobalVariable.go
 	var err error
-	database.DB, err = sql.Open("sqlite3", "threadcore.db")
+	db, err := sql.Open("sqlite3", "threadcore.db")
 	database.CheckErr(err)
 
 	// At the end of the program close the connnection
-	defer database.DB.Close()
+
+	query, _ := db.Prepare("INSERT INTO user (id, profilePicture, email, username, password) VALUES (?, ?, ?, ?, ?)")
+	query.Exec("id", "pp", "email", "username", "password")
+	defer query.Close()
+
+	defer db.Close()
 
 	FileServer := http.FileServer(http.Dir("static"))
 
