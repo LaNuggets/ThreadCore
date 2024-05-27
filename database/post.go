@@ -1,14 +1,13 @@
 package database
 
 import (
-	"database/sql"
 	"log"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type post struct {
+type Post struct {
 	id           string
 	title        string
 	content      string
@@ -17,88 +16,88 @@ type post struct {
 	created      time.Time
 }
 
-func addPost(db *sql.DB, post post) {
+func AddPost(post Post) {
 	id := ""      // ADD UUID
 	created := "" //ADD time
-	query, _ := db.Prepare("INSERT INTO post (id, title, content, user_id, community_id, created) VALUES (?, ?, ?, ?, ?)")
+	query, _ := DB.Prepare("INSERT INTO post (id, title, content, user_id, community_id, created) VALUES (?, ?, ?, ?, ?)")
 	query.Exec(id, post.title, post.content, post.user_id, post.community_id, created)
 	defer query.Close()
 }
 
-func getPostsBySearchString(db *sql.DB, searchString string) []post {
-	rows, err := db.Query("SELECT * FROM post WHERE title like '%" + searchString + "%' OR content like '%" + searchString + "%'")
+func GetPostsBySearchString(searchString string) []Post {
+	rows, err := DB.Query("SELECT * FROM post WHERE title like '%" + searchString + "%' OR content like '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
-	checkErr(err)
+	CheckErr(err)
 
-	postList := make([]post, 0)
+	postList := make([]Post, 0)
 
 	for rows.Next() {
-		post := post{}
+		post := Post{}
 		err = rows.Scan(&post.id, &post.title, &post.content, &post.user_id, &post.community_id, &post.created)
-		checkErr(err)
+		CheckErr(err)
 
 		postList = append(postList, post)
 	}
 
 	err = rows.Err()
-	checkErr(err)
+	CheckErr(err)
 
 	return postList
 }
 
-func getPostsByUser(db *sql.DB, userID string) []post {
-	rows, err := db.Query("SELECT * FROM post WHERE user_id='" + userID + "'")
+func GetPostsByUser(userID string) []Post {
+	rows, err := DB.Query("SELECT * FROM post WHERE user_id='" + userID + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	checkErr(err)
+	CheckErr(err)
 
-	postList := make([]post, 0)
+	postList := make([]Post, 0)
 
 	for rows.Next() {
-		post := post{}
+		post := Post{}
 		err = rows.Scan(&post.id, &post.title, &post.content, &post.user_id, &post.community_id, &post.created)
-		checkErr(err)
+		CheckErr(err)
 
 		postList = append(postList, post)
 	}
 
 	err = rows.Err()
-	checkErr(err)
+	CheckErr(err)
 
 	return postList
 }
 
-func getPostsByCommunity(db *sql.DB, communityID string) []post {
-	rows, err := db.Query("SELECT * FROM post WHERE community_id='" + communityID + "'")
+func GetPostsByCommunity(communityID string) []Post {
+	rows, err := DB.Query("SELECT * FROM post WHERE community_id='" + communityID + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	checkErr(err)
+	CheckErr(err)
 
-	postList := make([]post, 0)
+	postList := make([]Post, 0)
 
 	for rows.Next() {
-		post := post{}
+		post := Post{}
 		err = rows.Scan(&post.id, &post.title, &post.content, &post.user_id, &post.community_id, &post.created)
-		checkErr(err)
+		CheckErr(err)
 
 		postList = append(postList, post)
 	}
 
 	err = rows.Err()
-	checkErr(err)
+	CheckErr(err)
 
 	return postList
 }
 
-func getPostById(db *sql.DB, id string) post {
-	rows, _ := db.Query("SELECT * FROM post WHERE id = '" + id + "'")
+func GetPostById(id string) Post {
+	rows, _ := DB.Query("SELECT * FROM post WHERE id = '" + id + "'")
 	defer rows.Close()
 
-	post := post{}
+	post := Post{}
 
 	for rows.Next() {
 		rows.Scan(&post.id, &post.title, &post.content, &post.user_id, &post.community_id, &post.created)
@@ -107,32 +106,32 @@ func getPostById(db *sql.DB, id string) post {
 	return post
 }
 
-func updatePostInfo(db *sql.DB, post post) {
-	stmt, err := db.Prepare("UPDATE post set title = ?, content = ?, user_id = ?, community_id = ?, created = ? where id = ?")
-	checkErr(err)
+func UpdatePostInfo(post Post) {
+	stmt, err := DB.Prepare("UPDATE post set title = ?, content = ?, user_id = ?, community_id = ?, created = ? where id = ?")
+	CheckErr(err)
 	defer stmt.Close()
 
 	res, err := stmt.Exec(post.title, post.content, post.user_id, post.community_id, post.created, post.id)
-	checkErr(err)
+	CheckErr(err)
 
 	affected, err := res.RowsAffected()
-	checkErr(err)
+	CheckErr(err)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 post was affected")
 	}
 }
 
-func deletePost(db *sql.DB, userID string) {
-	stmt, err := db.Prepare("DELETE FROM user where id = ?")
-	checkErr(err)
+func DeletePost(userID string) {
+	stmt, err := DB.Prepare("DELETE FROM user where id = ?")
+	CheckErr(err)
 	defer stmt.Close()
 
 	res, err := stmt.Exec(userID)
-	checkErr(err)
+	CheckErr(err)
 
 	affected, err := res.RowsAffected()
-	checkErr(err)
+	CheckErr(err)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 post was deleted")

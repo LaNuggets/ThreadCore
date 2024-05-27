@@ -7,7 +7,7 @@ import (
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/home" {
+	if r.URL.Path != "/" {
 		http.Redirect(w, r, "/404", http.StatusSeeOther)
 		return
 	}

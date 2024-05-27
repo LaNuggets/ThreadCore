@@ -7,7 +7,7 @@ import (
 
 var DB *sql.DB
 
-func checkErr(err error) {
+func CheckErr(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
