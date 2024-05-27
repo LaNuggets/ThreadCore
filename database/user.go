@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -15,77 +14,81 @@ type User struct {
 	password       string
 }
 
-func AddUser(db *sql.DB, user User) {
+func AddUser(user User) {
 	id := "" // ADD UUID
-	query, _ := db.Prepare("INSERT INTO user (id, profilePicture, email, username, password) VALUES (?, ?, ?, ?, ?)")
+	query, _ := DB.Prepare("INSERT INTO user (id, profilePicture, email, username, password) VALUES (?, ?, ?, ?, ?)")
 	query.Exec(id, user.profilePicture, user.email, user.username, user.password)
 	defer query.Close()
 }
 
-func GetUserByEmail(db *sql.DB, email string) []User {
-	rows, err := db.Query("SELECT * FROM user WHERE email='" + email + "'")
+func GetUserByEmail(email string) []User {
+	rows, err := DB.Query("SELECT * FROM user WHERE email='" + email + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	checkErr(err)
+	CheckErr(err)
 
-	people := make([]User, 0)
+	userList := make([]User, 0)
 
 	for rows.Next() {
-		ourPerson := User{}
-		err = rows.Scan(&ourPerson.id, &ourPerson.profilePicture, &ourPerson.email, &ourPerson.username, &ourPerson.password)
-		checkErr(err)
+		user := User{}
+		err = rows.Scan(&user.id, &user.profilePicture, &user.email, &user.username, &user.password)
+		CheckErr(err)
 
-		people = append(people, ourPerson)
+		userList = append(userList, user)
 	}
 
 	err = rows.Err()
-	checkErr(err)
+	CheckErr(err)
 
-	if len(people) > 1 {
+	if len(userList) > 1 {
 		log.Fatal("Error : Found more than 1 user with this email")
 	}
 
-	return people
+	return userList
 }
 
-func GetUserById(db *sql.DB, id string) User {
-	rows, _ := db.Query("SELECT * FROM user WHERE id = '" + id + "'")
+func GetUserById(id string) User {
+	rows, _ := DB.Query("SELECT * FROM user WHERE id = '" + id + "'")
 	defer rows.Close()
 
-	ourPerson := User{}
+	user := User{}
 
 	for rows.Next() {
-		rows.Scan(&ourPerson.id, &ourPerson.profilePicture, &ourPerson.email, &ourPerson.username, &ourPerson.password)
+		rows.Scan(&user.id, &user.profilePicture, &user.email, &user.username, &user.password)
 	}
 
-	return ourPerson
+	return user
 }
 
-func UpdateUserInfo(db *sql.DB, user User) int64 {
-	stmt, err := db.Prepare("UPDATE user set profilePicture = ?, username = ?, email = ?, password = ? where id = ?")
-	checkErr(err)
+func UpdateUserInfo(user User) {
+	stmt, err := DB.Prepare("UPDATE user set profilePicture = ?, username = ?, email = ?, password = ? where id = ?")
+	CheckErr(err)
 	defer stmt.Close()
 
 	res, err := stmt.Exec(user.profilePicture, user.username, user.email, user.password, user.id)
-	checkErr(err)
+	CheckErr(err)
 
 	affected, err := res.RowsAffected()
-	checkErr(err)
+	CheckErr(err)
 
-	return affected
+	if affected > 1 {
+		log.Fatal("Error : More than 1 user was affected")
+	}
 }
 
-func DeleteUser(db *sql.DB, userID string) int64 {
-	stmt, err := db.Prepare("DELETE FROM user where id = ?")
-	checkErr(err)
+func DeleteUser(userID string) {
+	stmt, err := DB.Prepare("DELETE FROM user where id = ?")
+	CheckErr(err)
 	defer stmt.Close()
 
 	res, err := stmt.Exec(userID)
-	checkErr(err)
+	CheckErr(err)
 
 	affected, err := res.RowsAffected()
-	checkErr(err)
+	CheckErr(err)
 
-	return affected
+	if affected > 1 {
+		log.Fatal("Error : More than 1 user was deleted")
+	}
 }
