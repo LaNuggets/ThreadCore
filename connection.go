@@ -30,12 +30,17 @@ func Connection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	/*cookieUui, cookieUser :=*/
 	api.Authentication(w, r)
 
 	data := struct {
 		ErrorMessage string
+		// CookieUui    *http.Cookie
+		// CookieUser   *http.Cookie
 	}{
 		ErrorMessage: errorMessage,
+		// CookieUui:    cookieUui,
+		// CookieUser:   cookieUser,
 	}
 
 	err = tmpl.Execute(w, data)

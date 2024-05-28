@@ -8,7 +8,7 @@ import (
 )
 
 type Post struct {
-	Id           int
+	Id           *int
 	Title        string
 	Content      string
 	User_id      int
