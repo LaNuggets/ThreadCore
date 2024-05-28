@@ -12,5 +12,10 @@
     {{if .Name}}
     <p>{{.Name}}</p>
     {{end}}
+
+    <form enctype="multipart/form-data" action="/createCommunity" method="post">
+      <input type="file" name="myFile" />
+      <input type="submit" value="upload" />
+    </form>
 </body>
 </html>

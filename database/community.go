@@ -87,12 +87,12 @@ func DeleteCommunity(communityId int) {
 
 // USER_COMMUNITY Table handler
 
-func AddUserCommunity(communityId int, userId int) {
+func AddUserCommunity(userId int, communityId int) {
 	query, _ := DB.Prepare("INSERT INTO user_community (user_id, community_id) VALUES (?, ?)")
 	query.Exec(communityId, userId)
 	defer query.Close()
 
-	query2, _ := DB.Prepare("UPDATE comunity set following = following + 1 where id = ?")
+	query2, _ := DB.Prepare("UPDATE community SET following=following + 1 WHERE id = ?")
 	query2.Exec(communityId)
 	defer query2.Close()
 }
@@ -150,7 +150,7 @@ func DeleteUserCommunity(communityId int, userId int) {
 	CheckErr(err)
 	defer query.Close()
 
-	query2, _ := DB.Prepare("UPDATE comunity set following = following - 1 where id = ?")
+	query2, _ := DB.Prepare("UPDATE community SET following = following - 1 WHERE id = ?")
 	query2.Exec(communityId)
 	defer query2.Close()
 

@@ -68,7 +68,7 @@ func AddUserValue(username string, email string, password string) database.User 
 
 	hashedPassword := HashPassword(password)
 
-	user := database.User{nil, uuid, "picture", email, username, hashedPassword}
+	user := database.User{Id: 0, Uuid: uuid, ProfilePicture: "picture", Email: email, Username: username, Password: hashedPassword}
 	return user
 }
 

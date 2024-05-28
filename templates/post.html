@@ -25,5 +25,9 @@
         <img id="profilePicture" src="../static/images/defaultProfliePicture.svg" alt="Profile Picture">
     </div>
     <h1> POSTS </h1>
+    {{if .Post}}
+    <p>{{.Post.Title}}</p>
+    <p>{{.Post.Content}}</p>
+    {{end}}
 </body>
 </html>

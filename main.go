@@ -26,14 +26,19 @@ func main() {
 
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/community/", Community)
-	http.HandleFunc("/community", Communities)
 	http.HandleFunc("/friends", Friends)
 	http.HandleFunc("/message", Message)
-	http.HandleFunc("/post", Post)
+	http.HandleFunc("/post/", Post)
 	http.HandleFunc("/profile", Profile)
 	http.HandleFunc("/404", NotFound)
-	http.HandleFunc("/search", Search)
+	http.HandleFunc("/search/", Search)
 	http.HandleFunc("/connection", Connection)
+
+	//Hidden POST methods
+	//http.HandleFunc("/modifyUser", ModifyUser)
+	//http.HandleFunc("/createPost", CreatePost)
+	http.HandleFunc("/createCommunity", CreateCommunity)
+	//http.HandleFunc("/createComment", CreateComment)
 
 	fmt.Println("Server Start at:")
 	fmt.Println("http://localhost" + port)
