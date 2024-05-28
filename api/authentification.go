@@ -2,7 +2,11 @@ package api
 
 import (
 	"ThreadCore/database"
+	"log"
 	"net/http"
+
+	"github.com/gofrs/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Authentication(w http.ResponseWriter, r *http.Request) {
@@ -54,6 +58,28 @@ func ConnectionProfile(email string, password string, w http.ResponseWriter, r *
 }
 
 func AddUserValue(username string, email string, password string) database.User {
-	user := database.User{nil, "azrar-7894-d5f5d", "picture", email, username, password}
+	u, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("failed to generate UUID: %v", err)
+	}
+	log.Printf("generated Version 4 UUID %v", u)
+	uuid := u.String()
+
+	hashedPassword := HashPassword(password)
+
+	user := database.User{nil, uuid, "picture", email, username, hashedPassword}
 	return user
+}
+
+// BCRYPT PASSWORD
+
+func HashPassword(password string) string {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	database.CheckErr(err)
+	return string(bytes)
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
