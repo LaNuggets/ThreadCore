@@ -7,7 +7,7 @@ import (
 )
 
 type Like struct {
-	Id         int
+	Id         *int
 	Rating     string
 	Comment_id int
 	Post_id    int

@@ -8,7 +8,7 @@ import (
 )
 
 type User struct {
-	Id             int
+	Id             *int
 	Uuid           string
 	ProfilePicture string
 	Email          string

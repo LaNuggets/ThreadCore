@@ -8,7 +8,7 @@ import (
 )
 
 type Comment struct {
-	Id         int
+	Id         *int
 	User_id    int
 	Post_id    int
 	Comment_id int
@@ -17,7 +17,7 @@ type Comment struct {
 }
 
 func AddComment(comment Comment) {
-	query, _ := DB.Prepare("INSERT INTO comment (id, user_id, comment_id, comment_id, content, created) VALUES (?, ?, ?, ?, ?)")
+	query, _ := DB.Prepare("INSERT INTO comment (user_id, comment_id, comment_id, content, created) VALUES (?, ?, ?, ?, ?)")
 	query.Exec(comment.User_id, comment.Post_id, comment.Comment_id, comment.Content, comment.Created)
 	defer query.Close()
 }
