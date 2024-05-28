@@ -3,14 +3,14 @@ package api
 import (
 	"ThreadCore/database"
 	"net/http"
+	"time"
 )
 
-func Authentication(w http.ResponseWriter, r *http.Request) string {
+func Authentication(w http.ResponseWriter, r *http.Request) {
 	username, email, password := GetIdentifier(r)
 	if email != "" {
 		ChooseConnectionOrCreation(username, email, password, w, r)
 	}
-	return *&email
 }
 
 func GetIdentifier(r *http.Request) (*string, string, string) {
@@ -46,6 +46,15 @@ func ConnectionProfile(email string, password string, w http.ResponseWriter, r *
 	user := database.GetUserByEmail(email)
 	if user.Password == password {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+
+		expirationUuid := time.Now().Add(2 * 24 * time.Hour)
+		cookieUuid := http.Cookie{Name: "uuid", Value: user.Uuid, Path: "/", Expires: expirationUuid}
+		http.SetCookie(w, &cookieUuid)
+
+		expirationUsername := time.Now().Add(365 * 24 * time.Hour)
+		cookieUsername := http.Cookie{Name: "username", Value: user.Username, Path: "/", Expires: expirationUsername}
+		http.SetCookie(w, &cookieUsername)
+
 		println("Welcome", user.Username)
 		//Todo: Cookie
 	} else {
