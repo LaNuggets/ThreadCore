@@ -7,45 +7,34 @@ import (
 )
 
 type User struct {
-	id             string
-	profilePicture string
-	email          string
-	username       string
-	password       string
+	Id             string
+	ProfilePicture string
+	Email          string
+	Username       string
+	Password       string
 }
 
 func AddUser(user User) {
 	id := "" // ADD UUID
 	query, _ := DB.Prepare("INSERT INTO user (id, profilePicture, email, username, password) VALUES (?, ?, ?, ?, ?)")
-	query.Exec(id, user.profilePicture, user.email, user.username, user.password)
+	query.Exec(id, user.ProfilePicture, user.Email, user.Username, user.Password)
 	defer query.Close()
 }
 
-func GetUserByEmail(email string) []User {
+func GetUserByEmail(email string) User {
 	rows, err := DB.Query("SELECT * FROM user WHERE email='" + email + "'")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err)
 
-	userList := make([]User, 0)
+	user := User{}
 
 	for rows.Next() {
-		user := User{}
-		err = rows.Scan(&user.id, &user.profilePicture, &user.email, &user.username, &user.password)
-		CheckErr(err)
-
-		userList = append(userList, user)
+		rows.Scan(&user.Id, &user.ProfilePicture, &user.Email, &user.Username, &user.Password)
 	}
 
-	err = rows.Err()
-	CheckErr(err)
-
-	if len(userList) > 1 {
-		log.Fatal("Error : Found more than 1 user with this email")
-	}
-
-	return userList
+	return user
 }
 
 func GetUserById(id string) User {
@@ -55,7 +44,7 @@ func GetUserById(id string) User {
 	user := User{}
 
 	for rows.Next() {
-		rows.Scan(&user.id, &user.profilePicture, &user.email, &user.username, &user.password)
+		rows.Scan(&user.Id, &user.ProfilePicture, &user.Email, &user.Username, &user.Password)
 	}
 
 	return user
@@ -66,7 +55,7 @@ func UpdateUserInfo(user User) {
 	CheckErr(err)
 	defer stmt.Close()
 
-	res, err := stmt.Exec(user.profilePicture, user.username, user.email, user.password, user.id)
+	res, err := stmt.Exec(user.ProfilePicture, user.Username, user.Email, user.Password, user.Id)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()
