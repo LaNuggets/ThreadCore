@@ -5,11 +5,12 @@ import (
 	"net/http"
 )
 
-func Authentication(w http.ResponseWriter, r *http.Request) {
+func Authentication(w http.ResponseWriter, r *http.Request) string {
 	username, email, password := GetIdentifier(r)
 	if email != "" {
 		ChooseConnectionOrCreation(username, email, password, w, r)
 	}
+	return *&email
 }
 
 func GetIdentifier(r *http.Request) (*string, string, string) {
