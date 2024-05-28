@@ -7,7 +7,7 @@ import (
 )
 
 type Community struct {
-	Id   int
+	Id   *int
 	Name string
 }
 
