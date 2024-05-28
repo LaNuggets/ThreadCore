@@ -2,13 +2,14 @@ package database
 
 import (
 	"log"
+	"strconv"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Comment struct {
-	Id         *int
+	Id         int
 	User_id    int
 	Post_id    int
 	Comment_id int
@@ -22,8 +23,9 @@ func AddComment(comment Comment) {
 	defer query.Close()
 }
 
-func GetCommentsByPost(postId string) []Comment {
-	rows, err := DB.Query("SELECT * FROM comment WHERE post_id='" + postId + "'")
+func GetCommentsByPost(postId int) []Comment {
+	id := strconv.Itoa(postId)
+	rows, err := DB.Query("SELECT * FROM comment WHERE post_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -45,8 +47,9 @@ func GetCommentsByPost(postId string) []Comment {
 	return commentList
 }
 
-func GetCommentsByUser(userID string) []Comment {
-	rows, err := DB.Query("SELECT * FROM comment WHERE user_id='" + userID + "'")
+func GetCommentsByUser(userId int) []Comment {
+	id := strconv.Itoa(userId)
+	rows, err := DB.Query("SELECT * FROM comment WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -68,8 +71,9 @@ func GetCommentsByUser(userID string) []Comment {
 	return commentList
 }
 
-func GetCommentsByComment(commentID string) []Comment {
-	rows, err := DB.Query("SELECT * FROM comment WHERE comment_id='" + commentID + "'")
+func GetCommentsByComment(commentId int) []Comment {
+	id := strconv.Itoa(commentId)
+	rows, err := DB.Query("SELECT * FROM comment WHERE comment_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -91,8 +95,9 @@ func GetCommentsByComment(commentID string) []Comment {
 	return commentList
 }
 
-func GetCommentById(id string) Comment {
-	rows, _ := DB.Query("SELECT * FROM comment WHERE id = '" + id + "'")
+func GetCommentById(id int) Comment {
+	id2 := strconv.Itoa(id)
+	rows, _ := DB.Query("SELECT * FROM comment WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	comment := Comment{}
@@ -120,12 +125,12 @@ func UpdateCommentInfo(comment Comment) {
 	}
 }
 
-func DeleteComment(commentID string) {
+func DeleteComment(commentId int) {
 	query, err := DB.Prepare("DELETE FROM comment where id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(commentID)
+	res, err := query.Exec(commentId)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()

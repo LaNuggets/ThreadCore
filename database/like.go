@@ -2,12 +2,13 @@ package database
 
 import (
 	"log"
+	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Like struct {
-	Id         *int
+	Id         int
 	Rating     string
 	Comment_id int
 	Post_id    int
@@ -20,8 +21,9 @@ func AddLike(like Like) {
 	defer query.Close()
 }
 
-func GetLikesByPost(postId string) []Like {
-	rows, err := DB.Query("SELECT * FROM like WHERE post_id='" + postId + "'")
+func GetLikesByPost(postId int) []Like {
+	id := strconv.Itoa(postId)
+	rows, err := DB.Query("SELECT * FROM like WHERE post_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -43,8 +45,9 @@ func GetLikesByPost(postId string) []Like {
 	return likeList
 }
 
-func GetLikesByUser(userID string) []Like {
-	rows, err := DB.Query("SELECT * FROM like WHERE user_id='" + userID + "'")
+func GetLikesByUser(userId int) []Like {
+	id := strconv.Itoa(userId)
+	rows, err := DB.Query("SELECT * FROM like WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -66,8 +69,9 @@ func GetLikesByUser(userID string) []Like {
 	return likeList
 }
 
-func GetLikesByComment(commentID string) []Like {
-	rows, err := DB.Query("SELECT * FROM like WHERE comment_id='" + commentID + "'")
+func GetLikesByComment(commentId int) []Like {
+	id := strconv.Itoa(commentId)
+	rows, err := DB.Query("SELECT * FROM like WHERE comment_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -89,8 +93,9 @@ func GetLikesByComment(commentID string) []Like {
 	return likeList
 }
 
-func GetLikeById(id string) Like {
-	rows, _ := DB.Query("SELECT * FROM comment WHERE id = '" + id + "'")
+func GetLikeById(id int) Like {
+	id2 := strconv.Itoa(id)
+	rows, _ := DB.Query("SELECT * FROM comment WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	like := Like{}
@@ -118,12 +123,12 @@ func UpdateLike(like Like) {
 	}
 }
 
-func DeleteLike(likeID string) {
+func DeleteLike(likeId int) {
 	query, err := DB.Prepare("DELETE FROM like where id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(likeID)
+	res, err := query.Exec(likeId)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()

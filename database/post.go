@@ -2,13 +2,14 @@ package database
 
 import (
 	"log"
+	"strconv"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Post struct {
-	Id           *int
+	Id           int
 	Title        string
 	Content      string
 	User_id      int
@@ -45,8 +46,9 @@ func GetPostsBySearchString(searchString string) []Post {
 	return postList
 }
 
-func GetPostsByUser(userID string) []Post {
-	rows, err := DB.Query("SELECT * FROM post WHERE user_id='" + userID + "'")
+func GetPostsByUser(userId int) []Post {
+	id := strconv.Itoa(userId)
+	rows, err := DB.Query("SELECT * FROM post WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -68,8 +70,9 @@ func GetPostsByUser(userID string) []Post {
 	return postList
 }
 
-func GetPostsByCommunity(communityID string) []Post {
-	rows, err := DB.Query("SELECT * FROM post WHERE community_id='" + communityID + "'")
+func GetPostsByCommunity(communityId int) []Post {
+	id := strconv.Itoa(communityId)
+	rows, err := DB.Query("SELECT * FROM post WHERE community_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -91,8 +94,9 @@ func GetPostsByCommunity(communityID string) []Post {
 	return postList
 }
 
-func GetPostById(id string) Post {
-	rows, _ := DB.Query("SELECT * FROM post WHERE id = '" + id + "'")
+func GetPostById(id int) Post {
+	id2 := strconv.Itoa(id)
+	rows, _ := DB.Query("SELECT * FROM post WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	post := Post{}
@@ -120,12 +124,12 @@ func UpdatePostInfo(post Post) {
 	}
 }
 
-func DeletePost(postID string) {
+func DeletePost(postId int) {
 	query, err := DB.Prepare("DELETE FROM post where id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(postID)
+	res, err := query.Exec(postId)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()

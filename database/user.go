@@ -3,12 +3,13 @@ package database
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type User struct {
-	Id             *int
+	Id             int
 	Uuid           string
 	ProfilePicture string
 	Email          string
@@ -39,8 +40,9 @@ func GetUserByEmail(email string) User {
 	return user
 }
 
-func GetUserById(id string) User {
-	rows, _ := DB.Query("SELECT * FROM user WHERE id = '" + id + "'")
+func GetUserById(id int) User {
+	id2 := strconv.Itoa(id)
+	rows, _ := DB.Query("SELECT * FROM user WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	user := User{}
@@ -68,12 +70,12 @@ func UpdateUserInfo(user User) {
 	}
 }
 
-func DeleteUser(userID string) {
+func DeleteUser(userId int) {
 	query, err := DB.Prepare("DELETE FROM user where id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(userID)
+	res, err := query.Exec(userId)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()

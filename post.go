@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -22,6 +23,10 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal error, template not found.", http.StatusInternalServerError)
 		return
 	}
+
+	title := r.FormValue("title")
+	content := r.FormValue("content")
+	fmt.Println(title, content)
 
 	err = tmpl.Execute(w, nil)
 	if err != nil {

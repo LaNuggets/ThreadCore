@@ -25,7 +25,8 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", FileServer))
 
 	http.HandleFunc("/", Home)
-	http.HandleFunc("/community", Community)
+	http.HandleFunc("/community/", Community)
+	http.HandleFunc("/community", Communities)
 	http.HandleFunc("/friends", Friends)
 	http.HandleFunc("/message", Message)
 	http.HandleFunc("/post", Post)

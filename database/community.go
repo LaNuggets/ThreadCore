@@ -2,40 +2,79 @@ package database
 
 import (
 	"log"
+	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type Community struct {
-	Id   *int
-	Name string
+	Id        int
+	Name      string
+	Following int
 }
 
 func AddCommunity(community Community) {
-	query, _ := DB.Prepare("INSERT INTO community (name) VALUES (?)")
-	query.Exec(community.Name)
+	query, _ := DB.Prepare("INSERT INTO community (name, following) VALUES (?, ?)")
+	query.Exec(community.Name, 0)
 	defer query.Close()
 }
 
-func GetCommunityById(id string) Community {
-	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id + "'")
+func GetCommunityById(id int) Community {
+	id2 := strconv.Itoa(id)
+	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	community := Community{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Name)
+		rows.Scan(&community.Id, &community.Name, &community.Following)
 	}
 
 	return community
 }
 
-func DeleteCommunity(communityID string) {
+func GetCommunityByName(communityName string) Community {
+	rows, _ := DB.Query("SELECT * FROM community WHERE name = '" + communityName + "'")
+	defer rows.Close()
+
+	community := Community{}
+
+	for rows.Next() {
+		rows.Scan(&community.Id, &community.Name, &community.Following)
+	}
+
+	return community
+}
+
+func GetCommunitiesByNMembers() []Community {
+	rows, err := DB.Query("SELECT * FROM community ORDER BY following DESC")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	communityList := make([]Community, 0)
+
+	for rows.Next() {
+		community := Community{}
+		err = rows.Scan(&community.Id, &community.Name, &community.Following)
+		CheckErr(err)
+
+		communityList = append(communityList, community)
+	}
+
+	err = rows.Err()
+	CheckErr(err)
+
+	return communityList
+}
+
+func DeleteCommunity(communityId int) {
 	query, err := DB.Prepare("DELETE FROM community where id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(communityID)
+	res, err := query.Exec(communityId)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()
@@ -48,14 +87,19 @@ func DeleteCommunity(communityID string) {
 
 // USER_COMMUNITY Table handler
 
-func AddUserCommunity(communityID string, userID string) {
+func AddUserCommunity(communityId int, userId int) {
 	query, _ := DB.Prepare("INSERT INTO user_community (user_id, community_id) VALUES (?, ?)")
-	query.Exec(communityID, userID)
+	query.Exec(communityId, userId)
 	defer query.Close()
+
+	query2, _ := DB.Prepare("UPDATE comunity set following = following + 1 where id = ?")
+	query2.Exec(communityId)
+	defer query2.Close()
 }
 
-func GetUsersByCommunity(communityID string) []User {
-	rows, err := DB.Query("SELECT * FROM user INNER JOIN user_community ON user.id = user_community.user_id WHERE user_community.community_id='" + communityID + "'")
+func GetUsersByCommunity(communityId int) []User {
+	id := strconv.Itoa(communityId)
+	rows, err := DB.Query("SELECT * FROM user INNER JOIN user_community ON user.id = user_community.user_id WHERE user_community.community_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -77,8 +121,9 @@ func GetUsersByCommunity(communityID string) []User {
 	return userList
 }
 
-func GetCommunitiesByUser(userID string) []Community {
-	rows, err := DB.Query("SELECT * FROM community INNER JOIN user_community ON community.id = user_community.community_id WHERE user_community.user_id='" + userID + "'")
+func GetCommunitiesByUser(userId int) []Community {
+	id := strconv.Itoa(userId)
+	rows, err := DB.Query("SELECT * FROM community INNER JOIN user_community ON community.id = user_community.community_id WHERE user_community.user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -88,7 +133,7 @@ func GetCommunitiesByUser(userID string) []Community {
 
 	for rows.Next() {
 		community := Community{}
-		err = rows.Scan(&community.Id, &community.Name)
+		err = rows.Scan(&community.Id, &community.Name, &community.Following)
 		CheckErr(err)
 
 		communityList = append(communityList, community)
@@ -100,12 +145,16 @@ func GetCommunitiesByUser(userID string) []Community {
 	return communityList
 }
 
-func DeleteUserCommunity(communityID string, userID string) {
+func DeleteUserCommunity(communityId int, userId int) {
 	query, err := DB.Prepare("DELETE FROM user_community where user_id = ? AND community_id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(userID, communityID)
+	query2, _ := DB.Prepare("UPDATE comunity set following = following - 1 where id = ?")
+	query2.Exec(communityId)
+	defer query2.Close()
+
+	res, err := query.Exec(userId, communityId)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()
