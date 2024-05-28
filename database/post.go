@@ -8,19 +8,17 @@ import (
 )
 
 type Post struct {
-	id           string
-	title        string
-	content      string
-	user_id      string
-	community_id string
-	created      time.Time
+	Id           int
+	Title        string
+	Content      string
+	User_id      int
+	Community_id int
+	Created      time.Time
 }
 
 func AddPost(post Post) {
-	id := ""      // ADD UUID
-	created := "" //ADD time
-	query, _ := DB.Prepare("INSERT INTO post (id, title, content, user_id, community_id, created) VALUES (?, ?, ?, ?, ?)")
-	query.Exec(id, post.title, post.content, post.user_id, post.community_id, created)
+	query, _ := DB.Prepare("INSERT INTO post (title, content, user_id, community_id, created) VALUES (?, ?, ?, ?, ?)")
+	query.Exec(post.Title, post.Content, post.User_id, post.Community_id, post.Created)
 	defer query.Close()
 }
 
@@ -35,7 +33,7 @@ func GetPostsBySearchString(searchString string) []Post {
 
 	for rows.Next() {
 		post := Post{}
-		err = rows.Scan(&post.id, &post.title, &post.content, &post.user_id, &post.community_id, &post.created)
+		err = rows.Scan(&post.Id, &post.Title, &post.Content, &post.User_id, &post.Community_id, &post.Created)
 		CheckErr(err)
 
 		postList = append(postList, post)
@@ -58,7 +56,7 @@ func GetPostsByUser(userID string) []Post {
 
 	for rows.Next() {
 		post := Post{}
-		err = rows.Scan(&post.id, &post.title, &post.content, &post.user_id, &post.community_id, &post.created)
+		err = rows.Scan(&post.Id, &post.Title, &post.Content, &post.User_id, &post.Community_id, &post.Created)
 		CheckErr(err)
 
 		postList = append(postList, post)
@@ -81,7 +79,7 @@ func GetPostsByCommunity(communityID string) []Post {
 
 	for rows.Next() {
 		post := Post{}
-		err = rows.Scan(&post.id, &post.title, &post.content, &post.user_id, &post.community_id, &post.created)
+		err = rows.Scan(&post.Id, &post.Title, &post.Content, &post.User_id, &post.Community_id, &post.Created)
 		CheckErr(err)
 
 		postList = append(postList, post)
@@ -100,18 +98,18 @@ func GetPostById(id string) Post {
 	post := Post{}
 
 	for rows.Next() {
-		rows.Scan(&post.id, &post.title, &post.content, &post.user_id, &post.community_id, &post.created)
+		rows.Scan(&post.Id, &post.Title, &post.Content, &post.User_id, &post.Community_id, &post.Created)
 	}
 
 	return post
 }
 
 func UpdatePostInfo(post Post) {
-	stmt, err := DB.Prepare("UPDATE post set title = ?, content = ?, user_id = ?, community_id = ?, created = ? where id = ?")
+	query, err := DB.Prepare("UPDATE post set title = ?, content = ?, user_id = ?, community_id = ?, created = ? where id = ?")
 	CheckErr(err)
-	defer stmt.Close()
+	defer query.Close()
 
-	res, err := stmt.Exec(post.title, post.content, post.user_id, post.community_id, post.created, post.id)
+	res, err := query.Exec(post.Title, post.Content, post.User_id, post.Community_id, post.Created, post.Id)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()
@@ -122,12 +120,12 @@ func UpdatePostInfo(post Post) {
 	}
 }
 
-func DeletePost(userID string) {
-	stmt, err := DB.Prepare("DELETE FROM user where id = ?")
+func DeletePost(postID string) {
+	query, err := DB.Prepare("DELETE FROM post where id = ?")
 	CheckErr(err)
-	defer stmt.Close()
+	defer query.Close()
 
-	res, err := stmt.Exec(userID)
+	res, err := query.Exec(postID)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()
