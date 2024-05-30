@@ -4,17 +4,18 @@ import (
 	"ThreadCore/database"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Authentication(w http.ResponseWriter, r *http.Request) string {
+func Authentication(w http.ResponseWriter, r *http.Request) {
+
 	username, email, password := GetIdentifier(r)
 	if email != "" {
 		ChooseConnectionOrCreation(username, email, password, w, r)
 	}
-	return *&email
 }
 
 func GetIdentifier(r *http.Request) (*string, string, string) {
@@ -47,15 +48,23 @@ func CreationProfile(username string, email string, password string) {
 }
 
 func ConnectionProfile(email string, password string, w http.ResponseWriter, r *http.Request) {
+
 	user := database.GetUserByEmail(email)
-	if user.Password == password {
+	if CheckPasswordHash(password, user.Password) {
+
+		expiration := time.Now().Add(2 * 24 * time.Hour)
+		cookieUuid := http.Cookie{Name: "Uuid", Value: user.Uuid, Path: "/", Expires: expiration}
+		http.SetCookie(w, &cookieUuid)
+
+		cookieUsername := http.Cookie{Name: "Username", Value: user.Username, Path: "/", Expires: expiration}
+		http.SetCookie(w, &cookieUsername)
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+
 		println("Welcome", user.Username)
-		//Todo: Cookie
 	} else {
 		http.Redirect(w, r, "/connection?error=password_taken", http.StatusFound)
 	}
-
 }
 
 func AddUserValue(username string, email string, password string) database.User {
