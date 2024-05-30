@@ -2,7 +2,6 @@ package api
 
 import (
 	"ThreadCore/database"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -11,14 +10,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Authentication(w http.ResponseWriter, r *http.Request) (*http.Cookie, *http.Cookie) {
-	var cookieUui, cookieUser *http.Cookie
+func Authentication(w http.ResponseWriter, r *http.Request) {
 
 	username, email, password := GetIdentifier(r)
 	if email != "" {
-		cookieUui, cookieUser = ChooseConnectionOrCreation(username, email, password, w, r)
+		ChooseConnectionOrCreation(username, email, password, w, r)
 	}
-	return cookieUser, cookieUui
 }
 
 func GetIdentifier(r *http.Request) (*string, string, string) {
@@ -33,14 +30,12 @@ func GetIdentifier(r *http.Request) (*string, string, string) {
 	}
 }
 
-func ChooseConnectionOrCreation(username *string, email string, password string, w http.ResponseWriter, r *http.Request) (*http.Cookie, *http.Cookie) {
-	var cookieUui, cookieUser *http.Cookie
+func ChooseConnectionOrCreation(username *string, email string, password string, w http.ResponseWriter, r *http.Request) {
 	if username == nil {
-		cookieUui, cookieUser = ConnectionProfile(email, password, w, r)
+		ConnectionProfile(email, password, w, r)
 	} else {
 		CreationProfile(*username, email, password)
 	}
-	return cookieUui, cookieUser
 }
 
 func CreationProfile(username string, email string, password string) {
@@ -52,12 +47,10 @@ func CreationProfile(username string, email string, password string) {
 	println("Creation successful")
 }
 
-func ConnectionProfile(email string, password string, w http.ResponseWriter, r *http.Request) (*http.Cookie, *http.Cookie) {
-	var cookieUui, cookieUser *http.Cookie
+func ConnectionProfile(email string, password string, w http.ResponseWriter, r *http.Request) {
 
 	user := database.GetUserByEmail(email)
 	if CheckPasswordHash(password, user.Password) {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 
 		expiration := time.Now().Add(2 * 24 * time.Hour)
 		cookieUuid := http.Cookie{Name: "Uuid", Value: user.Uuid, Path: "/", Expires: expiration}
@@ -66,40 +59,12 @@ func ConnectionProfile(email string, password string, w http.ResponseWriter, r *
 		cookieUsername := http.Cookie{Name: "Username", Value: user.Username, Path: "/", Expires: expiration}
 		http.SetCookie(w, &cookieUsername)
 
-		var errUuid error
-		var errUser error
-
-		cookieUui, errUuid = r.Cookie("Uuid")
-		if errUuid != nil {
-			if errUuid == http.ErrNoCookie {
-				// Si le cookie n'existe pas
-				log.Fatal("Cookie uuid not found")
-				// Vous pouvez gérer ce cas en définissant une valeur par défaut, en renvoyant une erreur HTTP, etc.
-				log.Fatal("Cookie 'uuid' not found", http.StatusUnauthorized)
-			}
-			// Si une autre erreur s'est produite
-			log.Fatal("Error retrieving cookie:", errUuid)
-		}
-
-		cookieUser, errUser = r.Cookie("Username")
-		if errUser != nil {
-			if errUser == http.ErrNoCookie {
-				// Si le cookie n'existe pas
-				log.Fatal("Cookie username not found")
-				// Vous pouvez gérer ce cas en définissant une valeur par défaut, en renvoyant une erreur HTTP, etc.
-				log.Fatal("Cookie 'uuid' not found", http.StatusUnauthorized)
-			}
-			// Si une autre erreur s'est produite
-			log.Fatal("Error retrieving cookie:", errUser)
-		}
-
-		fmt.Fprintln(w, cookieUui, cookieUser)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 
 		println("Welcome", user.Username)
 	} else {
 		http.Redirect(w, r, "/connection?error=password_taken", http.StatusFound)
 	}
-	return cookieUui, cookieUser
 }
 
 func AddUserValue(username string, email string, password string) database.User {
