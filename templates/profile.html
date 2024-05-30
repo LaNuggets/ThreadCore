@@ -19,14 +19,16 @@
         <text class="name" >ThreadCore</text>
     <input placeholder="Search Community" class="input"/>
     
-        
+
     <img id="profilePicture" src="../static/assets/defaultProfliePicture.svg" alt="Profile Picture">
+    <!-- <img src="{{.User.Profile}}" alt="profile" class="ChoosenProfilePicture"> -->
+
 </div>
 
 <div class="middler">
     <div class="profileHeader">
         <img src="{{.User.Banner}}" alt="banner" class="banner">
-        <img src="{{.User.Profile}}" alt="profile" class="profilePicture">
+        <img src="{{.User.Profile}}" alt="profile" class="ChoosenProfilePicture">
     <p>{{.User.Username}}</p>
 </div>
 <div class="buttonNav"></div>
