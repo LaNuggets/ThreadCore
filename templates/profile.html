@@ -5,16 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style/style.css">
     <link rel="stylesheet" href="/static/style/profile.css">
-    <link href="../static/images/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
-    <link href="../static/images/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
+    <link href="../static/assets/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
+    <link href="../static/assets/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
+
 
     <title>Profile</title>
 </head>
 <body>
-    <h1>PROFILE</h1>
-    <h1>COMMUNITY</h1>
-    {{if .Name}}
-    <p>{{.Name}}</p>
-    {{end}}
+    <script src="/static/scripts/javascript.js" type="module"></script>
+    <div class="header">
+        <img src="../static/assets/logoForLightTheme.svg" class="logoTheme" alt="Logo">
+        <text class="name" >ThreadCore</text>
+    <input placeholder="Search Community" class="input"/>
+    
+        
+    <img id="profilePicture" src="../static/assets/defaultProfliePicture.svg" alt="Profile Picture">
+</div>
+
+<div class="middler">
+    <div class="profileHeader">
+        <img src="{{.User.Banner}}" alt="banner" class="banner">
+        <img src="{{.User.Profile}}" alt="profile" class="profilePicture">
+    <p>{{.User.Username}}</p>
+</div>
+<div class="buttonNav"></div>
+<button class="Posts">Posts</button>
+<button class="Comments">Comments</button>
+</div>
 </body>
 </html>

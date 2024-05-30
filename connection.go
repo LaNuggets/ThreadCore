@@ -23,14 +23,13 @@ func Connection(w http.ResponseWriter, r *http.Request) {
 		errorMessage = "Wrong password !"
 	}
 
-	tmpl, err := template.ParseFiles("./templates/conection.html") // Read the home page
+	tmpl, err := template.ParseFiles("./templates/connection.html") // Read the home page
 	if err != nil {
 		log.Printf("\033[31mError parsing template: %v\033[0m", err)
 		http.Error(w, "Internal error, template not found.", http.StatusInternalServerError)
 		return
 	}
 
-	/*cookieUui, cookieUser :=*/
 	api.Authentication(w, r)
 
 	data := struct {

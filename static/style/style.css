@@ -4,7 +4,7 @@
         color: black;
     }
     .logoTheme{
-        content: url(../images/logoForLightTheme.svg);
+        content: url(../assets/logoForLightTheme.svg);
     }
 }
 
@@ -14,7 +14,7 @@
         color: white;
     }
     .logoTheme{
-        content: url(../images/logoForDarkTheme.svg);
+        content: url(../assets/logoForDarkTheme.svg);
     }
 }
 .header{
@@ -26,14 +26,15 @@
 }
 
 .logoTheme{
-    height: 5%;
-    width: 5%;
+    height: 3.5%;
+    width: 3.5%;
 }  
 .name{
     font-family: 'Oswald', sans-serif;
     color: #f19601;
     font-size: 35px;
     margin-right: 17%;
+    margin-top: -0.6%;
 }
 
 .input {
@@ -79,7 +80,10 @@
 }
 
 #profilePicture{
-   display: none; 
+    height: 3%;
+    width: 3%;
+    border-radius: 20px;
+    padding: 7px 20px;
 }
 
 .logged{

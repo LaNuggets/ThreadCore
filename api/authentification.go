@@ -41,10 +41,6 @@ func ChooseConnectionOrCreation(username *string, email string, password string,
 func CreationProfile(username string, email string, password string) {
 	user := AddUserValue(username, email, password)
 	database.AddUser(user)
-	println(user.Username)
-	println(user.Email)
-	println(user.Password)
-	println("Creation successful")
 }
 
 func ConnectionProfile(email string, password string, w http.ResponseWriter, r *http.Request) {
@@ -77,7 +73,7 @@ func AddUserValue(username string, email string, password string) database.User 
 
 	hashedPassword := HashPassword(password)
 
-	user := database.User{Id: 0, Uuid: uuid, Profile: "picture", Banner: "banner", Email: email, Username: username, Password: hashedPassword}
+	user := database.User{Id: 0, Uuid: uuid, Profile: "../static/images/users/profiles/bah.png", Banner: "../static/images/users/banners/fleur.jpg", Email: email, Username: username, Password: hashedPassword}
 	return user
 }
 
