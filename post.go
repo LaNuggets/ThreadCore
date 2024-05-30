@@ -11,14 +11,10 @@ import (
 
 func Post(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/post/" {
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+		http.Redirect(w, r, "/search", http.StatusSeeOther)
 		return
 	}
 
-	if r.Method != "GET" {
-		http.Error(w, "Method is not supported.", http.StatusNotFound)
-		return
-	}
 	tmpl, err := template.ParseFiles("./templates/post.html") // Read the home page
 	if err != nil {
 		log.Printf("\033[31mError parsing template: %v\033[0m", err)
@@ -28,7 +24,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 
 	postId := strings.ReplaceAll(r.URL.Path, "/post/", "")
 	if strings.Contains(postId, "/") {
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+		http.Redirect(w, r, "/search", http.StatusSeeOther)
 	}
 	id, _ := strconv.Atoi(postId)
 	post := database.GetPostById(id)

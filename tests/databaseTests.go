@@ -17,15 +17,15 @@ func main() {
 	// At the end of the program close the connnection
 	defer database.DB.Close()
 
-	c1 := database.Community{Id: 0, Name: "Minecraft", Following: 0}
-	c2 := database.Community{Id: 0, Name: "Fortnite", Following: 0}
-	c3 := database.Community{Id: 0, Name: "Aurélien", Following: 0}
+	c1 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Minecraft", Following: 0}
+	c2 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Fortnite", Following: 0}
+	c3 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Aurélien", Following: 0}
 	database.AddCommunity(c1)
 	database.AddCommunity(c2)
 	database.AddCommunity(c3)
 
-	u1 := database.User{Id: 0, Uuid: "uuid", ProfilePicture: "pp", Email: "email", Username: "username", Password: "password"}
-	u2 := database.User{Id: 0, Uuid: "uuid2", ProfilePicture: "pp2", Email: "email2", Username: "username2", Password: "password2"}
+	u1 := database.User{Id: 0, Uuid: "uuid", Profile: "p", Banner: "b", Email: "email", Username: "username", Password: "password"}
+	u2 := database.User{Id: 0, Uuid: "uuid2", Profile: "p2", Banner: "b2", Email: "email2", Username: "username2", Password: "password2"}
 	database.AddUser(u1)
 	database.AddUser(u2)
 

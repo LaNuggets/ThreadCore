@@ -19,6 +19,8 @@
 - Debuts authentification (signup/login)
 
 28/5:
+- Creation et récuperation des cookies
+- fonctionnalité upload images par les users
 
 30/5:
 

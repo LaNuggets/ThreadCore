@@ -9,17 +9,18 @@ import (
 )
 
 type User struct {
-	Id             int
-	Uuid           string
-	ProfilePicture string
-	Email          string
-	Username       string
-	Password       string
+	Id       int
+	Uuid     string
+	Profile  string
+	Banner   string
+	Email    string
+	Username string
+	Password string
 }
 
 func AddUser(user User) {
-	query, _ := DB.Prepare("INSERT INTO user (uuid, profilePicture, email, username, password) VALUES (?, ?, ?, ?, ?)")
-	query.Exec(user.Uuid, user.ProfilePicture, user.Email, user.Username, user.Password)
+	query, _ := DB.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
+	query.Exec(user.Uuid, user.Profile, user.Banner, user.Email, user.Username, user.Password)
 	defer query.Close()
 	fmt.Println("test")
 }
@@ -34,7 +35,7 @@ func GetUserByEmail(email string) User {
 	user := User{}
 
 	for rows.Next() {
-		rows.Scan(&user.Id, &user.Uuid, &user.ProfilePicture, &user.Email, &user.Username, &user.Password)
+		rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
 	}
 
 	return user
@@ -48,18 +49,18 @@ func GetUserById(id int) User {
 	user := User{}
 
 	for rows.Next() {
-		rows.Scan(&user.Id, &user.Uuid, &user.ProfilePicture, &user.Email, &user.Username, &user.Password)
+		rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
 	}
 
 	return user
 }
 
 func UpdateUserInfo(user User) {
-	query, err := DB.Prepare("UPDATE user set uuid = ?, profilePicture = ?, username = ?, email = ?, password = ? where id = ?")
+	query, err := DB.Prepare("UPDATE user set uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? where id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(user.Uuid, user.ProfilePicture, user.Username, user.Email, user.Password, user.Id)
+	res, err := query.Exec(user.Uuid, user.Profile, user.Banner, user.Username, user.Email, user.Password, user.Id)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()

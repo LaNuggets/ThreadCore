@@ -9,13 +9,15 @@ import (
 
 type Community struct {
 	Id        int
+	Profile   string
+	Banner    string
 	Name      string
 	Following int
 }
 
 func AddCommunity(community Community) {
-	query, _ := DB.Prepare("INSERT INTO community (name, following) VALUES (?, ?)")
-	query.Exec(community.Name, 0)
+	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, following) VALUES (?, ?, ?, ?)")
+	query.Exec(community.Profile, community.Banner, community.Name, 0)
 	defer query.Close()
 }
 
@@ -27,7 +29,7 @@ func GetCommunityById(id int) Community {
 	community := Community{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Name, &community.Following)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following)
 	}
 
 	return community
@@ -40,7 +42,7 @@ func GetCommunityByName(communityName string) Community {
 	community := Community{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Name, &community.Following)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following)
 	}
 
 	return community
@@ -57,7 +59,7 @@ func GetCommunitiesByNMembers() []Community {
 
 	for rows.Next() {
 		community := Community{}
-		err = rows.Scan(&community.Id, &community.Name, &community.Following)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following)
 		CheckErr(err)
 
 		communityList = append(communityList, community)
@@ -109,7 +111,7 @@ func GetUsersByCommunity(communityId int) []User {
 
 	for rows.Next() {
 		user := User{}
-		err = rows.Scan(&user.Id, &user.Uuid, &user.ProfilePicture, &user.Email, &user.Username, &user.Password)
+		err = rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
 		CheckErr(err)
 
 		userList = append(userList, user)
@@ -133,7 +135,7 @@ func GetCommunitiesByUser(userId int) []Community {
 
 	for rows.Next() {
 		community := Community{}
-		err = rows.Scan(&community.Id, &community.Name, &community.Following)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following)
 		CheckErr(err)
 
 		communityList = append(communityList, community)

@@ -25,7 +25,7 @@ func GetFriendsByUser(userId string) []User {
 
 	for rows.Next() {
 		user := User{}
-		err = rows.Scan(&user.Id, &user.Uuid, &user.ProfilePicture, &user.Email, &user.Username, &user.Password)
+		err = rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
 		CheckErr(err)
 
 		userList = append(userList, user)

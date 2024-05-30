@@ -4,18 +4,15 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
-func Profile(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/profile" {
-		http.Redirect(w, r, "/404", http.StatusSeeOther)
+func User(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/user/" {
+		http.Redirect(w, r, "/search", http.StatusSeeOther)
 		return
 	}
 
-	if r.Method != "GET" {
-		http.Error(w, "Method is not supported.", http.StatusNotFound)
-		return
-	}
 	tmpl, err := template.ParseFiles("./templates/profile.html") // Read the home page
 	if err != nil {
 		log.Printf("\033[31mError parsing template: %v\033[0m", err)
@@ -23,7 +20,18 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.Execute(w, nil)
+	username := strings.ReplaceAll(r.URL.Path, "/user/", "")
+	if strings.Contains(username, "/") {
+		http.Redirect(w, r, "/search", http.StatusSeeOther)
+	}
+
+	userPage := struct {
+		Name string
+	}{
+		Name: username,
+	}
+
+	err = tmpl.Execute(w, userPage)
 	if err != nil {
 		log.Printf("\033[31mError executing template: %v\033[0m", err)
 		http.Error(w, "Internal error", http.StatusInternalServerError)
