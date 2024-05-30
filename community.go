@@ -12,7 +12,7 @@ import (
 
 func Community(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/community/" {
-		http.Redirect(w, r, "/search", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
@@ -25,7 +25,7 @@ func Community(w http.ResponseWriter, r *http.Request) {
 
 	communityName := strings.ReplaceAll(r.URL.Path, "/community/", "")
 	if strings.Contains(communityName, "/") {
-		http.Redirect(w, r, "/search", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 	}
 
 	communityPage := struct {

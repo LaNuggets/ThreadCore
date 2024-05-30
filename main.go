@@ -31,7 +31,7 @@ func main() {
 	http.HandleFunc("/post/", Post)
 	http.HandleFunc("/user/", User)
 	http.HandleFunc("/404", NotFound)
-	http.HandleFunc("/search", Search)
+	http.HandleFunc("/search/", Search)
 	http.HandleFunc("/connection", Connection)
 
 	fmt.Println("Server Start at:")

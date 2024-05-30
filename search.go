@@ -5,11 +5,11 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
+	"strings"
 )
 
 func Search(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/search" {
+	if r.URL.Path != "/search/" {
 		http.Redirect(w, r, "/404", http.StatusSeeOther)
 		return
 	}
@@ -21,7 +21,11 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	search, _ := strconv.Atoi(r.URL.Query().Get("search"))
+	search := strings.ReplaceAll(r.URL.Path, "/search/", "")
+	if strings.Contains(search, "/") {
+		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+	}
+
 	if r.Method == "POST" {
 		media := r.FormValue("type") // media options  : posts, communities, comments ,
 		sort := r.FormValue("sort")  // sort options : popular (most likes), recent,
@@ -30,7 +34,13 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(search, media, sort, time)
 	}
 
-	err = tmpl.Execute(w, nil)
+	searchPage := struct {
+		Name string
+	}{
+		Name: search,
+	}
+
+	err = tmpl.Execute(w, searchPage)
 	if err != nil {
 		log.Printf("\033[31mError executing template: %v\033[0m", err)
 		http.Error(w, "Internal error", http.StatusInternalServerError)
