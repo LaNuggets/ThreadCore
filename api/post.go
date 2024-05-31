@@ -1,5 +1,7 @@
 package api
 
-func Post() {
+import "net/http"
+
+func createPost(w http.ResponseWriter, r *http.Request) {
 
 }

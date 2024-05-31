@@ -8,15 +8,16 @@
     <title>Community</title>
 </head>
 <body>
-    <h1>COMMUNITY</h1>
-    {{if .Name}}
-    <p>{{.Name}}</p>
-    {{end}}
+  <script src="/static/scripts/community.js" type="module"></script>
+  <h1>COMMUNITY</h1>
+  {{if .Name}}
+  <p>{{.Name}}</p>
+  {{end}}
 
-    <form enctype="multipart/form-data" method="post">
-      <input type="text" placeholder="community name" name="name"/>
-      <input type="file" name="myFile" />
-      <input type="submit" value="upload" />
-    </form>
+  <form enctype="multipart/form-data" method="post" action="/createCommunity" id="myForm">
+    <input type="text" placeholder="community name" name="name">
+    <input type="file" name="myFile" >
+    <input type="submit" value="upload" >
+  </form>
 </body>
 </html>

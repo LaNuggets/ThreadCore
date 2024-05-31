@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ThreadCore/api"
 	"ThreadCore/database"
 	"database/sql"
 	"fmt"
@@ -33,6 +34,18 @@ func main() {
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/search/", Search)
 	http.HandleFunc("/connection", Connection)
+
+	// Forms routes
+	http.HandleFunc("/createCommunity", api.CreateCommunity)
+	http.HandleFunc("/updateCommunity", UpdateCommunity)
+	http.HandleFunc("/deleteCommunity", DeleteCommunity)
+	http.HandleFunc("/createPost", CreatePost)
+	http.HandleFunc("/updatePost", UpdatePost)
+	http.HandleFunc("/deletePost", DeletePost)
+	http.HandleFunc("/createComment", CreateComment)
+	http.HandleFunc("/updateComment", UpdateComment)
+	http.HandleFunc("/deleteComment", DeleteComment)
+	http.HandleFunc("/likeDislike", LikeDislike)
 
 	fmt.Println("Server Start at:")
 	fmt.Println("http://localhost" + port)

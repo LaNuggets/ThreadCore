@@ -1,11 +1,21 @@
-var search = document.getElementById("search");
+// get query value in url from key
+const urlParams = new URLSearchParams(window.location.search);
 
-// Execute a function when the user presses a key on the keyboard
+const searchString = urlParams.get('q');
+if (searchString != null) {
+    document.getElementById("search").value = searchString
+}
+
+
+let search = document.getElementById("search");
+
 search.addEventListener("keypress", function(event) {
-  // If the user presses the "Enter" key on the keyboard
   if (event.key === "Enter") {
     event.preventDefault();
-    let searchString = document.forms["search"]["search"].value
-    document.location.href="/search/" + searchString
+    if ('URLSearchParams' in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("q", search.value);
+        window.location.search = searchParams.toString();
+    }
   }
 });

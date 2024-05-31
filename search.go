@@ -1,16 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"strings"
 )
 
 func Search(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/search/" {
-		http.Redirect(w, r, "/404", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
@@ -21,23 +19,21 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	search := strings.ReplaceAll(r.URL.Path, "/search/", "")
-	if strings.Contains(search, "/") {
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
-	}
-
-	if r.Method == "POST" {
-		media := r.FormValue("type") // media options  : posts, communities, comments ,
-		sort := r.FormValue("sort")  // sort options : popular (most likes), recent,
-		time := r.FormValue("time")  // time options : all time, year, month, week, day, hour
-
-		fmt.Println(search, media, sort, time)
-	}
+	search := r.URL.Query().Get("q")
+	media := r.URL.Query().Get("media") // media options  : posts, communities, comments , users
+	sort := r.URL.Query().Get("sort")
+	time := r.URL.Query().Get("time")
 
 	searchPage := struct {
-		Name string
+		Search string
+		Media  string
+		Sort   string
+		Time   string
 	}{
-		Name: search,
+		Search: search,
+		Media:  media,
+		Sort:   sort,
+		Time:   time,
 	}
 
 	err = tmpl.Execute(w, searchPage)
