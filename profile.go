@@ -11,7 +11,7 @@ import (
 
 func User(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/user/" {
-		http.Redirect(w, r, "/search", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
@@ -24,7 +24,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 
 	username := strings.ReplaceAll(r.URL.Path, "/user/", "")
 	if strings.Contains(username, "/") {
-		http.Redirect(w, r, "/search", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 	}
 
 	cookieUuid := api.CookieGetter("Uuid", r)

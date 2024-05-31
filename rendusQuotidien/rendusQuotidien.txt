@@ -23,6 +23,8 @@
 - fonctionnalité upload images par les users
 
 30/5:
+- Recuperation des users inputs sur la page search afin de sort les elements (mots clé, type de media, temps, populaire ou recents)
+- fonctionnalités de la page de profile
 
 31/5:
 
