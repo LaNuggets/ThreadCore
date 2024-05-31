@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 
@@ -22,7 +21,6 @@ func AddUser(user User) {
 	query, _ := DB.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
 	query.Exec(user.Uuid, user.Profile, user.Banner, user.Email, user.Username, user.Password)
 	defer query.Close()
-	fmt.Println("test")
 }
 
 func GetUserByEmail(email string) User {
@@ -44,6 +42,19 @@ func GetUserByEmail(email string) User {
 func GetUserById(id int) User {
 	id2 := strconv.Itoa(id)
 	rows, _ := DB.Query("SELECT * FROM user WHERE id = '" + id2 + "'")
+	defer rows.Close()
+
+	user := User{}
+
+	for rows.Next() {
+		rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
+	}
+
+	return user
+}
+
+func GetUserByUuid(uuid string) User {
+	rows, _ := DB.Query("SELECT * FROM user WHERE uuid = '" + uuid + "'")
 	defer rows.Close()
 
 	user := User{}

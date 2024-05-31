@@ -1,6 +1,8 @@
 package main
 
 import (
+	"ThreadCore/api"
+	"ThreadCore/database"
 	"html/template"
 	"log"
 	"net/http"
@@ -25,10 +27,14 @@ func User(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 	}
 
+	cookieUuid := api.CookieGetter("Uuid", r)
+
+	user := database.GetUserByUuid(cookieUuid)
+
 	userPage := struct {
-		Name string
+		User database.User
 	}{
-		Name: username,
+		User: user,
 	}
 
 	err = tmpl.Execute(w, userPage)

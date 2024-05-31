@@ -1,7 +1,11 @@
 package api
 
-import "net/http"
+import "ThreadCore/database"
 
-func createPost(w http.ResponseWriter, r *http.Request) {
-
+func DisplayPosts(post []database.Post) []string {
+	var commentContent []string
+	for i := 0; i < len(post); i++ {
+		commentContent = append(commentContent, post[i].Content)
+	}
+	return commentContent
 }
