@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ThreadCore/database"
 	"html/template"
 	"log"
 	"net/http"
@@ -24,16 +25,22 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	sort := r.URL.Query().Get("sort")
 	time := r.URL.Query().Get("time")
 
+	searchedPost := database.GetPostsBySearchString(search)
+
+	// postContent := api.DisplayPosts(searchedPost)
+
 	searchPage := struct {
-		Search string
-		Media  string
-		Sort   string
-		Time   string
+		Search       string
+		Media        string
+		Sort         string
+		Time         string
+		SearchedPost []database.PostDisplay
 	}{
-		Search: search,
-		Media:  media,
-		Sort:   sort,
-		Time:   time,
+		Search:       search,
+		Media:        media,
+		Sort:         sort,
+		Time:         time,
+		SearchedPost: searchedPost,
 	}
 
 	err = tmpl.Execute(w, searchPage)

@@ -25,7 +25,13 @@
     <h1>COMMUNITY</h1>
     {{if .Search}}
     <p>{{.Search}}</p>
+    {{range .SearchedPost}}
+  <p>{{.Username}}</p>
+  <p>{{.Content}}</p>
+
+  {{end}}
     {{end}}
+
     {{if .Media}}
     <p>{{.Media}}</p>
     {{end}}
