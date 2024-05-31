@@ -36,10 +36,12 @@ func main() {
 	fmt.Println(database.GetCommunitiesByNMembers())
 	fmt.Println("done")
 
-	p1 := database.Post{Id: 0, Title: "I like minecraft", Content: "minecraft is really cool and i like playing it a lot", User_id: 1, Community_id: 1, Created: time.Now()}
-	p2 := database.Post{Id: 1, Title: "I like my self", Content: "I am beautiful and evrybody need to now that", User_id: 2, Community_id: 2, Created: time.Now()}
+	p1 := database.Post{Id: 0, Title: "I like minecraft", Content: "minecraft is really cool and i like playing it a lot.", User_id: 1, Community_id: 1, Created: time.Now()}
+	p2 := database.Post{Id: 1, Title: "I like my self", Content: "I am beautiful and evrybody need to now that.", User_id: 2, Community_id: 2, Created: time.Now()}
+	p3 := database.Post{Id: 3, Title: "New glitch", Content: "Yesturday i just found a new bug in minecraft whiche allow player to duplicate everything.", User_id: 2, Community_id: 1, Created: time.Now()}
 
 	database.AddPost(p1)
 	database.AddPost(p2)
+	database.AddPost(p3)
 
 }

@@ -23,14 +23,15 @@
         </button>
     </div>
     <h1>COMMUNITY</h1>
+    <div class="posts">
     {{if .Search}}
     <p>{{.Search}}</p>
     {{range .SearchedPost}}
-  <p>{{.Username}}</p>
+  <p>Creator: {{.Username}}</p>
   <p>{{.Content}}</p>
-
   {{end}}
     {{end}}
+</div>
 
     {{if .Media}}
     <p>{{.Media}}</p>

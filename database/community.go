@@ -48,6 +48,19 @@ func GetCommunityByName(communityName string) Community {
 	return community
 }
 
+func GetCommunityBySearchString(searchString string) Community {
+	rows, _ := DB.Query("SELECT * FROM community WHERE name LIKE '%" + searchString + "%' OR user_id LIKE '%" + searchString + "%'")
+	defer rows.Close()
+
+	community := Community{}
+
+	for rows.Next() {
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
+	}
+
+	return community
+}
+
 func GetCommunitiesByNMembers() []Community {
 	rows, err := DB.Query("SELECT * FROM community ORDER BY following DESC")
 	defer rows.Close()
