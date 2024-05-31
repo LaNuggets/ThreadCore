@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 // get query value in url from key
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -21,4 +19,3 @@ search.addEventListener("keypress", function(event) {
     }
   }
 });
->>>>>>> jeremy
