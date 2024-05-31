@@ -1,5 +1,7 @@
 package api
 
-func Post() {
+import "ThreadCore/database"
+
+func DisplayPosts(post []database.Post) []struct {
 
 }
