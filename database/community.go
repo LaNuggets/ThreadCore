@@ -22,9 +22,8 @@ func AddCommunity(community Community) {
 	defer query.Close()
 }
 
-func GetCommunityById(id int) Community {
-	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
+func GetCommunityById(id string) Community {
+	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id + "'")
 	defer rows.Close()
 
 	community := Community{}
