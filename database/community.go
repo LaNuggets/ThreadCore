@@ -13,23 +13,23 @@ type Community struct {
 	Banner    string
 	Name      string
 	Following int
+	User_id   int
 }
 
 func AddCommunity(community Community) {
-	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, following) VALUES (?, ?, ?, ?)")
-	query.Exec(community.Profile, community.Banner, community.Name, 0)
+	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, following, user_id) VALUES (?, ?, ?, ?, ?)")
+	query.Exec(community.Profile, community.Banner, community.Name, 0, community.User_id)
 	defer query.Close()
 }
 
-func GetCommunityById(id int) Community {
-	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
+func GetCommunityById(id string) Community {
+	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id + "'")
 	defer rows.Close()
 
 	community := Community{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
 	}
 
 	return community
@@ -42,14 +42,15 @@ func GetCommunityByName(communityName string) Community {
 	community := Community{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
 	}
 
 	return community
 }
 
 func GetCommunityBySearchString(searchString string) Community {
-	rows, _ := DB.Query("SELECT * FROM community WHERE name LIKE '%" + searchString + "%' OR user_id LIKE '%" + searchString + "%'")
+	rows, _ := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.following, community.user_id, user.username FROM community INNER JOIN user.id = community.user_id WHERE name LIKE '%" + searchString + "%' OR user_id LIKE '%" + searchString + "%'")
+
 	defer rows.Close()
 
 	community := Community{}
@@ -72,7 +73,7 @@ func GetCommunitiesByNMembers() []Community {
 
 	for rows.Next() {
 		community := Community{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
 		CheckErr(err)
 
 		communityList = append(communityList, community)
@@ -82,6 +83,22 @@ func GetCommunitiesByNMembers() []Community {
 	CheckErr(err)
 
 	return communityList
+}
+
+func UpdateCommunityInfo(community Community) {
+	query, err := DB.Prepare("UPDATE community set profile = ?, banner = ?, name = ?, following = ?, user_id = ?, where id = ?")
+	CheckErr(err)
+	defer query.Close()
+
+	res, err := query.Exec(community.Profile, community.Banner, community.Name, community.Following, &community.User_id, community.Id)
+	CheckErr(err)
+
+	affected, err := res.RowsAffected()
+	CheckErr(err)
+
+	if affected > 1 {
+		log.Fatal("Error : More than 1 community was affected")
+	}
 }
 
 func DeleteCommunity(communityId int) {
@@ -148,7 +165,7 @@ func GetCommunitiesByUser(userId int) []Community {
 
 	for rows.Next() {
 		community := Community{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
 		CheckErr(err)
 
 		communityList = append(communityList, community)
