@@ -25,7 +25,7 @@ func AddPost(post Post) {
 }
 
 func GetPostsBySearchString(searchString string) []Post {
-	rows, err := DB.Query("SELECT * FROM post WHERE title like '%" + searchString + "%' OR content like '%" + searchString + "%'")
+	rows, err := DB.Query("SELECT * FROM post WHERE title like '%" + searchString + "%' OR content LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
