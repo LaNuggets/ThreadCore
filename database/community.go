@@ -72,7 +72,7 @@ func GetCommunitiesByNMembers() []Community {
 }
 
 func UpdateCommunityInfo(community Community) {
-	query, err := DB.Prepare("UPDATE community set profile = ?, banner = ?, name = ?, following = ?, user_id = ?, where id = ?")
+	query, err := DB.Prepare("UPDATE community SET profile = ?, banner = ?, name = ?, following = ?, user_id = ? WHERE id = ?")
 	CheckErr(err)
 	defer query.Close()
 

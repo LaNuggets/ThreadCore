@@ -73,13 +73,36 @@
         </select>
     </div>
 
-    <!-- CREATE POST -->
+    <!-- CREATE Community -->
+    <h1>CREATE COMMUNITY</h1>
+    <form enctype="multipart/form-data" method="post" action="/createCommunity">
+        
+        <p>name</p>
+        <input type="text" placeholder="community name" name="name">
+        
+        <!-- profile -->
+        <p>profile picture</p>
+        <input type="text" placeholder="profile link" name="profileLink">
+        <input type="file" name="profile" accept="image/png, image/gif, image/jpeg" >
+        
+        <!-- choose between link or file -->
+        <p>link or file?</p>
+        <input type="radio" name="profileOption" value="link">
+        <label for="age1">link</label>
+        <input type="radio" name="profileOption" value="file">
+        <label for="age2">file</label>
+        
+        <p>banner picture</p>
+        <input type="text" placeholder="banner link" name="bannerLink">
+        <input type="file" name="banner" accept="image/png, image/gif, image/jpeg" >
 
-    <form enctype="multipart/form-data" method="post">
-        <input type="text" placeholder="Post Title" name="title"/>
-        <input type="text" placeholder="Content" name="content"/>
-        <input type="file" name="myFile" accept="image/png, image/gif, image/jpeg" />
-        <input type="submit" value="upload" />
+        <p>link or file?</p>
+        <input type="radio" name="bannerOption" value="link">
+        <label for="age1">link</label>
+        <input type="radio" name="bannerOption" value="file">
+        <label for="age2">file</label>
+
+        <input type="submit" value="upload" >
     </form>
 </body>
 </html>

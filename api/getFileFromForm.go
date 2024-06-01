@@ -1,8 +1,10 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"os"
 )
@@ -17,6 +19,15 @@ func GetFileFromForm(file multipart.File, handler *multipart.FileHeader, err err
 	// fmt.Printf("Uploaded File: %+v\n", handler.Filename)
 	// fmt.Printf("File Size: %+v\n", handler.Size)
 	// fmt.Printf("MIME Header: %+v\n", handler.Header)
+
+	if _, err := os.Stat("./static/images/" + path); errors.Is(err, os.ErrNotExist) {
+		// file does not exist
+	} else {
+		e := os.Remove("./static/images/" + path)
+		if e != nil {
+			log.Fatal(e)
+		}
+	}
 
 	f, err := os.OpenFile("./static/images/"+path, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {

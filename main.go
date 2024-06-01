@@ -37,7 +37,7 @@ func main() {
 
 	// Forms routes
 	http.HandleFunc("/createCommunity", api.CreateCommunity)
-	// http.HandleFunc("/updateCommunity", UpdateCommunity)
+	http.HandleFunc("/updateCommunity", api.UpdateCommunity)
 	// http.HandleFunc("/deleteCommunity", DeleteCommunity)
 	// http.HandleFunc("/createPost", CreatePost)
 	// http.HandleFunc("/updatePost", UpdatePost)
