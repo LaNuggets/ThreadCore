@@ -27,7 +27,10 @@
 - fonctionnalités de la page de profile
 
 31/5:
-
+- Ajout de la fonctionalite des foreign key par sqlite (off par defaut) ainsi que la suppresion des données en cascade pour chaque table relier à une foreign key
+- formulaires de creation, modification et suppression d'une communautées qvec leu propres routes
+- affichage des posts et communautées
+- rcuperation des nom d'utilisateurs des createurs des posts et communautées
 
 03/6:
 
