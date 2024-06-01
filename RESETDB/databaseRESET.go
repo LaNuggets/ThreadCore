@@ -39,13 +39,68 @@ DROP TABLE IF EXISTS user;
 	dropTables += ""
 
 	createTables := `
-CREATE TABLE user(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, uuid VARCHAR(255),  profile VARCHAR(255), banner VARCHAR(255), email VARCHAR(64), username VARCHAR(20), password VARCHAR(255));
-CREATE TABLE community(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,  profile VARCHAR(255), banner VARCHAR(255), name VARCHAR(32), following INTEGER NOT NULL, user_id INTEGER, FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE);
-CREATE TABLE friend(user_id INTEGER, friend_id INTEGER, PRIMARY KEY(user_id, friend_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, FOREIGN KEY (friend_id) REFERENCES user(id) ON DELETE CASCADE);
-CREATE TABLE post(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, title VARCHAR(32), content VARCHAR(255), media VARCHAR(255), user_id INTEGER, community_id INTEGER, created TIMESTAMP, FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, FOREIGN KEY (community_id) REFERENCES community(id) ON DELETE CASCADE);
-CREATE TABLE comment(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, user_id INTEGER, post_id INTEGER, comment_id INTEGER, content VARCHAR(255), created TIMESTAMP, FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE, FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE);
-CREATE TABLE like(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, rating INTEGER, comment_id INTEGER, post_id INTEGER, user_id INTEGER, FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE, FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE, FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE);
-CREATE TABLE user_community(user_id INTEGER, community_id INTEGER, PRIMARY KEY(user_id, community_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, FOREIGN KEY (community_id) REFERENCES community(id) ON DELETE CASCADE);
+CREATE TABLE user(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	uuid VARCHAR(255),  
+	profile VARCHAR(255), 
+	banner VARCHAR(255), 
+	email VARCHAR(64), 
+	username VARCHAR(20), 
+	password VARCHAR(255));
+
+CREATE TABLE community(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	profile VARCHAR(255), 
+	banner VARCHAR(255), 
+	name VARCHAR(32), 
+	following INTEGER NOT NULL, 
+	user_id INTEGER, 
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE);
+
+CREATE TABLE friend(
+	user_id INTEGER, friend_id INTEGER, 
+	PRIMARY KEY(user_id, friend_id), 
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
+	FOREIGN KEY (friend_id) REFERENCES user(id) ON DELETE CASCADE);
+
+CREATE TABLE post(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	title VARCHAR(32), 
+	content VARCHAR(255), 
+	media VARCHAR(255), 
+	user_id INTEGER, 
+	community_id INTEGER, 
+	created TIMESTAMP, 
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
+	FOREIGN KEY (community_id) REFERENCES community(id) ON DELETE CASCADE);
+
+CREATE TABLE comment(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	user_id INTEGER, 
+	post_id INTEGER, 
+	comment_id INTEGER, 
+	content VARCHAR(255), 
+	created TIMESTAMP, 
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
+	FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE, 
+	FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE);
+
+CREATE TABLE like(
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
+	rating INTEGER, 
+	comment_id INTEGER, 
+	post_id INTEGER, 
+	user_id INTEGER, 
+	FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE, 
+	FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE, 
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE);
+
+CREATE TABLE user_community(
+	user_id INTEGER, 
+	community_id INTEGER, 
+	PRIMARY KEY(user_id, community_id), 
+	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
+	FOREIGN KEY (community_id) REFERENCES community(id) ON DELETE CASCADE);
 	`
 
 	// not used for now :

@@ -16,7 +16,7 @@ type Like struct {
 }
 
 func AddLike(like Like) {
-	query, _ := DB.Prepare("INSERT INTO like (rating, comment_id, post_id, user_id) VALUES (?, ?, ?, ?)")
+	query, _ := DB.Prepare("INSERT INTO like (rating, comment_id, post_id, user_id) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?)")
 	query.Exec(like.Rating, like.Comment_id, like.Post_id, like.User_id)
 	defer query.Close()
 }

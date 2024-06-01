@@ -22,8 +22,9 @@ func AddCommunity(community Community) {
 	defer query.Close()
 }
 
-func GetCommunityById(id string) Community {
-	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id + "'")
+func GetCommunityById(id int) Community {
+	id2 := strconv.Itoa(id)
+	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	community := Community{}
@@ -49,7 +50,7 @@ func GetCommunityByName(communityName string) Community {
 }
 
 func GetCommunitiesByNMembers() []Community {
-	rows, err := DB.Query("SELECT * FROM community ORDER BY following DESC")
+	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, COUNT(*), community.user_id FROM user_community JOIN community ON community.id = user_community.community_id GROUP BY user_community.community_id ORDER BY COUNT(*) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -59,9 +60,10 @@ func GetCommunitiesByNMembers() []Community {
 
 	for rows.Next() {
 		community := Community{}
+		var count int
 		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
 		CheckErr(err)
-
+		community.Following = count
 		communityList = append(communityList, community)
 	}
 
@@ -107,7 +109,7 @@ func DeleteCommunity(communityId int) {
 
 func AddUserCommunity(userId int, communityId int) {
 	query, _ := DB.Prepare("INSERT INTO user_community (user_id, community_id) VALUES (?, ?)")
-	query.Exec(communityId, userId)
+	query.Exec(userId, communityId)
 	defer query.Close()
 
 	query2, _ := DB.Prepare("UPDATE community SET following=following + 1 WHERE id = ?")

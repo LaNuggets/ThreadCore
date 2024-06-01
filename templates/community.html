@@ -12,8 +12,8 @@
   <h1>COMMUNITY</h1>
   {{if .Community}}
   <p>{{.Community.Name}}</p>
-  <img src="/static/images/{{.Community.Profile}}" alt="profile">
-  <img src="/static/images/{{.Community.Banner}}" alt="Banner">
+  <img src="{{.Community.Profile}}" alt="profile">
+  <img src="{{.Community.Banner}}" alt="Banner">
   <p>{{.Community.User_id}}</p>
   {{end}}
 
@@ -33,7 +33,7 @@
       <!-- profile -->
       <p>profile picture</p>
       <input type="text" placeholder="profile link" name="profileLink">
-      <input type="file" name="profile" accept="image/png, image/gif, image/jpeg" >
+      <input type="file" name="profile" accept="image/*" >
       
       <!-- choose between link or file -->
       <p>link or file?</p>
@@ -48,7 +48,7 @@
       
       <p>banner picture</p>
       <input type="text" placeholder="banner link" name="bannerLink">
-      <input type="file" name="banner" accept="image/png, image/gif, image/jpeg" >
+      <input type="file" name="banner" accept="image/*" >
 
       <p>link or file?</p>
       <input type="radio" name="bannerOption" value="link">
@@ -62,6 +62,15 @@
 
       <input type="text" name="communityId" value="{{.Community.Id}}">
       <input type="submit" value="upload" >
+  </form>
+
+  <!-- DELETE COMMUNITY -->
+  <h1>DELETE COMMUNITY</h1>
+  <form method="post" action="/deleteCommunity">
+    <input type="text" name="communityId" value="{{.Community.Id}}">
+    <input type="checkbox" name="confirm" value="true">
+    <label> Confirm Deletion </label><br>
+    <input type="submit" value="DELETE {{.Community.Name}}" >
   </form>
 </body>
 </html>

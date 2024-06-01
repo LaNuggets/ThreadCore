@@ -30,7 +30,7 @@ type PostDisplay struct {
 }
 
 func AddPost(post Post) {
-	query, _ := DB.Prepare("INSERT INTO post (title, content, media, user_id, community_id, created) VALUES (?, ?, ?, ?, ?, ?)")
+	query, _ := DB.Prepare("INSERT INTO post (title, content, media, user_id, community_id, created) VALUES (?, ?, ?, ?, NULLIF(?, 0), ?)")
 	query.Exec(post.Title, post.Content, post.Media, post.User_id, post.Community_id, post.Created)
 	defer query.Close()
 }

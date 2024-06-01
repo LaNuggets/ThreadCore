@@ -18,7 +18,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	// Check if user connected
 	userUuid := CookieGetter("Uuid", r)
 	if userUuid == "" {
-		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for invalid user
+		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
@@ -58,7 +58,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 				return //if no extension is present print failure
 			}
 			ext1 := handler1.Filename[extension:] //obtain the extension in ext variable
-			profilePath = "communities/profile/" + name + ext1
+			profilePath = "/static/images/communities/profile/" + name + ext1
 			GetFileFromForm(profile, handler1, err, profilePath)
 		}
 	}
@@ -82,7 +82,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 				return //if no extension is present print failure
 			}
 			ext2 := handler2.Filename[extension:] //obtain the extension in ext variable
-			bannerPath = "communities/banner/" + name + ext2
+			bannerPath = "/static/images/communities/banner/" + name + ext2
 			GetFileFromForm(banner, handler2, err, bannerPath)
 		}
 	}
@@ -101,17 +101,18 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := r.FormValue("communityId")
-	community := database.GetCommunityById(id)
+	id2, _ := strconv.Atoi(id)
+	community := database.GetCommunityById(id2)
 	if (community == database.Community{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
-		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
 	// Check if user connected and allowed to modify
 	userUuid := CookieGetter("Uuid", r)
 	if userUuid == "" {
-		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for invalid user
+		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
 		return
 	}
@@ -121,7 +122,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
 		return
 	} else if community.User_id != user.Id {
-		fmt.Println("user not author of community") // TO-DO : Send error message for user not found
+		fmt.Println("user not author of community") // TO-DO : Send error message for user not allowed action
 		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
 		return
 	}
@@ -173,7 +174,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 				return //if no extension is present print failure
 			}
 			ext1 := handler1.Filename[extension:] //obtain the extension in ext variable
-			profilePath = "communities/profile/" + strconv.Itoa(community.Id) + ext1
+			profilePath = "/static/images/communities/profile/" + strconv.Itoa(community.Id) + ext1
 			GetFileFromForm(profile, handler1, err, profilePath)
 		}
 	}
@@ -201,7 +202,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 				return //if no extension is present print failure
 			}
 			ext2 := handler2.Filename[extension:] //obtain the extension in ext variable
-			bannerPath = "communities/banner/" + strconv.Itoa(community.Id) + ext2
+			bannerPath = "/static/images/communities/banner/" + strconv.Itoa(community.Id) + ext2
 			GetFileFromForm(banner, handler2, err, bannerPath)
 		}
 	}
@@ -210,4 +211,51 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	database.UpdateCommunityInfo(community)
 
 	http.Redirect(w, r, "/community/"+newName, http.StatusSeeOther)
+}
+
+// DELETE COMMUNITY
+func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	id := r.FormValue("communityId")
+	id2, _ := strconv.Atoi(id)
+	community := database.GetCommunityById(id2)
+	if (community == database.Community{}) {
+		fmt.Println("community does not exist") // TO-DO : send error community not found
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+
+	// Check if user connected and allowed to modify
+	userUuid := CookieGetter("Uuid", r)
+	if userUuid == "" {
+		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+	user := database.GetUserByUuid(userUuid)
+	if (user == database.User{}) {
+		fmt.Println("user not found") // TO-DO : Send error message for user not found
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	} else if community.User_id != user.Id {
+		fmt.Println("user not author of community") // TO-DO : Send error message for user not allowed action
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+
+	confirm := r.FormValue("confirm")
+	if confirm != "true" {
+		fmt.Println("user did not confirm deletion") // TO-DO : Send error message need to confirm before submiting
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	} else {
+		database.DeleteCommunity(community.Id)
+	}
+
+	//Send confirmation message
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

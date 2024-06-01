@@ -15,7 +15,7 @@ func main() {
 
 	// Open the database connection in the global varaible DB located in database/DBglobalVariable.go
 	var err error
-	database.DB, err = sql.Open("sqlite3", "threadcore.db")
+	database.DB, err = sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	database.CheckErr(err)
 
 	// At the end of the program close the connnection
@@ -38,7 +38,7 @@ func main() {
 	// Forms routes
 	http.HandleFunc("/createCommunity", api.CreateCommunity)
 	http.HandleFunc("/updateCommunity", api.UpdateCommunity)
-	// http.HandleFunc("/deleteCommunity", DeleteCommunity)
+	http.HandleFunc("/deleteCommunity", api.DeleteCommunity)
 	// http.HandleFunc("/createPost", CreatePost)
 	// http.HandleFunc("/updatePost", UpdatePost)
 	// http.HandleFunc("/deletePost", DeletePost)
@@ -46,6 +46,11 @@ func main() {
 	// http.HandleFunc("/updateComment", UpdateComment)
 	// http.HandleFunc("/deleteComment", DeleteComment)
 	// http.HandleFunc("/likeDislike", LikeDislike)
+	// http.HandleFunc("/updateUserInfo", UpdateUser)
+	// http.HandleFunc("/followCommuity", FollowCommunity)
+	// http.HandleFunc("/unfollowCommunity", UnfollowCommunity)
+	// http.HandleFunc("/followUser", FollowUser)
+	// http.HandleFunc("/unfollowUser", UnfollowUser)
 
 	fmt.Println("Server Start at:")
 	fmt.Println("http://localhost" + port)
