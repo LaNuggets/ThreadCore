@@ -50,7 +50,7 @@ func GetCommunityByName(communityName string) Community {
 }
 
 func GetCommunitiesByNMembers() []Community {
-	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, COUNT(*), community.user_id FROM user_community JOIN community ON community.id = user_community.community_id GROUP BY user_community.community_id ORDER BY COUNT(*) DESC")
+	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, COUNT(user_community.community_id), community.user_id FROM community JOIN user_community ON user_community.community_id = community.id GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -60,10 +60,8 @@ func GetCommunitiesByNMembers() []Community {
 
 	for rows.Next() {
 		community := Community{}
-		var count int
 		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
 		CheckErr(err)
-		community.Following = count
 		communityList = append(communityList, community)
 	}
 
@@ -115,6 +113,26 @@ func AddUserCommunity(userId int, communityId int) {
 	query2, _ := DB.Prepare("UPDATE community SET following=following + 1 WHERE id = ?")
 	query2.Exec(communityId)
 	defer query2.Close()
+}
+
+func ExistsUserCommunity(userId int, communityId int) bool {
+	userid := strconv.Itoa(userId)
+	communityid := strconv.Itoa(communityId)
+
+	rows, _ := DB.Query("SELECT * FROM user_community WHERE user_id = '" + userid + "' AND community_id = '" + communityid + "'")
+	defer rows.Close()
+
+	type UserCommunity struct {
+		UserId      int
+		CommunityId int
+	}
+	user_communty := UserCommunity{}
+
+	for rows.Next() {
+		rows.Scan(&user_communty.UserId, &user_communty.CommunityId)
+	}
+
+	return user_communty != UserCommunity{}
 }
 
 func GetUsersByCommunity(communityId int) []User {

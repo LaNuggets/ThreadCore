@@ -46,20 +46,26 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	if profileOption == "link" {
 		profilePath = r.FormValue("profileLink")
 	} else {
-		profile, handler1, err := r.FormFile("profile")
+		profile, handler, err := r.FormFile("profile")
 
 		if err == http.ErrMissingFile {
 			fmt.Println("no file uploaded")
-			profilePath = "/profileTemplate"
+			profilePath = "/static/images/profileTemplate.png"
 		} else {
-			extension := strings.LastIndex(handler1.Filename, ".") //obtain the extension after the dot
+			extension := strings.LastIndex(handler.Filename, ".") //obtain the extension after the dot
 			if extension == -1 {
 				fmt.Println("The file has no extension")
 				return //if no extension is present print failure
 			}
-			ext1 := handler1.Filename[extension:] //obtain the extension in ext variable
-			profilePath = "/static/images/communities/profile/" + name + ext1
-			GetFileFromForm(profile, handler1, err, profilePath)
+			ext := handler.Filename[extension:] //obtain the extension in ext variable
+			e := strings.ToLower(ext)
+			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
+				profilePath = "/static/images/communities/profile/" + name + ext
+				GetFileFromForm(profile, handler, err, profilePath)
+			} else {
+				fmt.Println("The file is  not in an image format")
+				return //if not an image format
+			}
 		}
 	}
 
@@ -70,20 +76,26 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	if bannerOption == "link" {
 		bannerPath = r.FormValue("bannerLink")
 	} else {
-		banner, handler2, err := r.FormFile("banner")
+		banner, handler, err := r.FormFile("banner")
 
 		if err == http.ErrMissingFile {
 			fmt.Println("no file uploaded")
-			bannerPath = "/bannerTemplate.png"
+			bannerPath = "/static/images/bannerTemplate.png"
 		} else {
-			extension := strings.LastIndex(handler2.Filename, ".") //obtain the extension after the dot
+			extension := strings.LastIndex(handler.Filename, ".") //obtain the extension after the dot
 			if extension == -1 {
 				fmt.Println("The file has no extension")
 				return //if no extension is present print failure
 			}
-			ext2 := handler2.Filename[extension:] //obtain the extension in ext variable
-			bannerPath = "/static/images/communities/banner/" + name + ext2
-			GetFileFromForm(banner, handler2, err, bannerPath)
+			ext := handler.Filename[extension:] //obtain the extension in ext variable
+			e := strings.ToLower(ext)
+			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
+				bannerPath = "/static/images/communities/banner/" + name + ext
+				GetFileFromForm(banner, handler, err, bannerPath)
+			} else {
+				fmt.Println("The file is  not in an image format")
+				return //if not an image format
+			}
 		}
 	}
 
@@ -127,27 +139,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nameOption := r.FormValue("nameOption")
-
-	newName := ""
-	if nameOption == "change" {
-		newName = r.FormValue("newName")
-		checkCommunity := database.GetCommunityByName(newName)
-		if (checkCommunity != database.Community{}) {
-			fmt.Println("Community already exists") // TO-DO : Send error message for invalid name
-			http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
-			return
-		}
-	} else {
-		newName = community.Name
-	}
-
-	checkCommunity := database.GetCommunityByName(newName)
-	if (checkCommunity != database.Community{}) {
-		fmt.Println("Community already exists") // TO-DO : Send error message for invalid name
-		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
-		return
-	}
+	newName := r.FormValue("newName")
 
 	r.ParseMultipartForm(10 << 20)
 
@@ -156,26 +148,32 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
-		profilePath = "/profileTemplate.png"
+		profilePath = "/static/images/profileTemplate.png.png"
 	} else if profileOption == "keep" {
 		profilePath = community.Profile
 	} else if profileOption == "link" {
 		profilePath = r.FormValue("profileLink")
 	} else {
-		profile, handler1, err := r.FormFile("profile")
+		profile, handler, err := r.FormFile("profile")
 
 		if err == http.ErrMissingFile {
 			fmt.Println("no file uploaded")
-			profilePath = "/profileTemplate.png"
+			profilePath = "/static/images/profileTemplate.png"
 		} else {
-			extension := strings.LastIndex(handler1.Filename, ".") //obtain the extension after the dot
+			extension := strings.LastIndex(handler.Filename, ".") //obtain the extension after the dot
 			if extension == -1 {
 				fmt.Println("The file has no extension")
 				return //if no extension is present print failure
 			}
-			ext1 := handler1.Filename[extension:] //obtain the extension in ext variable
-			profilePath = "/static/images/communities/profile/" + strconv.Itoa(community.Id) + ext1
-			GetFileFromForm(profile, handler1, err, profilePath)
+			ext := handler.Filename[extension:] //obtain the extension in ext variable
+			e := strings.ToLower(ext)
+			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
+				profilePath = "/static/images/communities/profile/" + strconv.Itoa(community.Id) + ext
+				GetFileFromForm(profile, handler, err, profilePath)
+			} else {
+				fmt.Println("The file is  not in an image format")
+				return //if not an image format
+			}
 		}
 	}
 
@@ -184,26 +182,32 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 
 	bannerOption := r.FormValue("bannerOption")
 	if bannerOption == "remove" {
-		bannerPath = "/bannerTemplate.png"
+		bannerPath = "/static/images/bannerTemplate.png"
 	} else if bannerOption == "keep" {
 		bannerPath = community.Banner
 	} else if bannerOption == "link" {
 		bannerPath = r.FormValue("bannerLink")
 	} else {
-		banner, handler2, err := r.FormFile("banner")
+		banner, handler, err := r.FormFile("banner")
 
 		if err == http.ErrMissingFile {
 			fmt.Println("no file uploaded")
-			bannerPath = "/bannerTemplate.png"
+			bannerPath = "/static/images/bannerTemplate.png"
 		} else {
-			extension := strings.LastIndex(handler2.Filename, ".") //obtain the extension after the dot
+			extension := strings.LastIndex(handler.Filename, ".") //obtain the extension after the dot
 			if extension == -1 {
 				fmt.Println("The file has no extension")
 				return //if no extension is present print failure
 			}
-			ext2 := handler2.Filename[extension:] //obtain the extension in ext variable
-			bannerPath = "/static/images/communities/banner/" + strconv.Itoa(community.Id) + ext2
-			GetFileFromForm(banner, handler2, err, bannerPath)
+			ext := handler.Filename[extension:] //obtain the extension in ext variable
+			e := strings.ToLower(ext)
+			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
+				bannerPath = "/static/images/communities/banner/" + strconv.Itoa(community.Id) + ext
+				GetFileFromForm(banner, handler, err, bannerPath)
+			} else {
+				fmt.Println("The file is  not in an image format")
+				return //if not an image format
+			}
 		}
 	}
 
@@ -258,4 +262,76 @@ func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
 
 	//Send confirmation message
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func FollowCommunity(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	communityId := r.FormValue("communityId")
+	communityid, _ := strconv.Atoi(communityId)
+	community := database.GetCommunityById(communityid)
+	if (community == database.Community{}) {
+		fmt.Println("community does not exist") // TO-DO : send error community not found
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+
+	// Check if user connected and allowed to modify
+	userUuid := CookieGetter("Uuid", r)
+	if userUuid == "" {
+		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+	user := database.GetUserByUuid(userUuid)
+	if (user == database.User{}) {
+		fmt.Println("user not found") // TO-DO : Send error message for user not found
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+
+	if database.ExistsUserCommunity(user.Id, communityid) {
+		fmt.Println("user already following this community")
+	} else {
+		database.AddUserCommunity(user.Id, communityid)
+	}
+}
+
+func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	communityId := r.FormValue("communityId")
+	communityid, _ := strconv.Atoi(communityId)
+	community := database.GetCommunityById(communityid)
+	if (community == database.Community{}) {
+		fmt.Println("community does not exist") // TO-DO : send error community not found
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+
+	// Check if user connected and allowed to modify
+	userUuid := CookieGetter("Uuid", r)
+	if userUuid == "" {
+		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+	user := database.GetUserByUuid(userUuid)
+	if (user == database.User{}) {
+		fmt.Println("user not found") // TO-DO : Send error message for user not found
+		http.Redirect(w, r, "/community/"+community.Name, http.StatusSeeOther)
+		return
+	}
+
+	if database.ExistsUserCommunity(user.Id, communityid) {
+		database.DeleteUserCommunity(user.Id, communityid)
+	} else {
+		fmt.Println("user already not following this community")
+	}
 }

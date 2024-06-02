@@ -107,6 +107,36 @@ func GetLikeById(id int) Like {
 	return like
 }
 
+func GetLikeByUserComment(user_id int, comment_id int) Like {
+	userId := strconv.Itoa(user_id)
+	commentId := strconv.Itoa(comment_id)
+	rows, _ := DB.Query("SELECT * FROM comment WHERE user_id = '" + userId + "' AND comment_id = '" + commentId + "'")
+	defer rows.Close()
+
+	like := Like{}
+
+	for rows.Next() {
+		rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+	}
+
+	return like
+}
+
+func GetLikeByUserPost(user_id int, post_id int) Like {
+	userId := strconv.Itoa(user_id)
+	postId := strconv.Itoa(post_id)
+	rows, _ := DB.Query("SELECT * FROM comment WHERE user_id = '" + userId + "' AND post_id = '" + postId + "'")
+	defer rows.Close()
+
+	like := Like{}
+
+	for rows.Next() {
+		rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+	}
+
+	return like
+}
+
 func UpdateLike(like Like) {
 	query, err := DB.Prepare("UPDATE like set rating = ?, comment_id = ?, post_id = ?, user_id = ? where id = ?")
 	CheckErr(err)

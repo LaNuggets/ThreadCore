@@ -34,15 +34,11 @@ func main() {
 	database.AddPost(p1)
 	database.AddPost(p2)
 
-	fmt.Println(database.GetUserById(3))
-	fmt.Println(database.User{})
-	fmt.Println(database.GetUserById(3) == database.User{})
-
 	database.AddUserCommunity(1, 2)
-	database.AddUserCommunity(2, 2)
+	database.AddUserCommunity(1, 3)
 	database.AddUserCommunity(2, 3)
 
-	//fmt.Println(database.GetCommunitiesByNMembers()) // Still not working
+	fmt.Println(database.GetCommunitiesByNMembers()) // Still not working
 	fmt.Println("done")
 
 }

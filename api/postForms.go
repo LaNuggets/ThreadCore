@@ -30,7 +30,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postId := r.FormValue("postId")
+	postId := r.FormValue("postId") // TODO : REMOVE THIS LINE AND IMPLEMENT UUID
 	title := r.FormValue("title")
 	content := r.FormValue("content")
 	id := r.FormValue("communityId")
@@ -38,27 +38,33 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseMultipartForm(10 << 20)
 
-	// Get profile file or link from user
+	// Get image or video file or link from user
 	mediaPath := ""
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "link" {
 		mediaPath = r.FormValue("profileLink")
 	} else {
-		profile, handler1, err := r.FormFile("profile")
+		profile, handler, err := r.FormFile("profile")
 
 		if err == http.ErrMissingFile {
 			fmt.Println("no file uploaded")
-			mediaPath = "/mediaTemplate"
+			mediaPath = "/static/images/mediaTemplate.png"
 		} else {
-			extension := strings.LastIndex(handler1.Filename, ".") //obtain the extension after the dot
+			extension := strings.LastIndex(handler.Filename, ".") //obtain the extension after the dot
 			if extension == -1 {
 				fmt.Println("The file has no extension")
 				return //if no extension is present print failure
 			}
-			ext1 := handler1.Filename[extension:] //obtain the extension in ext variable
-			mediaPath = "/static/images/posts/" + postId + ext1
-			GetFileFromForm(profile, handler1, err, mediaPath)
+			ext := handler.Filename[extension:] //obtain the extension in ext variable
+			e := strings.ToLower(ext)
+			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" || e == ".mp4" || e == ".webm" || e == ".ogg" {
+				mediaPath = "/static/images/posts/" + postId + ext
+				GetFileFromForm(profile, handler, err, mediaPath)
+			} else {
+				fmt.Println("The file is  not in an image or video format")
+				return //if not an image or video format
+			}
 		}
 	}
 
@@ -88,104 +94,65 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	userUuid := CookieGetter("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/post/"+strconv.Itoa(post.Id), http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 		return
 	} else if post.User_id != user.Id {
 		fmt.Println("user not author of post") // TO-DO : Send error message for user not allowed action
-		http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 		return
 	}
 
-	nameOption := r.FormValue("nameOption")
-
-	newName := ""
-	if nameOption == "change" {
-		newName = r.FormValue("newName")
-		checkPost := database.GetPostByName(newName)
-		if (checkPost != database.Post{}) {
-			fmt.Println("Post already exists") // TO-DO : Send error message for invalid name
-			http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
-			return
-		}
-	} else {
-		newName = post.Name
-	}
-
-	checkPost := database.GetPostByName(newName)
-	if (checkPost != database.Post{}) {
-		fmt.Println("Post already exists") // TO-DO : Send error message for invalid name
-		http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
-		return
-	}
+	title := r.FormValue("title")
+	content := r.FormValue("content")
+	communityid := r.FormValue("communityId")
+	communityId, _ := strconv.Atoi(communityid)
 
 	r.ParseMultipartForm(10 << 20)
 
-	// Get profile file or link from user
+	// Get image or video file or link from user
 	mediaPath := ""
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
-		mediaPath = "/profileTemplate.png"
+		mediaPath = "/static/images/mediaTemplate.png"
 	} else if profileOption == "keep" {
-		mediaPath = post.Profile
+		mediaPath = post.Media
 	} else if profileOption == "link" {
 		mediaPath = r.FormValue("profileLink")
 	} else {
-		profile, handler1, err := r.FormFile("profile")
+		profile, handler, err := r.FormFile("profile")
 
 		if err == http.ErrMissingFile {
 			fmt.Println("no file uploaded")
-			mediaPath = "/profileTemplate.png"
+			mediaPath = "/static/images/mediaTemplate.png"
 		} else {
-			extension := strings.LastIndex(handler1.Filename, ".") //obtain the extension after the dot
+			extension := strings.LastIndex(handler.Filename, ".") //obtain the extension after the dot
 			if extension == -1 {
 				fmt.Println("The file has no extension")
 				return //if no extension is present print failure
 			}
-			ext1 := handler1.Filename[extension:] //obtain the extension in ext variable
-			mediaPath = "/static/images/posts/" + strconv.Itoa(post.Id) + ext1
-			GetFileFromForm(profile, handler1, err, mediaPath)
-		}
-	}
-
-	// Get profile file or link from user
-	bannerPath := ""
-
-	bannerOption := r.FormValue("bannerOption")
-	if bannerOption == "remove" {
-		bannerPath = "/bannerTemplate.png"
-	} else if bannerOption == "keep" {
-		bannerPath = post.Banner
-	} else if bannerOption == "link" {
-		bannerPath = r.FormValue("bannerLink")
-	} else {
-		banner, handler2, err := r.FormFile("banner")
-
-		if err == http.ErrMissingFile {
-			fmt.Println("no file uploaded")
-			bannerPath = "/bannerTemplate.png"
-		} else {
-			extension := strings.LastIndex(handler2.Filename, ".") //obtain the extension after the dot
-			if extension == -1 {
-				fmt.Println("The file has no extension")
-				return //if no extension is present print failure
+			ext := handler.Filename[extension:] //obtain the extension in ext variable
+			e := strings.ToLower(ext)
+			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" || e == ".mp4" || e == ".webm" || e == ".ogg" {
+				mediaPath = "/static/images/posts/" + postId + ext
+				GetFileFromForm(profile, handler, err, mediaPath)
+			} else {
+				fmt.Println("The file is  not in an image or video format")
+				return //if not an image or video format
 			}
-			ext2 := handler2.Filename[extension:] //obtain the extension in ext variable
-			bannerPath = "/static/images/communities/banner/" + strconv.Itoa(post.Id) + ext2
-			GetFileFromForm(banner, handler2, err, bannerPath)
 		}
 	}
 
-	post = database.Post{Id: post.Id, Profile: mediaPath, Banner: bannerPath, Name: newName, Following: 0, User_id: user.Id}
+	post = database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: post.Created}
 	database.UpdatePostInfo(post)
 
-	http.Redirect(w, r, "/post/"+newName, http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 }
 
 // DELETE Post
@@ -195,11 +162,12 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := r.FormValue("PostId")
+	postId := r.FormValue("PostId")
+	id, _ := strconv.Atoi(postId)
 	post := database.GetPostById(id)
 	if (post == database.Post{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
-		http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
+		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
@@ -207,24 +175,24 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	userUuid := CookieGetter("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 		return
 	} else if post.User_id != user.Id {
 		fmt.Println("user not author of post") // TO-DO : Send error message for user not allowed action
-		http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 		return
 	}
 
 	confirm := r.FormValue("confirm")
 	if confirm != "true" {
 		fmt.Println("user did not confirm deletion") // TO-DO : Send error message need to confirm before submiting
-		http.Redirect(w, r, "/post/"+post.Name, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 		return
 	} else {
 		database.DeletePost(post.Id)

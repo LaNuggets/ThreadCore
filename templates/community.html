@@ -22,13 +22,7 @@
   <form enctype="multipart/form-data" method="post" action="/updateCommunity">
       
       <p>new name</p>
-      <input type="text" placeholder="community name" name="newName">
-
-      <p>change or keep?</p>
-      <input type="radio" name="nameOption" value="change">
-      <label>change</label>
-      <input type="radio" name="nameOption" value="keep">
-      <label>keep</label>
+      <input type="text" placeholder="community name" name="newName" value="{{.Community.Name}}">
       
       <!-- profile -->
       <p>profile picture</p>
@@ -60,14 +54,14 @@
       <input type="radio" name="bannerOption" value="remove">
       <label>remove</label>
 
-      <input type="text" name="communityId" value="{{.Community.Id}}">
+      <input type="text" name="communityId" value="{{.Community.Id}}" hidden>
       <input type="submit" value="upload" >
   </form>
 
   <!-- DELETE COMMUNITY -->
   <h1>DELETE COMMUNITY</h1>
   <form method="post" action="/deleteCommunity">
-    <input type="text" name="communityId" value="{{.Community.Id}}">
+    <input type="text" name="communityId" value="{{.Community.Id}}" hidden>
     <input type="checkbox" name="confirm" value="true">
     <label> Confirm Deletion </label><br>
     <input type="submit" value="DELETE {{.Community.Name}}" >
