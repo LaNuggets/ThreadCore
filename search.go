@@ -26,7 +26,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	time := r.URL.Query().Get("time")
 
 	searchedPost := database.GetPostsBySearchString(search)
-	
+
 	var commentFromSearchedPost []database.Comment
 	for i := 0; i < len(searchedPost); i++ {
 		commentFromSearchedPost = database.GetCommentsByPost(searchedPost[i].Id)

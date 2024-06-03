@@ -17,28 +17,83 @@ type Comment struct {
 	Created    time.Time
 }
 
+type CommentInfo struct {
+	Id         int
+	User_id    int
+	Username   string
+	Post_id    int
+	Comment_id int
+	Content    string
+	Created    time.Time
+}
+
+type TempCommentInfo struct {
+	Id         int
+	User_id    int
+	Username   string
+	Post_id    *int
+	Comment_id *int
+	Content    string
+	Created    time.Time
+}
+
 func AddComment(comment Comment) {
 	query, _ := DB.Prepare("INSERT INTO comment (user_id, post_id, comment_id, content, created) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?, ?)")
 	query.Exec(comment.User_id, comment.Post_id, comment.Comment_id, comment.Content, comment.Created)
 	defer query.Close()
 }
 
-func GetCommentsByPost(postId int) []Comment {
+// func GetCommentsBySearchString(searchString string) []CommentInfo {
+// 	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE comment.content LIKE '%" + searchString + "%'")
+// 	defer rows.Close()
+
+// 	err = rows.Err()
+// 	CheckErr(err)
+
+// 	commentList := make([]CommentInfo, 0)
+
+// 	for rows.Next() {
+// 		tempCommentInfo := TempCommentInfo{}
+// 		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+// 		CheckErr(err)
+// 		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
+// 		if tempCommentInfo.Comment_id != nil {
+// 			commentInfo.Comment_id = *tempCommentInfo.Comment_id
+// 		}
+// 		if tempCommentInfo.Post_id != nil {
+// 			commentInfo.Post_id = *tempCommentInfo.Post_id
+// 		}
+// 		commentList = append(commentList, commentInfo)
+// 	}
+
+// 	err = rows.Err()
+// 	CheckErr(err)
+
+// 	return commentList
+// }
+
+func GetCommentsByPost(postId int) []CommentInfo {
 	id := strconv.Itoa(postId)
-	rows, err := DB.Query("SELECT * FROM comment WHERE post_id='" + id + "'")
+	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id FROM comment WHERE post_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err)
 
-	commentList := make([]Comment, 0)
+	commentList := make([]CommentInfo, 0)
 
 	for rows.Next() {
-		comment := Comment{}
-		err = rows.Scan(&comment.Id, &comment.User_id, &comment.Post_id, &comment.Comment_id, &comment.Content, &comment.Created)
+		tempCommentInfo := TempCommentInfo{}
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 		CheckErr(err)
-
-		commentList = append(commentList, comment)
+		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
+		if tempCommentInfo.Comment_id != nil {
+			commentInfo.Comment_id = *tempCommentInfo.Comment_id
+		}
+		if tempCommentInfo.Post_id != nil {
+			commentInfo.Post_id = *tempCommentInfo.Post_id
+		}
+		commentList = append(commentList, commentInfo)
 	}
 
 	err = rows.Err()
@@ -47,22 +102,28 @@ func GetCommentsByPost(postId int) []Comment {
 	return commentList
 }
 
-func GetCommentsByUser(userId int) []Comment {
+func GetCommentsByUser(userId int) []CommentInfo {
 	id := strconv.Itoa(userId)
-	rows, err := DB.Query("SELECT * FROM comment WHERE user_id='" + id + "'")
+	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id FROM comment WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err)
 
-	commentList := make([]Comment, 0)
+	commentList := make([]CommentInfo, 0)
 
 	for rows.Next() {
-		comment := Comment{}
-		err = rows.Scan(&comment.Id, &comment.User_id, &comment.Post_id, &comment.Comment_id, &comment.Content, &comment.Created)
+		tempCommentInfo := TempCommentInfo{}
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 		CheckErr(err)
-
-		commentList = append(commentList, comment)
+		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
+		if tempCommentInfo.Comment_id != nil {
+			commentInfo.Comment_id = *tempCommentInfo.Comment_id
+		}
+		if tempCommentInfo.Post_id != nil {
+			commentInfo.Post_id = *tempCommentInfo.Post_id
+		}
+		commentList = append(commentList, commentInfo)
 	}
 
 	err = rows.Err()
@@ -71,22 +132,28 @@ func GetCommentsByUser(userId int) []Comment {
 	return commentList
 }
 
-func GetCommentsByComment(commentId int) []Comment {
+func GetCommentsByComment(commentId int) []CommentInfo {
 	id := strconv.Itoa(commentId)
-	rows, err := DB.Query("SELECT * FROM comment WHERE comment_id='" + id + "'")
+	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id FROM comment WHERE comment_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err)
 
-	commentList := make([]Comment, 0)
+	commentList := make([]CommentInfo, 0)
 
 	for rows.Next() {
-		comment := Comment{}
-		err = rows.Scan(&comment.Id, &comment.User_id, &comment.Post_id, &comment.Comment_id, &comment.Content, &comment.Created)
+		tempCommentInfo := TempCommentInfo{}
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 		CheckErr(err)
-
-		commentList = append(commentList, comment)
+		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
+		if tempCommentInfo.Comment_id != nil {
+			commentInfo.Comment_id = *tempCommentInfo.Comment_id
+		}
+		if tempCommentInfo.Post_id != nil {
+			commentInfo.Post_id = *tempCommentInfo.Post_id
+		}
+		commentList = append(commentList, commentInfo)
 	}
 
 	err = rows.Err()
@@ -95,18 +162,26 @@ func GetCommentsByComment(commentId int) []Comment {
 	return commentList
 }
 
-func GetCommentById(id int) Comment {
+func GetCommentById(id int) CommentInfo {
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT * FROM comment WHERE id = '" + id2 + "'")
+	rows, _ := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id FROM comment WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
-	comment := Comment{}
+	tempCommentInfo := TempCommentInfo{}
 
 	for rows.Next() {
-		rows.Scan(&comment.Id, &comment.User_id, &comment.Post_id, &comment.Comment_id, &comment.Content, &comment.Created)
+		rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 	}
 
-	return comment
+	commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
+	if tempCommentInfo.Comment_id != nil {
+		commentInfo.Comment_id = *tempCommentInfo.Comment_id
+	}
+	if tempCommentInfo.Post_id != nil {
+		commentInfo.Post_id = *tempCommentInfo.Post_id
+	}
+
+	return commentInfo
 }
 
 func UpdateCommentInfo(comment Comment) {

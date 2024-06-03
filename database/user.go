@@ -39,6 +39,22 @@ func GetUserByEmail(email string) User {
 	return user
 }
 
+func GetUserByUsername(username string) User {
+	rows, err := DB.Query("SELECT * FROM user WHERE username='" + username + "'")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	user := User{}
+
+	for rows.Next() {
+		rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
+	}
+
+	return user
+}
+
 func GetUserById(id int) User {
 	id2 := strconv.Itoa(id)
 	rows, _ := DB.Query("SELECT * FROM user WHERE id = '" + id2 + "'")

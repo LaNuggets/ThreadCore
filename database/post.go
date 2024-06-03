@@ -18,15 +18,27 @@ type Post struct {
 	Created      time.Time
 }
 
-type PostDisplay struct {
+type PostInfo struct {
 	Id           int
 	Title        string
 	Content      string
 	Media        string
 	User_id      int
-	Community_id int
-	Created      time.Time
 	Username     string
+	Community_id int
+	CommuntyName string
+	Created      time.Time
+}
+
+type TempPostInfo struct {
+	Id           int
+	Title        string
+	Content      string
+	Media        string
+	User_id      int
+	Username     string
+	Community_id *int
+	Created      time.Time
 }
 
 func AddPost(post Post) {
@@ -35,21 +47,25 @@ func AddPost(post Post) {
 	defer query.Close()
 }
 
-func GetPostsBySearchString(searchString string) []PostDisplay {
-	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, post.community_id, post.created, user.username FROM post INNER JOIN user ON user.id = post.user_id WHERE title LIKE '%" + searchString + "%' OR content LIKE '%" + searchString + "%'")
+func GetPostsBySearchString(searchString string) []PostInfo {
+	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE post.title LIKE '%" + searchString + "%' OR post.content LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err)
 
-	postList := make([]PostDisplay, 0)
+	postList := make([]PostInfo, 0)
 
 	for rows.Next() {
-		postDisplay := PostDisplay{}
-		err = rows.Scan(&postDisplay.Id, &postDisplay.Title, &postDisplay.Content, &postDisplay.Media, &postDisplay.User_id, &postDisplay.Community_id, &postDisplay.Created, &postDisplay.Username)
+		temppostInfo := TempPostInfo{}
+		err = rows.Scan(&temppostInfo.Id, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Community_id, &temppostInfo.Created)
 		CheckErr(err)
-
-		postList = append(postList, postDisplay)
+		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommuntyName: "", Created: temppostInfo.Created}
+		if temppostInfo.Community_id != nil {
+			postInfo.Community_id = *temppostInfo.Community_id
+			postInfo.CommuntyName = GetCommunityById(*temppostInfo.Community_id).Name
+		}
+		postList = append(postList, postInfo)
 	}
 
 	err = rows.Err()
@@ -58,22 +74,26 @@ func GetPostsBySearchString(searchString string) []PostDisplay {
 	return postList
 }
 
-func GetPostsByUser(userId int) []Post {
+func GetPostsByUser(userId int) []PostInfo {
 	id := strconv.Itoa(userId)
-	rows, err := DB.Query("SELECT * FROM post WHERE user_id='" + id + "'")
+	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err)
 
-	postList := make([]Post, 0)
+	postList := make([]PostInfo, 0)
 
 	for rows.Next() {
-		post := Post{}
-		err = rows.Scan(&post.Id, &post.Title, &post.Content, &post.Media, &post.User_id, &post.Community_id, &post.Created)
+		temppostInfo := TempPostInfo{}
+		err = rows.Scan(&temppostInfo.Id, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Community_id, &temppostInfo.Created)
 		CheckErr(err)
-
-		postList = append(postList, post)
+		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommuntyName: "", Created: temppostInfo.Created}
+		if temppostInfo.Community_id != nil {
+			postInfo.Community_id = *temppostInfo.Community_id
+			postInfo.CommuntyName = GetCommunityById(*temppostInfo.Community_id).Name
+		}
+		postList = append(postList, postInfo)
 	}
 
 	err = rows.Err()
@@ -82,22 +102,26 @@ func GetPostsByUser(userId int) []Post {
 	return postList
 }
 
-func GetPostsByCommunity(communityId int) []PostDisplay {
+func GetPostsByCommunity(communityId int) []PostInfo {
 	id := strconv.Itoa(communityId)
-	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, post.community_id, post.created, user.username FROM post INNER JOIN user ON user.id = post.user_id WHERE community_id='" + id + "'")
+	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE community_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err)
 
-	postList := make([]PostDisplay, 0)
+	postList := make([]PostInfo, 0)
 
 	for rows.Next() {
-		postDisplay := PostDisplay{}
-		err = rows.Scan(&postDisplay.Id, &postDisplay.Title, &postDisplay.Content, &postDisplay.Media, &postDisplay.User_id, &postDisplay.Community_id, &postDisplay.Created, &postDisplay.Username)
+		temppostInfo := TempPostInfo{}
+		err = rows.Scan(&temppostInfo.Id, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Community_id, &temppostInfo.Created)
 		CheckErr(err)
-
-		postList = append(postList, postDisplay)
+		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommuntyName: "", Created: temppostInfo.Created}
+		if temppostInfo.Community_id != nil {
+			postInfo.Community_id = *temppostInfo.Community_id
+			postInfo.CommuntyName = GetCommunityById(*temppostInfo.Community_id).Name
+		}
+		postList = append(postList, postInfo)
 	}
 
 	err = rows.Err()
@@ -106,18 +130,25 @@ func GetPostsByCommunity(communityId int) []PostDisplay {
 	return postList
 }
 
-func GetPostById(id int) Post {
+func GetPostById(id int) PostInfo {
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT * FROM post WHERE id = '" + id2 + "'")
+	rows, _ := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
-	post := Post{}
+	temppostInfo := TempPostInfo{}
 
 	for rows.Next() {
-		rows.Scan(&post.Id, &post.Title, &post.Content, &post.Media, &post.User_id, &post.Community_id, &post.Created)
+		rows.Scan(&temppostInfo.Id, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Community_id, &temppostInfo.Created)
+
 	}
 
-	return post
+	postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommuntyName: "", Created: temppostInfo.Created}
+	if temppostInfo.Community_id != nil {
+		postInfo.Community_id = *temppostInfo.Community_id
+		postInfo.CommuntyName = GetCommunityById(*temppostInfo.Community_id).Name
+	}
+
+	return postInfo
 }
 
 func UpdatePostInfo(post Post) {

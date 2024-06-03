@@ -29,7 +29,6 @@ if (searchString != null) {
     document.getElementById("search").value = searchString
 }
 
-
 let search = document.getElementById("search");
 
 search.addEventListener("keypress", function(event) {

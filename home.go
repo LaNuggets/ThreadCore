@@ -24,7 +24,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookieValue := api.CookieGetter("Username", r)
+	cookieValue := api.GetCookie("Username", r)
 	data := struct {
 		CookieValue string
 	}{

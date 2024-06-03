@@ -16,7 +16,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
@@ -51,14 +51,14 @@ func UpdateComment(w http.ResponseWriter, r *http.Request) {
 	commentId := r.FormValue("commentId")
 	commentid, _ := strconv.Atoi(commentId)
 	comment := database.GetCommentById(commentid)
-	if (comment == database.Comment{}) {
+	if (comment == database.CommentInfo{}) {
 		fmt.Println("comment does not exist") // TO-DO : send error comment not found
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/comment/"+commentId, http.StatusSeeOther)
@@ -79,8 +79,8 @@ func UpdateComment(w http.ResponseWriter, r *http.Request) {
 	postId, _ := strconv.Atoi(postid)
 	content := r.FormValue("content")
 
-	comment = database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentid, Content: content, Created: time.Now()}
-	database.AddComment(comment)
+	commentUpdate := database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentid, Content: content, Created: time.Now()}
+	database.AddComment(commentUpdate)
 
 	http.Redirect(w, r, "/comment/"+commentId, http.StatusSeeOther)
 }
@@ -95,14 +95,14 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	commentId := r.FormValue("commentId")
 	commentid, _ := strconv.Atoi(commentId)
 	comment := database.GetCommentById(commentid)
-	if (comment == database.Comment{}) {
+	if (comment == database.CommentInfo{}) {
 		fmt.Println("comment does not exist") // TO-DO : send error comment not found
 		http.Redirect(w, r, "/comment/"+commentId, http.StatusSeeOther)
 		return
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/comment/"+commentId, http.StatusSeeOther)

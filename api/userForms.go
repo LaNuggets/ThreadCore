@@ -4,9 +4,103 @@ import (
 	"ThreadCore/database"
 	"fmt"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 )
+
+// SIGNUP
+func Signup(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	// check valid username and email
+	username := r.FormValue("username")
+	checkUsername := database.GetUserByUsername(username)
+	if (checkUsername != database.User{}) {
+		fmt.Println("username taken") // TO-DO : send error user not found
+		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		return
+	}
+	email := r.FormValue("email")
+	checkEmail := database.GetUserByEmail(email)
+	if (checkEmail != database.User{}) {
+		fmt.Println("email taken") // TO-DO : send error user not found
+		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		return
+	}
+	password := r.FormValue("password")
+	passwordConfirm := r.FormValue("passwordConfirm")
+	if passwordConfirm != password {
+		fmt.Println("password and passwordConfirm dont match") // TO-DO : Send error message for confirm password
+		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		return
+	} else if password == "" {
+		fmt.Println("password is null") // TO-DO : Send error message for input password
+		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		return
+	}
+	password = HashPassword(password)
+	uuid := GetNewUuid()
+
+	user := database.User{Id: 0, Uuid: uuid, Profile: "/static/images/profileTemplate.png", Banner: "/static/images/bannerTemplate.png", Email: email, Username: username, Password: password}
+	database.AddUser(user)
+
+	SetCookie("uuid", user.Uuid, w)
+	SetCookie("username", user.Username, w)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// LOGIN
+func Login(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	username := r.FormValue("username")
+	user := database.GetUserByUsername(username)
+	if (user == database.User{}) {
+		fmt.Println("username not found") // TO-DO : send error user not found
+		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		return
+	}
+	email := r.FormValue("email")
+	user2 := database.GetUserByEmail(email)
+	if (user2 == database.User{}) {
+		fmt.Println("email not found") // TO-DO : send error user not found
+		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		return
+	}
+	if reflect.DeepEqual(user, user2) {
+		fmt.Println("user not found check username or email") // TO-DO : send error user not found
+		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		return
+	}
+	if !CheckPasswordHash(user.Password, user.Password) {
+		fmt.Println("Wrong password") // TO-DO : Send error message for wrong password
+		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		return
+	}
+
+	SetCookie("uuid", user.Uuid, w)
+	SetCookie("username", user.Username, w)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// DISCONNECT
+func Disconnect(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	DeleteCookie("uuid", w)
+	DeleteCookie("username", w)
+	http.Redirect(w, r, "/connection", http.StatusSeeOther)
+}
 
 // UPDATE EXISTING user
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +118,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/user/"+userToUpdate.Username, http.StatusSeeOther)
@@ -41,8 +135,21 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// check valid username and email
 	username := r.FormValue("username")
+	checkUsername := database.GetUserByUsername(username)
+	if (checkUsername != database.User{}) {
+		fmt.Println("username taken") // TO-DO : send error user not found
+		http.Redirect(w, r, "/user/"+userToUpdate.Username, http.StatusSeeOther)
+		return
+	}
 	email := r.FormValue("email")
+	checkEmail := database.GetUserByEmail(email)
+	if (checkEmail != database.User{}) {
+		fmt.Println("email taken") // TO-DO : send error user not found
+		http.Redirect(w, r, "/user/"+userToUpdate.Username, http.StatusSeeOther)
+		return
+	}
 
 	password := ""
 	passwordOption := r.FormValue("passwordOption")
@@ -162,7 +269,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/user/"+userToDelete.Username, http.StatusSeeOther)
@@ -207,7 +314,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/user/"+userToFollow.Username, http.StatusSeeOther)
@@ -242,7 +349,7 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/user/"+userToFollow.Username, http.StatusSeeOther)
