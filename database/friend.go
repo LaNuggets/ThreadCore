@@ -14,6 +14,26 @@ func AddFriend(userId int, friendId int) {
 	defer query.Close()
 }
 
+func ExistsFriend(userId int, friendId int) bool {
+	userid := strconv.Itoa(userId)
+	friendid := strconv.Itoa(friendId)
+
+	rows, _ := DB.Query("SELECT * FROM friend WHERE user_id = '" + userid + "' AND friend_id = '" + friendid + "'")
+	defer rows.Close()
+
+	type Friend struct {
+		UserId   int
+		FriendId int
+	}
+	friend := Friend{}
+
+	for rows.Next() {
+		rows.Scan(&friend.UserId, &friend.FriendId)
+	}
+
+	return friend != Friend{}
+}
+
 func GetFriendsByUser(userId string) []User {
 	rows, err := DB.Query("SELECT * FROM user INNER JOIN friend ON user.id = friend.user_id WHERE friend.friend_id='" + userId + "'")
 	defer rows.Close()

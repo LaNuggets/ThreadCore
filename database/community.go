@@ -32,8 +32,9 @@ func AddCommunity(community Community) {
 	defer query.Close()
 }
 
-func GetCommunityById(id string) Community {
-	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id + "'")
+func GetCommunityById(id int) Community {
+	id2 := strconv.Itoa(id)
+	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	community := Community{}
@@ -82,7 +83,7 @@ func GetCommunityBySearchString(searchString string) []CommunityDisplay {
 }
 
 func GetCommunitiesByNMembers() []Community {
-	rows, err := DB.Query("SELECT * FROM community ORDER BY following DESC")
+	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, COUNT(user_community.community_id), community.user_id FROM community JOIN user_community ON user_community.community_id = community.id GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -94,7 +95,6 @@ func GetCommunitiesByNMembers() []Community {
 		community := Community{}
 		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
 		CheckErr(err)
-
 		communityList = append(communityList, community)
 	}
 
@@ -105,7 +105,7 @@ func GetCommunitiesByNMembers() []Community {
 }
 
 func UpdateCommunityInfo(community Community) {
-	query, err := DB.Prepare("UPDATE community set profile = ?, banner = ?, name = ?, following = ?, user_id = ?, where id = ?")
+	query, err := DB.Prepare("UPDATE community SET profile = ?, banner = ?, name = ?, following = ?, user_id = ? WHERE id = ?")
 	CheckErr(err)
 	defer query.Close()
 
@@ -140,12 +140,32 @@ func DeleteCommunity(communityId int) {
 
 func AddUserCommunity(userId int, communityId int) {
 	query, _ := DB.Prepare("INSERT INTO user_community (user_id, community_id) VALUES (?, ?)")
-	query.Exec(communityId, userId)
+	query.Exec(userId, communityId)
 	defer query.Close()
 
 	query2, _ := DB.Prepare("UPDATE community SET following=following + 1 WHERE id = ?")
 	query2.Exec(communityId)
 	defer query2.Close()
+}
+
+func ExistsUserCommunity(userId int, communityId int) bool {
+	userid := strconv.Itoa(userId)
+	communityid := strconv.Itoa(communityId)
+
+	rows, _ := DB.Query("SELECT * FROM user_community WHERE user_id = '" + userid + "' AND community_id = '" + communityid + "'")
+	defer rows.Close()
+
+	type UserCommunity struct {
+		UserId      int
+		CommunityId int
+	}
+	user_communty := UserCommunity{}
+
+	for rows.Next() {
+		rows.Scan(&user_communty.UserId, &user_communty.CommunityId)
+	}
+
+	return user_communty != UserCommunity{}
 }
 
 func GetUsersByCommunity(communityId int) []User {

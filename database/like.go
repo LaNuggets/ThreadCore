@@ -16,7 +16,7 @@ type Like struct {
 }
 
 func AddLike(like Like) {
-	query, _ := DB.Prepare("INSERT INTO like (rating, comment_id, post_id, user_id) VALUES (?, ?, ?, ?)")
+	query, _ := DB.Prepare("INSERT INTO like (rating, comment_id, post_id, user_id) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?)")
 	query.Exec(like.Rating, like.Comment_id, like.Post_id, like.User_id)
 	defer query.Close()
 }
@@ -96,6 +96,36 @@ func GetLikesByComment(commentId int) []Like {
 func GetLikeById(id int) Like {
 	id2 := strconv.Itoa(id)
 	rows, _ := DB.Query("SELECT * FROM comment WHERE id = '" + id2 + "'")
+	defer rows.Close()
+
+	like := Like{}
+
+	for rows.Next() {
+		rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+	}
+
+	return like
+}
+
+func GetLikeByUserComment(user_id int, comment_id int) Like {
+	userId := strconv.Itoa(user_id)
+	commentId := strconv.Itoa(comment_id)
+	rows, _ := DB.Query("SELECT * FROM comment WHERE user_id = '" + userId + "' AND comment_id = '" + commentId + "'")
+	defer rows.Close()
+
+	like := Like{}
+
+	for rows.Next() {
+		rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+	}
+
+	return like
+}
+
+func GetLikeByUserPost(user_id int, post_id int) Like {
+	userId := strconv.Itoa(user_id)
+	postId := strconv.Itoa(post_id)
+	rows, _ := DB.Query("SELECT * FROM comment WHERE user_id = '" + userId + "' AND post_id = '" + postId + "'")
 	defer rows.Close()
 
 	like := Like{}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ThreadCore/database"
 	"html/template"
 	"log"
 	"net/http"
@@ -26,9 +27,9 @@ func Community(w http.ResponseWriter, r *http.Request) {
 	}
 
 	communityPage := struct {
-		Name string
+		Community database.Community
 	}{
-		Name: communityName,
+		Community: database.GetCommunityByName(communityName),
 	}
 
 	err = tmpl.Execute(w, communityPage)

@@ -15,7 +15,7 @@ func main() {
 
 	// Open the database connection in the global varaible DB located in database/DBglobalVariable.go
 	var err error
-	database.DB, err = sql.Open("sqlite3", "threadcore.db")
+	database.DB, err = sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	database.CheckErr(err)
 
 	// At the end of the program close the connnection
@@ -37,15 +37,21 @@ func main() {
 
 	// Forms routes
 	http.HandleFunc("/createCommunity", api.CreateCommunity)
-	// http.HandleFunc("/updateCommunity", UpdateCommunity)
-	// http.HandleFunc("/deleteCommunity", DeleteCommunity)
-	// http.HandleFunc("/createPost", CreatePost)
-	// http.HandleFunc("/updatePost", UpdatePost)
-	// http.HandleFunc("/deletePost", DeletePost)
-	// http.HandleFunc("/createComment", CreateComment)
-	// http.HandleFunc("/updateComment", UpdateComment)
-	// http.HandleFunc("/deleteComment", DeleteComment)
-	// http.HandleFunc("/likeDislike", LikeDislike)
+	http.HandleFunc("/updateCommunity", api.UpdateCommunity)
+	http.HandleFunc("/deleteCommunity", api.DeleteCommunity)
+	http.HandleFunc("/createPost", api.CreatePost)
+	http.HandleFunc("/updatePost", api.UpdatePost)
+	http.HandleFunc("/deletePost", api.DeletePost)
+	http.HandleFunc("/createComment", api.CreateComment)
+	http.HandleFunc("/updateComment", api.UpdateComment)
+	http.HandleFunc("/deleteComment", api.DeleteComment)
+	http.HandleFunc("/likeDislike", api.LikeDislike)
+	http.HandleFunc("/updateUserInfo", api.UpdateUser)
+	http.HandleFunc("/updateUserInfo", api.DeleteUser)
+	http.HandleFunc("/followCommuity", api.FollowCommunity)
+	http.HandleFunc("/unfollowCommunity", api.UnfollowCommunity)
+	http.HandleFunc("/followUser", api.FollowUser)
+	http.HandleFunc("/unfollowUser", api.UnfollowUser)
 
 	fmt.Println("Server Start at:")
 	fmt.Println("http://localhost" + port)

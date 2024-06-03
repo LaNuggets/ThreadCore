@@ -10,14 +10,61 @@
 <body>
   <script src="/static/scripts/community.js" type="module"></script>
   <h1>COMMUNITY</h1>
-  {{if .Name}}
-  <p>{{.Name}}</p>
+  {{if .Community}}
+  <p>{{.Community.Name}}</p>
+  <img src="{{.Community.Profile}}" alt="profile">
+  <img src="{{.Community.Banner}}" alt="Banner">
+  <p>{{.Community.User_id}}</p>
   {{end}}
 
-  <form enctype="multipart/form-data" method="post" action="/createCommunity" id="myForm">
-    <input type="text" placeholder="community name" name="name">
-    <input type="file" name="myFile" >
-    <input type="submit" value="upload" >
+  <!-- UPDATE Community -->
+  <h1>CREATE COMMUNITY : {{.Community.Name}}</h1>
+  <form enctype="multipart/form-data" method="post" action="/updateCommunity">
+      
+      <p>new name</p>
+      <input type="text" placeholder="community name" name="newName" value="{{.Community.Name}}">
+      
+      <!-- profile -->
+      <p>profile picture</p>
+      <input type="text" placeholder="profile link" name="profileLink">
+      <input type="file" name="profile" accept="image/*" >
+      
+      <!-- choose between link or file -->
+      <p>link or file?</p>
+      <input type="radio" name="profileOption" value="link">
+      <label>link</label>
+      <input type="radio" name="profileOption" value="file">
+      <label>file</label>
+      <input type="radio" name="profileOption" value="keep">
+      <label>keep</label>
+      <input type="radio" name="profileOption" value="remove">
+      <label>remove</label>
+      
+      <p>banner picture</p>
+      <input type="text" placeholder="banner link" name="bannerLink">
+      <input type="file" name="banner" accept="image/*" >
+
+      <p>link or file?</p>
+      <input type="radio" name="bannerOption" value="link">
+      <label>link</label>
+      <input type="radio" name="bannerOption" value="file">
+      <label>file</label>
+      <input type="radio" name="bannerOption" value="keep">
+      <label>keep</label>
+      <input type="radio" name="bannerOption" value="remove">
+      <label>remove</label>
+
+      <input type="text" name="communityId" value="{{.Community.Id}}" hidden>
+      <input type="submit" value="upload" >
+  </form>
+
+  <!-- DELETE COMMUNITY -->
+  <h1>DELETE COMMUNITY</h1>
+  <form method="post" action="/deleteCommunity">
+    <input type="text" name="communityId" value="{{.Community.Id}}" hidden>
+    <input type="checkbox" name="confirm" value="true">
+    <label> Confirm Deletion </label><br>
+    <input type="submit" value="DELETE {{.Community.Name}}" >
   </form>
 </body>
 </html>

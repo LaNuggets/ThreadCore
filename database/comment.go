@@ -18,7 +18,7 @@ type Comment struct {
 }
 
 func AddComment(comment Comment) {
-	query, _ := DB.Prepare("INSERT INTO comment (user_id, comment_id, comment_id, content, created) VALUES (?, ?, ?, ?, ?)")
+	query, _ := DB.Prepare("INSERT INTO comment (user_id, post_id, comment_id, content, created) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?, ?)")
 	query.Exec(comment.User_id, comment.Post_id, comment.Comment_id, comment.Content, comment.Created)
 	defer query.Close()
 }
