@@ -17,7 +17,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
@@ -84,14 +84,14 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	postId := r.FormValue("postId")
 	id, _ := strconv.Atoi(postId)
 	post := database.GetPostById(id)
-	if (post == database.Post{}) {
+	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
@@ -149,8 +149,8 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	post = database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: post.Created}
-	database.UpdatePostInfo(post)
+	updatedPost := database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: post.Created}
+	database.UpdatePostInfo(updatedPost)
 
 	http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
 }
@@ -165,14 +165,14 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	postId := r.FormValue("PostId")
 	id, _ := strconv.Atoi(postId)
 	post := database.GetPostById(id)
-	if (post == database.Post{}) {
+	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := CookieGetter("Uuid", r)
+	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)

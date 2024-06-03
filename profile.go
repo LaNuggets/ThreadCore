@@ -27,7 +27,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 	}
 
-	cookieUuid := api.CookieGetter("Uuid", r)
+	cookieUuid := api.GetCookie("Uuid", r)
 
 	user := database.GetUserByUuid(cookieUuid)
 

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"ThreadCore/api"
 	"html/template"
 	"log"
 	"net/http"
@@ -29,8 +28,6 @@ func Connection(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal error, template not found.", http.StatusInternalServerError)
 		return
 	}
-
-	api.Authentication(w, r)
 
 	data := struct {
 		ErrorMessage string
