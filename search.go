@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ThreadCore/api"
 	"ThreadCore/database"
 	"fmt"
 	"html/template"
@@ -33,14 +34,16 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	var data []string
 	switch r.FormValue("media") {
 	case "":
+		api.NewestPost(searchedPost)
 		for i := 0; i < len(searchedPost); i++ {
-			fmt.Print("Post:")
+			fmt.Print("Post: ")
 			fmt.Println(searchedPost[i].Content)
 			data = append(data, searchedPost[i].Content)
 		}
 	case "posts":
+		api.NewestPost(searchedPost)
 		for i := 0; i < len(searchedPost); i++ {
-			fmt.Print("Post:")
+			fmt.Print("Post: ")
 			fmt.Println(searchedPost[i].Content)
 			data = append(data, searchedPost[i].Content)
 		}

@@ -32,9 +32,9 @@ func main() {
 	database.AddCommunity(c2)
 	database.AddCommunity(c3)
 
-	p1 := database.Post{Id: 1, Title: "I like minecraft", Content: "minecraft is really cool and i like playing it a lot", User_id: 1, Community_id: 1, Created: time.Now()}
+	p1 := database.Post{Id: 1, Title: "I like minecraft", Content: "minecraft is really cool and i like playing it a lot", User_id: 1, Community_id: 1, Created: (time.Now()).Add(2 * time.Minute)}
 	p2 := database.Post{Id: 2, Title: "I like my self", Content: "I am beautiful and evrybody need to now that", User_id: 2, Community_id: 2, Created: time.Now()}
-	p3 := database.Post{Id: 3, Title: "Something about Minecraft", Content: "I want to talk about Minecraft", User_id: 1, Community_id: 1, Created: time.Now()}
+	p3 := database.Post{Id: 3, Title: "Something about Minecraft", Content: "I want to talk about Minecraft", User_id: 1, Community_id: 1, Created: (time.Now()).Add(time.Minute)}
 
 	database.AddPost(p1)
 	database.AddPost(p2)
@@ -44,8 +44,8 @@ func main() {
 	database.AddUserCommunity(1, 3)
 	database.AddUserCommunity(2, 3)
 
-	comment1 := database.Comment{Id: 1, User_id: 1, Post_id: 1, Comment_id: 1, Content: "Yeah me to", Created: time.Now()}
-	comment2 := database.Comment{Id: 2, User_id: 2, Post_id: 2, Comment_id: 2, Content: "Wow fucking narcissistic", Created: time.Now()}
+	comment1 := database.Comment{Id: 1, User_id: 1, Post_id: 1, Comment_id: 1, Content: "Yeah me to", Created: (time.Now()).Add(time.Minute)}
+	comment2 := database.Comment{Id: 2, User_id: 2, Post_id: 2, Comment_id: 2, Content: "Wow fucking narcissistic", Created: (time.Now()).Add(2 * time.Minute)}
 	comment3 := database.Comment{Id: 3, User_id: 3, Post_id: 1, Comment_id: 3, Content: "#Nerd", Created: time.Now()}
 
 	database.AddComment(comment1)
