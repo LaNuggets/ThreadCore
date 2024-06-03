@@ -66,6 +66,29 @@ func GetUserByUuid(uuid string) User {
 	return user
 }
 
+func GetUserByUsername(searchString string) []User {
+	rows, err := DB.Query("SELECT * FROM user WHERE username LIKE '%" + searchString + "%'")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	userList := make([]User, 0)
+
+	for rows.Next() {
+		userDisplay := User{}
+		err = rows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
+		CheckErr(err)
+
+		userList = append(userList, userDisplay)
+	}
+
+	err = rows.Err()
+	CheckErr(err)
+
+	return userList
+}
+
 func UpdateUserInfo(user User) {
 	query, err := DB.Prepare("UPDATE user set uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? where id = ?")
 	CheckErr(err)

@@ -23,15 +23,8 @@
         </button>
     </div>
     <h1>COMMUNITY</h1>
-    {{if .Search}}
-    <p>{{.Search}}</p>
-    {{range .SearchedPost}}
-  <p>Creator: {{.Username}}</p>
-  <p>Content :{{.Content}}</p>
-  {{end}}
-  {{range .CommentFromSearchedPost}}
-  {{.Content}}
-  {{end}}
+    {{range .Data}}
+    {{.}}
     {{end}}
 
 

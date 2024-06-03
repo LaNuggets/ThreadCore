@@ -2,6 +2,7 @@ package main
 
 import (
 	"ThreadCore/database"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -26,29 +27,50 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	time := r.URL.Query().Get("time")
 
 	searchedPost := database.GetPostsBySearchString(search)
-	
-	var commentFromSearchedPost []database.Comment
-	for i := 0; i < len(searchedPost); i++ {
-		commentFromSearchedPost = database.GetCommentsByPost(searchedPost[i].Id)
-	}
 	searchedCommunities := database.GetCommunityBySearchString(search)
+	searchUser := database.GetUserByUsername(search)
+
+	var data []string
+	switch r.FormValue("media") {
+	case "":
+		for i := 0; i < len(searchedPost); i++ {
+			fmt.Print("Post:")
+			fmt.Println(searchedPost[i].Content)
+			data = append(data, searchedPost[i].Content)
+		}
+	case "posts":
+		for i := 0; i < len(searchedPost); i++ {
+			fmt.Print("Post:")
+			fmt.Println(searchedPost[i].Content)
+			data = append(data, searchedPost[i].Content)
+		}
+	case "communities":
+		for i := 0; i < len(searchedCommunities); i++ {
+			fmt.Print("Communities:")
+			fmt.Println(searchedCommunities[i].Name)
+			data = append(data, searchedCommunities[i].Name)
+		}
+
+	case "users":
+		for i := 0; i < len(searchUser); i++ {
+			fmt.Print("User:")
+			fmt.Println(searchUser[i].Username)
+			data = append(data, searchUser[i].Username)
+		}
+	}
 
 	searchPage := struct {
-		Search                  string
-		Media                   string
-		Sort                    string
-		Time                    string
-		SearchedPost            []database.PostDisplay
-		CommentFromSearchedPost []database.Comment
-		SearchedCommunities     []database.CommunityDisplay
+		Search string
+		Media  string
+		Sort   string
+		Time   string
+		Data   []string
 	}{
-		Search:                  search,
-		Media:                   media,
-		Sort:                    sort,
-		Time:                    time,
-		SearchedPost:            searchedPost,
-		CommentFromSearchedPost: commentFromSearchedPost,
-		SearchedCommunities:     searchedCommunities,
+		Search: search,
+		Media:  media,
+		Sort:   sort,
+		Time:   time,
+		Data:   data,
 	}
 
 	err = tmpl.Execute(w, searchPage)
