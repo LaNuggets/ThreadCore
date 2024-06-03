@@ -47,7 +47,7 @@ func main() {
 	http.HandleFunc("/deleteComment", api.DeleteComment)
 	http.HandleFunc("/likeDislike", api.LikeDislike)
 	http.HandleFunc("/updateUserInfo", api.UpdateUser)
-	http.HandleFunc("/updateUserInfo", api.DeleteUser)
+	http.HandleFunc("/deleteUserInfo", api.DeleteUser)
 	http.HandleFunc("/followCommuity", api.FollowCommunity)
 	http.HandleFunc("/unfollowCommunity", api.UnfollowCommunity)
 	http.HandleFunc("/followUser", api.FollowUser)
