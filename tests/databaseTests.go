@@ -44,4 +44,6 @@ func main() {
 	database.AddPost(p2)
 	database.AddPost(p3)
 
+	comment1 := database.Comment{Id: 0, User_id: 2, Post_id: 3, Comment_id: 0, Content: "Prety cool things", Created: time.Now()}
+	database.AddComment(comment1)
 }

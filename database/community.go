@@ -16,6 +16,16 @@ type Community struct {
 	User_id   int
 }
 
+type CommunityDisplay struct {
+	Id        int
+	Profile   string
+	Banner    string
+	Name      string
+	Following int
+	User_id   int
+	Username  string
+}
+
 func AddCommunity(community Community) {
 	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, following, user_id) VALUES (?, ?, ?, ?, ?)")
 	query.Exec(community.Profile, community.Banner, community.Name, 0, community.User_id)
@@ -48,18 +58,27 @@ func GetCommunityByName(communityName string) Community {
 	return community
 }
 
-func GetCommunityBySearchString(searchString string) Community {
-	rows, _ := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.following, community.user_id, user.username FROM community INNER JOIN user.id = community.user_id WHERE name LIKE '%" + searchString + "%' OR user_id LIKE '%" + searchString + "%'")
-
+func GetCommunityBySearchString(searchString string) []CommunityDisplay {
+	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.following, community.user_id, user.username FROM community INNER JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
-	community := Community{}
+	err = rows.Err()
+	CheckErr(err)
+
+	communityList := make([]CommunityDisplay, 0)
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
+		community := CommunityDisplay{}
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id, &community.Username)
+		CheckErr(err)
+
+		communityList = append(communityList, community)
 	}
 
-	return community
+	err = rows.Err()
+	CheckErr(err)
+
+	return communityList
 }
 
 func GetCommunitiesByNMembers() []Community {

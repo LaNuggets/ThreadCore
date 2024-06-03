@@ -26,21 +26,28 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	time := r.URL.Query().Get("time")
 
 	searchedPost := database.GetPostsBySearchString(search)
-
-	// postContent := api.DisplayPosts(searchedPost)
+	var commentFromSearchedPost []database.Comment
+	for i := 0; i < len(searchedPost); i++ {
+		commentFromSearchedPost = database.GetCommentsByPost(searchedPost[i].Id)
+	}
+	searchedCommunities := database.GetCommunityBySearchString(search)
 
 	searchPage := struct {
-		Search       string
-		Media        string
-		Sort         string
-		Time         string
-		SearchedPost []database.PostDisplay
+		Search                  string
+		Media                   string
+		Sort                    string
+		Time                    string
+		SearchedPost            []database.PostDisplay
+		CommentFromSearchedPost []database.Comment
+		SearchedCommunities     []database.CommunityDisplay
 	}{
-		Search:       search,
-		Media:        media,
-		Sort:         sort,
-		Time:         time,
-		SearchedPost: searchedPost,
+		Search:                  search,
+		Media:                   media,
+		Sort:                    sort,
+		Time:                    time,
+		SearchedPost:            searchedPost,
+		CommentFromSearchedPost: commentFromSearchedPost,
+		SearchedCommunities:     searchedCommunities,
 	}
 
 	err = tmpl.Execute(w, searchPage)
