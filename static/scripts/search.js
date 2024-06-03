@@ -5,16 +5,34 @@ const urlParams = new URLSearchParams(window.location.search);
 const mediaOption = urlParams.get('media');
 if (mediaOption != null) {
     document.getElementById(mediaOption).checked = true
+} else {
+    if ('URLSearchParams' in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("media", "posts");
+        window.location.search = searchParams.toString();
+    }
 }
 
 const sortOption = urlParams.get('sort');
 if (sortOption != null) {
     document.getElementById(sortOption).selected = true
+} else {
+    if ('URLSearchParams' in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("sort", "popular");
+        window.location.search = searchParams.toString();
+    }
 }
 
 const timeOption = urlParams.get('time');
 if (timeOption != null) {
     document.getElementById(timeOption).selected = true
+} else {
+    if ('URLSearchParams' in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("time", "all_time");
+        window.location.search = searchParams.toString();
+    }
 }
 
 

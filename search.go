@@ -2,6 +2,7 @@ package main
 
 import (
 	"ThreadCore/database"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -26,7 +27,8 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	time := r.URL.Query().Get("time")
 
 	searchedPost := database.GetPostsBySearchString(search)
-
+	fmt.Println("searchedPost:")
+	fmt.Println(searchedPost)
 	// postContent := api.DisplayPosts(searchedPost)
 
 	searchPage := struct {
@@ -34,7 +36,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Media        string
 		Sort         string
 		Time         string
-		SearchedPost []database.PostDisplay
+		SearchedPost []database.PostInfo
 	}{
 		Search:       search,
 		Media:        media,

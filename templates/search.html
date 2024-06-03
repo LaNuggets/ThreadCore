@@ -26,10 +26,10 @@
     {{if .Search}}
     <p>{{.Search}}</p>
     {{range .SearchedPost}}
-  <p>{{.Username}}</p>
-  <p>{{.Content}}</p>
+    <p>{{.Username}}</p>
+    <p>{{.Content}}</p>
 
-  {{end}}
+    {{end}}
     {{end}}
 
     {{if .Media}}
@@ -50,9 +50,6 @@
         </label>
         <label class="">
             <input type="radio" name="test" value="users" id="users">Users
-        </label>
-        <label class="">
-            <input type="radio" name="test" value="comments" id="comments">Comments
         </label>
     </div>
     <div class="sort-select">

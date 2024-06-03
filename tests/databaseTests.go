@@ -22,9 +22,9 @@ func main() {
 	database.AddUser(u1)
 	database.AddUser(u2)
 
-	c1 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Minecraft", Following: 0, User_id: 1}
-	c2 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Fortnite", Following: 0, User_id: 1}
-	c3 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Aurélien", Following: 0, User_id: 2}
+	c1 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Minecraft", Description: "its a community for the minecraft game", User_id: 1}
+	c2 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Fortnite", Description: "its a community for the fortnite game", User_id: 1}
+	c3 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Aurélien", Description: "welcome to the aurelien fan club", User_id: 2}
 	database.AddCommunity(c1)
 	database.AddCommunity(c2)
 	database.AddCommunity(c3)

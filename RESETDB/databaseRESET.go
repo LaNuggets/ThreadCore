@@ -53,7 +53,7 @@ CREATE TABLE community(
 	profile VARCHAR(255), 
 	banner VARCHAR(255), 
 	name VARCHAR(32), 
-	following INTEGER NOT NULL, 
+	description VARCHAR(255), 
 	user_id INTEGER, 
 	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE);
 
@@ -66,7 +66,7 @@ CREATE TABLE friend(
 CREATE TABLE post(
 	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
 	title VARCHAR(32), 
-	content VARCHAR(255), 
+	content VARCHAR(500), 
 	media VARCHAR(255), 
 	user_id INTEGER, 
 	community_id INTEGER, 

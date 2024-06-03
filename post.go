@@ -30,7 +30,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	post := database.GetPostById(id)
 
 	postPage := struct {
-		Post database.Post
+		Post database.PostInfo
 	}{
 		Post: post,
 	}

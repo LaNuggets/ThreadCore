@@ -8,17 +8,17 @@ import (
 )
 
 type Community struct {
-	Id        int
-	Profile   string
-	Banner    string
-	Name      string
-	Following int
-	User_id   int
+	Id          int
+	Profile     string
+	Banner      string
+	Name        string
+	Description string
+	User_id     int
 }
 
 func AddCommunity(community Community) {
-	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, following, user_id) VALUES (?, ?, ?, ?, ?)")
-	query.Exec(community.Profile, community.Banner, community.Name, 0, community.User_id)
+	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, description, user_id) VALUES (?, ?, ?, ?, ?)")
+	query.Exec(community.Profile, community.Banner, community.Name, community.Description, community.User_id)
 	defer query.Close()
 }
 
@@ -30,7 +30,7 @@ func GetCommunityById(id int) Community {
 	community := Community{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
 	}
 
 	return community
@@ -43,14 +43,16 @@ func GetCommunityByName(communityName string) Community {
 	community := Community{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
 	}
 
 	return community
 }
 
 func GetCommunitiesByNMembers() []Community {
-	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, COUNT(user_community.community_id), community.user_id FROM community JOIN user_community ON user_community.community_id = community.id GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
+
+	//, COUNT(user_community.community_id)
+	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id FROM community JOIN user_community ON user_community.community_id = community.id GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -60,7 +62,7 @@ func GetCommunitiesByNMembers() []Community {
 
 	for rows.Next() {
 		community := Community{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
 		CheckErr(err)
 		communityList = append(communityList, community)
 	}
@@ -72,11 +74,11 @@ func GetCommunitiesByNMembers() []Community {
 }
 
 func UpdateCommunityInfo(community Community) {
-	query, err := DB.Prepare("UPDATE community SET profile = ?, banner = ?, name = ?, following = ?, user_id = ? WHERE id = ?")
+	query, err := DB.Prepare("UPDATE community SET profile = ?, banner = ?, name = ?, description = ?, user_id = ? WHERE id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(community.Profile, community.Banner, community.Name, community.Following, &community.User_id, community.Id)
+	res, err := query.Exec(community.Profile, community.Banner, community.Name, community.Description, &community.User_id, community.Id)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()
@@ -109,10 +111,6 @@ func AddUserCommunity(userId int, communityId int) {
 	query, _ := DB.Prepare("INSERT INTO user_community (user_id, community_id) VALUES (?, ?)")
 	query.Exec(userId, communityId)
 	defer query.Close()
-
-	query2, _ := DB.Prepare("UPDATE community SET following=following + 1 WHERE id = ?")
-	query2.Exec(communityId)
-	defer query2.Close()
 }
 
 func ExistsUserCommunity(userId int, communityId int) bool {
@@ -171,7 +169,7 @@ func GetCommunitiesByUser(userId int) []Community {
 
 	for rows.Next() {
 		community := Community{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Following, &community.User_id)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
 		CheckErr(err)
 
 		communityList = append(communityList, community)
@@ -187,10 +185,6 @@ func DeleteUserCommunity(communityId int, userId int) {
 	query, err := DB.Prepare("DELETE FROM user_community where user_id = ? AND community_id = ?")
 	CheckErr(err)
 	defer query.Close()
-
-	query2, _ := DB.Prepare("UPDATE community SET following = following - 1 WHERE id = ?")
-	query2.Exec(communityId)
-	defer query2.Close()
 
 	res, err := query.Exec(userId, communityId)
 	CheckErr(err)
