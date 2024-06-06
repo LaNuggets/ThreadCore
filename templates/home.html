@@ -11,21 +11,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
     <title>Home</title>
 </head>
-<body>
+<body class="wrapper">
+    <!-- Scripts -->
     <script src="/static/scripts/javascript.js" type="module"></script>
-    <div class="header">
-        <img src="../static/assets/logoForLightTheme.svg" class="logoTheme" alt="Logo">
-        <text class="name" >ThreadCore</text>
-    <input placeholder="Search Community" class="input"/>
-    
 
-    {{if .CookieValue}}
-    <img id="profilePicture" src="../static/assets/defaultProfliePicture.svg" alt="Profile Picture" onclick="window.location.href='user/{{.CookieValue}}'">
-    {{else}}
-    <button id="loginButtonId" class="loginButton" onclick="window.location.href='connection'">Login
-        <svg viewBox="0 0 512 512" class="exit" ><path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1L32 320c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"></path></svg>
-    </button>
-    {{end}}
+    <!-- Header -->
+    <header>
+        <section class="logo">
+            <p class="name"><img src="/static/assets/logoForLightTheme.svg" class="logo-image" alt="Logo">ThreadCore</p>
+        </section>
+        <section class="search-bar">
+            <input placeholder="Search Communities, Posts or Users" class="input" id="search"/>
+            <span class="placeholder">Search on ThreadCore</span>
+        </section>
+        <section class="connect-or-user">
+            <article id="connect">
+                <button class="login">
+                    Login →
+                </button>
+            </article>
+            <!-- <article id="profile">
+                <img id="profilePicture" src="/static/assets/profileTemplate.svg" alt="Profile Picture">
+            </article> -->
+        </section>
+    </header>
+    <section class="content">
+        <nav>
+            <button id="home">
+                <h3>Home</h3>
+            </button>
+            <button id="popular">
+                <h3>Popular</h3>
+            </button>
+            <button id="all">
+                <h3>All</h3>
+            </button>
+            <div id="line"></div>
+            <button id="createUserPost">
+                <h3>Create Post</h3>
+            </button>
+            <div id="line"></div>
+            <button id="createCommunity">
+                <h3>Create Community</h3>
+            </button>
+        </nav>
+        <main>
+            <div class="honeycomb">
+                <div class="blackhoneycomb"></div>
+                <div class="orangehoneycomb"></div>
+                <div class="blackhoneycomb"></div>
+                <div class="blackhoneycomb"></div>
+                <div class="orangehoneycomb"></div>
+                <div class="orangehoneycomb"></div>
+                <div class="orangehoneycomb"></div>
+            </div>
+        </main>
+        <aside>
+            <div>test</div>
+        </aside>
+    </section>
+    
+    
 </div>
 </body>
 </html>
