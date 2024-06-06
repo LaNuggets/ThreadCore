@@ -31,3 +31,10 @@ search.addEventListener("keypress", function(event) {
 //     img.alt = 'default';
 //   });
 // });
+
+
+document.querySelector("div.media-radio").addEventListener("click", function(evt){
+  if(evt.target.type === "radio"){
+    //evt.target.value
+  }
+});
