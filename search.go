@@ -3,6 +3,7 @@ package main
 import (
 	"ThreadCore/api"
 	"ThreadCore/database"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -23,146 +24,17 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	search := r.URL.Query().Get("q")
-	media := r.URL.Query().Get("media") // media options  : posts, communities, comments , users
+	media := r.URL.Query().Get("media") // media options  : posts, communities, users
 	sort := r.URL.Query().Get("sort")
 	ChoosenTime := r.URL.Query().Get("time")
 
 	var sortedPosts []database.PostInfo
 
 	switch media {
-	case "":
-		searchedPost := database.GetPostsBySearchString(search)
-		switch sort {
-		case "popular":
-			//TODO sort
-			switch ChoosenTime {
-			case "all_time":
-				sortedPosts = searchedPost
-			case "year":
-				var YearTime = (time.Now().Add(-(time.Hour * 8764)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "month":
-				var YearTime = (time.Now().Add(-(time.Hour * 744)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "week":
-				var YearTime = (time.Now().Add(-(time.Hour * 168)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "day":
-				var YearTime = (time.Now().Add(-(time.Hour * 24)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "hour":
-				var YearTime = (time.Now().Add(-(time.Hour)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			}
-		case "new":
-			api.NewestPost(searchedPost)
-			switch ChoosenTime {
-			case "all_time":
-				sortedPosts = searchedPost
-			case "year":
-				var YearTime = (time.Now().Add(-(time.Hour * 8764)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "month":
-				var YearTime = (time.Now().Add(-(time.Hour * 744)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "week":
-				var YearTime = (time.Now().Add(-(time.Hour * 168)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "day":
-				var YearTime = (time.Now().Add(-(time.Hour * 24)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "hour":
-				var YearTime = (time.Now().Add(-(time.Hour)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			}
-		case "most_comment":
-			//TODO sort
-			switch ChoosenTime {
-			case "all_time":
-				sortedPosts = searchedPost
-			case "year":
-				var YearTime = (time.Now().Add(-(time.Hour * 8764)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "month":
-				var YearTime = (time.Now().Add(-(time.Hour * 744)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "week":
-				var YearTime = (time.Now().Add(-(time.Hour * 168)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "day":
-				var YearTime = (time.Now().Add(-(time.Hour * 24)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			case "hour":
-				var YearTime = (time.Now().Add(-(time.Hour)))
-				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
-						sortedPosts = append(sortedPosts, searchedPost[i])
-					}
-				}
-			}
-		}
-
 	case "posts":
-		searchedPost := database.GetPostsBySearchString(search)
 		switch sort {
 		case "popular":
-			//TODO sort
+			searchedPost := database.GetPostByPopular(search)
 			switch ChoosenTime {
 			case "all_time":
 				sortedPosts = searchedPost
@@ -203,6 +75,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		case "new":
+			searchedPost := database.GetPostsBySearchString(search)
 			api.NewestPost(searchedPost)
 			switch ChoosenTime {
 			case "all_time":
@@ -243,8 +116,8 @@ func Search(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
-		case "most_comment":
-			//TODO sort
+		case "most_comments":
+			searchedPost := database.GetPostByMostComment(search)
 			switch ChoosenTime {
 			case "all_time":
 				sortedPosts = searchedPost
@@ -256,30 +129,30 @@ func Search(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			case "month":
-				var YearTime = (time.Now().Add(-(time.Hour * 744)))
+				var monthTime = (time.Now().Add(-(time.Hour * 744)))
 				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
+					if !(searchedPost[i].Created.Before(monthTime)) {
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
 			case "week":
-				var YearTime = (time.Now().Add(-(time.Hour * 168)))
+				var weekTime = (time.Now().Add(-(time.Hour * 168)))
 				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
+					if !(searchedPost[i].Created.Before(weekTime)) {
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
 			case "day":
-				var YearTime = (time.Now().Add(-(time.Hour * 24)))
+				var dayTime = (time.Now().Add(-(time.Hour * 24)))
 				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
+					if !(searchedPost[i].Created.Before(dayTime)) {
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
 			case "hour":
-				var YearTime = (time.Now().Add(-(time.Hour)))
+				var hourTime = (time.Now().Add(-(time.Hour)))
 				for i := 0; i < len(searchedPost); i++ {
-					if !(searchedPost[i].Created.Before(YearTime)) {
+					if !(searchedPost[i].Created.Before(hourTime)) {
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -287,11 +160,22 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case "communities":
-		searchedCommunities := database.GetCommunityBySearchString(search)
+		switch sort {
+		case "popular":
+			searchedCommunities := database.GetCommunitiesByNMembers(search)
+			fmt.Println(searchedCommunities)
+		case "new":
+			// searchedCommunities := database.GetCommunityBySearchString(search)
+			// api.NewestPost(searchedCommunities)
+		}
 
 	case "users":
 		searchedUser := database.GetUserBySearchString(search)
+		fmt.Println(searchedUser)
+	}
 
+	for i := 0; i < len(sortedPosts); i++ {
+		fmt.Println(sortedPosts[i].Content)
 	}
 
 	searchPage := struct {

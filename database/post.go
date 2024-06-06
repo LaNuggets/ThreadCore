@@ -19,15 +19,15 @@ type Post struct {
 }
 
 type PostInfo struct {
-	Id           int
-	Title        string
-	Content      string
-	Media        string
-	User_id      int
-	Username     string
-	Community_id int
-	CommuntyName string
-	Created      time.Time
+	Id            int
+	Title         string
+	Content       string
+	Media         string
+	User_id       int
+	Username      string
+	Community_id  int
+	CommunityName string
+	Created       time.Time
 }
 
 type TempPostInfo struct {
@@ -60,10 +60,10 @@ func GetPostsBySearchString(searchString string) []PostInfo {
 		temppostInfo := TempPostInfo{}
 		err = rows.Scan(&temppostInfo.Id, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Community_id, &temppostInfo.Created)
 		CheckErr(err)
-		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommuntyName: "", Created: temppostInfo.Created}
+		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommunityName: "", Created: temppostInfo.Created}
 		if temppostInfo.Community_id != nil {
 			postInfo.Community_id = *temppostInfo.Community_id
-			postInfo.CommuntyName = GetCommunityById(*temppostInfo.Community_id).Name
+			postInfo.CommunityName = GetCommunityById(*temppostInfo.Community_id).Name
 		}
 		postList = append(postList, postInfo)
 	}
@@ -88,10 +88,10 @@ func GetPostsByUser(userId int) []PostInfo {
 		temppostInfo := TempPostInfo{}
 		err = rows.Scan(&temppostInfo.Id, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Community_id, &temppostInfo.Created)
 		CheckErr(err)
-		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommuntyName: "", Created: temppostInfo.Created}
+		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommunityName: "", Created: temppostInfo.Created}
 		if temppostInfo.Community_id != nil {
 			postInfo.Community_id = *temppostInfo.Community_id
-			postInfo.CommuntyName = GetCommunityById(*temppostInfo.Community_id).Name
+			postInfo.CommunityName = GetCommunityById(*temppostInfo.Community_id).Name
 		}
 		postList = append(postList, postInfo)
 	}
@@ -116,10 +116,10 @@ func GetPostsByCommunity(communityId int) []PostInfo {
 		temppostInfo := TempPostInfo{}
 		err = rows.Scan(&temppostInfo.Id, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Community_id, &temppostInfo.Created)
 		CheckErr(err)
-		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommuntyName: "", Created: temppostInfo.Created}
+		postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommunityName: "", Created: temppostInfo.Created}
 		if temppostInfo.Community_id != nil {
 			postInfo.Community_id = *temppostInfo.Community_id
-			postInfo.CommuntyName = GetCommunityById(*temppostInfo.Community_id).Name
+			postInfo.CommunityName = GetCommunityById(*temppostInfo.Community_id).Name
 		}
 		postList = append(postList, postInfo)
 	}
@@ -142,13 +142,57 @@ func GetPostById(id int) PostInfo {
 
 	}
 
-	postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommuntyName: "", Created: temppostInfo.Created}
+	postInfo := PostInfo{Id: temppostInfo.Id, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommunityName: "", Created: temppostInfo.Created}
 	if temppostInfo.Community_id != nil {
 		postInfo.Community_id = *temppostInfo.Community_id
-		postInfo.CommuntyName = GetCommunityById(*temppostInfo.Community_id).Name
+		postInfo.CommunityName = GetCommunityById(*temppostInfo.Community_id).Name
 	}
 
 	return postInfo
+}
+
+func GetPostByMostComment(searchString string) []PostInfo {
+
+	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, user.username, post.community_id, community.name, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN comment ON comment.post_id = post.id WHERE post.title LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY post.id ORDER BY COUNT(comment.post_id) DESC")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	postList := make([]PostInfo, 0)
+
+	for rows.Next() {
+		post := PostInfo{}
+		err = rows.Scan(&post.Id, &post.Title, &post.Content, &post.Media, &post.User_id, &post.Username, &post.Community_id, &post.CommunityName, &post.Created)
+		postList = append(postList, post)
+	}
+
+	err = rows.Err()
+	CheckErr(err)
+
+	return postList
+}
+
+func GetPostByPopular(searchString string) []PostInfo {
+
+	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, user.username, post.community_id, community.name, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	postList := make([]PostInfo, 0)
+
+	for rows.Next() {
+		post := PostInfo{}
+		err = rows.Scan(&post.Id, &post.Title, &post.Content, &post.Media, &post.User_id, &post.Username, &post.Community_id, &post.CommunityName, &post.Created)
+		postList = append(postList, post)
+	}
+
+	err = rows.Err()
+	CheckErr(err)
+
+	return postList
 }
 
 func UpdatePostInfo(post Post) {

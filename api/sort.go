@@ -18,6 +18,14 @@ func NewestPost(posts []database.PostInfo) {
 	sort.Sort(test(posts))
 }
 
+
+
+
+
+
+
+
+
 func YearAgo(posts []database.PostInfo) []database.PostInfo {
 	var YearTime = (time.Now().Add(-(time.Hour * 8764)))
 	var sortedPosts []database.PostInfo
