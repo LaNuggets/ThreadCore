@@ -30,11 +30,13 @@
 - Ajout de la fonctionalite des foreign key par sqlite (off par defaut) ainsi que la suppresion des données en cascade pour chaque table relier à une foreign key
 - formulaires de creation, modification et suppression d'une communautées qvec leu propres routes
 - affichage des posts et communautées
-- rcuperation des nom d'utilisateurs des createurs des posts et communautées
+- recuperation des nom d'utilisateurs des createurs des posts et communautées
 
 03/6:
 
 04/6:
+- Started front end with home page
+- Filtrage listes Posts par date creation
 
 06/6:
 
