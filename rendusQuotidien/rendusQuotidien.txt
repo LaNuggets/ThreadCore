@@ -38,6 +38,8 @@
 - Récuperation des donné utilisateurs(pour création/suppresion des posts/communautées/commentaire/utilisateurs).
 
 04/6:
+- Réalisation des Filtres pour posts
+- Réalisation Front end pour Formulaire de création de communautées/Posts
 
 06/6:
 
