@@ -1,12 +1,9 @@
 package main
 
 import (
-<<<<<<< HEAD
 	"ThreadCore/api"
 	"ThreadCore/database"
 	"fmt"
-=======
->>>>>>> a11642ba790d675f39a899d8d6dd54cb04e91b88
 	"html/template"
 	"log"
 	"net/http"

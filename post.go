@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -22,12 +21,11 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postId := strings.ReplaceAll(r.URL.Path, "/post/", "")
-	if strings.Contains(postId, "/") {
+	postUuid := strings.ReplaceAll(r.URL.Path, "/post/", "")
+	if strings.Contains(postUuid, "/") {
 		http.Redirect(w, r, "/search", http.StatusSeeOther)
 	}
-	id, _ := strconv.Atoi(postId)
-	post := database.GetPostById(id)
+	post := database.GetPostByUuid(postUuid)
 
 	postPage := struct {
 		Post database.PostInfo
