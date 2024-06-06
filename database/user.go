@@ -66,7 +66,23 @@ func GetUserByUuid(uuid string) User {
 	return user
 }
 
-func GetUserByUsername(searchString string) []User {
+func GetUserByUsername(username string) User {
+	rows, err := DB.Query("SELECT * FROM user WHERE username='" + username + "'")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	user := User{}
+
+	for rows.Next() {
+		rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
+	}
+
+	return user
+}
+
+func GetUserBySearchString(searchString string) []User {
 	rows, err := DB.Query("SELECT * FROM user WHERE username LIKE '%" + searchString + "%'")
 	defer rows.Close()
 

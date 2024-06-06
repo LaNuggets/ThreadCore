@@ -20,14 +20,14 @@ search.addEventListener("keypress", function(event) {
 });
 
 // If any images are not found, display default image
-const images = document.querySelectorAll('img');
+// const images = document.querySelectorAll('img');
 
-images.forEach(img => {
-  img.addEventListener('error', function handleError() {
-    const defaultImage =
-      'https://bobbyhadz.com/images/blog/javascript-show-div-on-select-option/banner.webp';
+// images.forEach(img => {
+//   img.addEventListener('error', function handleError() {
+//     const defaultImage =
+//       'https://bobbyhadz.com/images/blog/javascript-show-div-on-select-option/banner.webp';
 
-    img.src = defaultImage;
-    img.alt = 'default';
-  });
-});
+//     img.src = defaultImage;
+//     img.alt = 'default';
+//   });
+// });

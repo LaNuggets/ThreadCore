@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,8 +12,8 @@
     <title>Search</title>
 </head>
 <body>
-    <script src="/static/scripts/javascript.js" type="module"></script>
     <script src="/static/scripts/search.js" type="module"></script>
+    <script src="/static/scripts/javascript.js" type="module"></script>
     <div class="header">
         <img src="/static/assets/logoForLightTheme.svg" class="logoTheme">
         <text class="name" >ThreadCore</text>
@@ -24,10 +23,6 @@
         </button>
     </div>
     <h1>COMMUNITY</h1>
-    {{range .Data}}
-    {{.}}
-    {{end}}
-
 
     {{if .Media}}
     <p>{{.Media}}</p>
@@ -102,110 +97,4 @@
         <input type="submit" value="upload" >
     </form>
 </body>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style/style.css">
-    <link rel="stylesheet" href="/static/style/search.css">
-    <link href="/static/assets/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
-    <link href="/static/assets/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
-
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
-    <title>Search</title>
-</head>
-<body>
-    <script src="/static/scripts/javascript.js" type="module"></script>
-    <script src="/static/scripts/search.js" type="module"></script>
-    <div class="header">
-        <img src="/static/assets/logoForLightTheme.svg" class="logoTheme">
-        <text class="name" >ThreadCore</text>
-        <input placeholder="Search ..." class="input" name="q" id="search"/>
-        <button class="loginButton">Login
-            <svg viewBox="0 0 512 512" class="exit" ><path d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1L32 320c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"></path></svg>
-        </button>
-    </div>
-    <h1>COMMUNITY</h1>
-    {{if .Search}}
-    <p>{{.Search}}</p>
-    {{range .SearchedPost}}
-    <p>{{.Username}}</p>
-    <p>{{.Content}}</p>
-
-    {{end}}
-    {{end}}
-
-    {{if .Media}}
-    <p>{{.Media}}</p>
-    {{end}}
-    {{if .Sort}}
-    <p>{{.Sort}}</p>
-    {{end}}
-    {{if .Time}}
-    <p>{{.Time}}</p>
-    {{end}}
-    <div class="media-radio" data-toggle="buttons">
-        <label class="">
-            <input type="radio" name="test" value="posts" id="posts">Posts
-        </label>
-        <label class="">
-            <input type="radio" name="test" value="communities" id="communities">Communities
-        </label>
-        <label class="">
-            <input type="radio" name="test" value="users" id="users">Users
-        </label>
-    </div>
-    <div class="sort-select">
-        <select class="">
-            <option value="popular" id="popular">Popular</option>
-            <option value="new" id="new">New</option>
-            <option value="most_comments" id="most_comments">Most Comments</option>
-        </select>
-    </div>
-    <div class="time-select">
-        <select class="">
-            <option value="all_time" id="all_time">All Time</option>
-            <option value="year" id="year">Year</option>
-            <option value="month" id="month">Month</option>
-            <option value="week" id="week">Week</option>
-            <option value="day" id="day">Day</option>
-            <option value="hour" id="hour">Hour</option>
-        </select>
-    </div>
-
-    <!-- CREATE Community -->
-    <h1>CREATE COMMUNITY</h1>
-    <form enctype="multipart/form-data" method="post" action="/createCommunity">
-        
-        <p>name</p>
-        <input type="text" placeholder="community name" name="name">
-        
-        <!-- profile -->
-        <p>profile picture</p>
-        <input type="text" placeholder="profile link" name="profileLink">
-        <input type="file" name="profile" accept="image/*" >
-        
-        <!-- choose between link or file -->
-        <p>link or file?</p>
-        <input type="radio" name="profileOption" value="link">
-        <label for="age1">link</label>
-        <input type="radio" name="profileOption" value="file">
-        <label for="age2">file</label>
-        
-        <p>banner picture</p>
-        <input type="text" placeholder="banner link" name="bannerLink">
-        <input type="file" name="banner" accept="image/*" >
-
-        <p>link or file?</p>
-        <input type="radio" name="bannerOption" value="link">
-        <label for="age1">link</label>
-        <input type="radio" name="bannerOption" value="file">
-        <label for="age2">file</label>
-
-        <input type="submit" value="upload" >
-    </form>
-</body>
->>>>>>> jeremy
 </html>
