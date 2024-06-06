@@ -192,7 +192,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		// Data:   data,
 	}
 
-	err = tmpl.Execute(w, searchPage)
+	err = tmpl.Execute(w, nil)
 	if err != nil {
 		log.Printf("\033[31mError executing template: %v\033[0m", err)
 		http.Error(w, "Internal error", http.StatusInternalServerError)

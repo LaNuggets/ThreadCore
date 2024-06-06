@@ -184,7 +184,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
-		profilePath = "/static/images/profileTemplate.png.png"
+		profilePath = "/static/images/profileTemplate.png"
 	} else if profileOption == "keep" {
 		profilePath = user.Profile
 	} else if profileOption == "link" {
