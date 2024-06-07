@@ -24,6 +24,9 @@ func main() {
 	database.AddUser(u2)
 	database.AddUser(u3)
 
+	database.AddFriend(1, 2)
+	database.AddFriend(2, 3)
+
 	c1 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Minecraft", Description: "desc", User_id: 1}
 	c2 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Fortnite", Description: "desc", User_id: 1}
 	c3 := database.Community{Id: 0, Profile: "p", Banner: "b", Name: "Aurélien", Description: "desc", User_id: 2}
@@ -42,6 +45,20 @@ func main() {
 	database.AddPost(p3)
 	database.AddPost(p4)
 	database.AddPost(p5)
+
+	l1 := database.Like{Id: 1, Rating: "like", Comment_id: 0, Post_id: 3, User_id: 1}
+	l2 := database.Like{Id: 2, Rating: "like", Comment_id: 0, Post_id: 3, User_id: 2}
+	l3 := database.Like{Id: 3, Rating: "like", Comment_id: 0, Post_id: 3, User_id: 3}
+	l4 := database.Like{Id: 4, Rating: "like", Comment_id: 0, Post_id: 1, User_id: 1}
+	l5 := database.Like{Id: 5, Rating: "like", Comment_id: 0, Post_id: 1, User_id: 2}
+	l6 := database.Like{Id: 6, Rating: "like", Comment_id: 0, Post_id: 2, User_id: 1}
+
+	database.AddLike(l1)
+	database.AddLike(l2)
+	database.AddLike(l3)
+	database.AddLike(l4)
+	database.AddLike(l5)
+	database.AddLike(l6)
 
 	database.AddUserCommunity(1, 2)
 	database.AddUserCommunity(1, 3)

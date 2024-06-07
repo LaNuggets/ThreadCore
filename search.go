@@ -198,16 +198,16 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Sort              string
 		Time              string
 		SortedPosts       []database.PostInfo
-		sortedCommunities []database.CommunityDisplay
-		sortedUsers       []database.User
+		SortedCommunities []database.CommunityDisplay
+		SortedUsers       []database.User
 	}{
 		Search:            search,
 		Media:             media,
 		Sort:              sort,
 		Time:              ChoosenTime,
 		SortedPosts:       sortedPosts,
-		sortedCommunities: sortedCommunities,
-		sortedUsers:       sortedUsers,
+		SortedCommunities: sortedCommunities,
+		SortedUsers:       sortedUsers,
 	}
 
 	err = tmpl.Execute(w, searchPage)

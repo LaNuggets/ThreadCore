@@ -24,6 +24,18 @@
     </div>
     <h1>COMMUNITY</h1>
 
+    {{range .SortedPosts}}
+        <li>{{.Title}}</li>
+    {{end}}
+
+    {{range .SortedCommunities}}
+    <li>{{.Name}}</li>
+    {{end}}
+
+    {{range .SortedUsers}}
+    <li>{{.Username}}</li>
+    {{end}}
+
     {{if .Media}}
     <p>{{.Media}}</p>
     {{end}}

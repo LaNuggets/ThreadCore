@@ -26,7 +26,7 @@
                <div class="flip-card__inner">
                   <div class="flip-card__front">
                      <div class="title">Log in</div>
-                     <form class="flip-card__form" action="/login">
+                     <form class="flip-card__form" action="/login" method="post">
                         <input class="flip-card__input" name="email" placeholder="Email" type="email" required>
                         <input class="flip-card__input" name="password" placeholder="Password" type="password" required>
                         {{if .ErrorMessage}}
@@ -37,7 +37,7 @@
                   </div>
                   <div class="flip-card__back">
                      <div class="title">Sign up</div>
-                     <form class="flip-card__form" action="/singup">
+                     <form class="flip-card__form" action="/signup" method="post">
                         <input class="flip-card__input" name="username" placeholder="Username" type="username" required>
                         <input class="flip-card__input" name="email" placeholder="Email" type="email" required>
                         <input class="flip-card__input" name="password" placeholder="Password" type="password" required>

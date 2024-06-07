@@ -106,7 +106,7 @@ func GetUserBySearchString(searchString string) []User {
 }
 
 func GetUserByMostPopular(searchString string) []User {
-	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN like ON like.user_id = user.id WHERE like.rating = 'like' AND username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(like.user_id) DESC")
+	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN friend ON friend.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(friend.user_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
