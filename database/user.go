@@ -105,6 +105,75 @@ func GetUserBySearchString(searchString string) []User {
 	return userList
 }
 
+func GetUserByMostPopular(searchString string) []User {
+	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN like ON like.user_id = user.id WHERE like.rating = 'like' AND username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(like.user_id) DESC")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	userList := make([]User, 0)
+
+	for rows.Next() {
+		userDisplay := User{}
+		err = rows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
+		CheckErr(err)
+
+		userList = append(userList, userDisplay)
+	}
+
+	err = rows.Err()
+	CheckErr(err)
+
+	return userList
+}
+
+func GetUserByMostPost(searchString string) []User {
+	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN post ON post.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(post.user_id) DESC")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	userList := make([]User, 0)
+
+	for rows.Next() {
+		userDisplay := User{}
+		err = rows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
+		CheckErr(err)
+
+		userList = append(userList, userDisplay)
+	}
+
+	err = rows.Err()
+	CheckErr(err)
+
+	return userList
+}
+
+func GetUserByMostComment(searchString string) []User {
+	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN comment ON comment.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(comment.user_id) DESC")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	userList := make([]User, 0)
+
+	for rows.Next() {
+		userDisplay := User{}
+		err = rows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
+		CheckErr(err)
+
+		userList = append(userList, userDisplay)
+	}
+
+	err = rows.Err()
+	CheckErr(err)
+
+	return userList
+}
+
 func UpdateUserInfo(user User) {
 	query, err := DB.Prepare("UPDATE user set uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? where id = ?")
 	CheckErr(err)

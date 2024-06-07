@@ -82,20 +82,42 @@ func GetCommunityByName(communityName string) Community {
 	return community
 }
 
-func GetCommunitiesByNMembers(searchString string) []Community {
+func GetCommunitiesByNMembers(searchString string) []CommunityDisplay {
 
 	//, COUNT(user_community.community_id)
-	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
+	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err)
 
-	communityList := make([]Community, 0)
+	communityList := make([]CommunityDisplay, 0)
 
 	for rows.Next() {
-		community := Community{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
+		community := CommunityDisplay{}
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username)
+		communityList = append(communityList, community)
+	}
+
+	err = rows.Err()
+	CheckErr(err)
+
+	return communityList
+}
+
+func GetCommunitiesByMostPost(searchString string) []CommunityDisplay {
+
+	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN post ON post.community_id = community.id JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(post.community_id) DESC")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err)
+
+	communityList := make([]CommunityDisplay, 0)
+
+	for rows.Next() {
+		community := CommunityDisplay{}
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username)
 		communityList = append(communityList, community)
 	}
 

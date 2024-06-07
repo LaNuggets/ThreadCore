@@ -175,7 +175,7 @@ func GetPostByMostComment(searchString string) []PostInfo {
 
 func GetPostByPopular(searchString string) []PostInfo {
 
-	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, user.username, post.community_id, community.name, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
+	rows, err := DB.Query("SELECT post.id, post.title, post.content, post.media, post.user_id, user.username, post.community_id, community.name, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' AND post.title LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()

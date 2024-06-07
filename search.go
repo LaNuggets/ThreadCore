@@ -29,6 +29,8 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	ChoosenTime := r.URL.Query().Get("time")
 
 	var sortedPosts []database.PostInfo
+	var sortedCommunities []database.CommunityDisplay
+	var sortedUsers []database.User
 
 	switch media {
 	case "posts":
@@ -162,20 +164,30 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	case "communities":
 		switch sort {
 		case "popular":
-			searchedCommunities := database.GetCommunitiesByNMembers(search)
-			fmt.Println(searchedCommunities)
+			sortedCommunities = database.GetCommunitiesByNMembers(search)
 		case "new":
-			// searchedCommunities := database.GetCommunityBySearchString(search)
-			// api.NewestPost(searchedCommunities)
+			sortedCommunities = database.GetCommunitiesByMostPost(search)
 		}
 
 	case "users":
-		searchedUser := database.GetUserBySearchString(search)
-		fmt.Println(searchedUser)
+		switch sort {
+		case "popular":
+			sortedUsers = database.GetUserByMostPopular(search)
+		case "new":
+			sortedUsers = database.GetUserByMostPost(search)
+		case "most_comments":
+			sortedUsers = database.GetUserByMostComment(search)
+		}
 	}
 
 	for i := 0; i < len(sortedPosts); i++ {
-		fmt.Println(sortedPosts[i].Content)
+		fmt.Println(sortedPosts[i].Title)
+	}
+	for i := 0; i < len(sortedCommunities); i++ {
+		fmt.Println(sortedCommunities[i].Name)
+	}
+	for i := 0; i < len(sortedUsers); i++ {
+		fmt.Println(sortedUsers[i].Username)
 	}
 
 	searchPage := struct {
