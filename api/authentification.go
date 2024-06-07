@@ -29,7 +29,6 @@ func GetNewUuid() string {
 	if err != nil {
 		log.Fatalf("failed to generate UUID: %v", err)
 	}
-	log.Printf("generated Version 4 UUID %v", uuid)
 	return uuid.String()
 }
 

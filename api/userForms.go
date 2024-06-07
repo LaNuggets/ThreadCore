@@ -4,7 +4,6 @@ import (
 	"ThreadCore/database"
 	"fmt"
 	"net/http"
-	"reflect"
 	"strings"
 )
 
@@ -20,25 +19,25 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	checkUsername := database.GetUserByUsername(username)
 	if (checkUsername != database.User{}) {
 		fmt.Println("username taken") // TO-DO : send error user not found
-		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
 	checkEmail := database.GetUserByEmail(email)
 	if (checkEmail != database.User{}) {
 		fmt.Println("email taken") // TO-DO : send error user not found
-		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	password := r.FormValue("password")
 	passwordConfirm := r.FormValue("passwordConfirm")
 	if passwordConfirm != password {
 		fmt.Println("password and passwordConfirm dont match") // TO-DO : Send error message for confirm password
-		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	} else if password == "" {
 		fmt.Println("password is null") // TO-DO : Send error message for input password
-		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	password = HashPassword(password)
@@ -63,24 +62,25 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user := database.GetUserByUsername(username)
 	if (user == database.User{}) {
 		fmt.Println("username not found") // TO-DO : send error user not found
-		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
 	user2 := database.GetUserByEmail(email)
 	if (user2 == database.User{}) {
 		fmt.Println("email not found") // TO-DO : send error user not found
-		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	if reflect.DeepEqual(user, user2) {
+	if user.Uuid != user2.Uuid {
 		fmt.Println("user not found check username or email") // TO-DO : send error user not found
-		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	if !CheckPasswordHash(user.Password, user.Password) {
+	password := r.FormValue("password")
+	if !CheckPasswordHash(password, user.Password) {
 		fmt.Println("Wrong password") // TO-DO : Send error message for wrong password
-		http.Redirect(w, r, "/connection", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -98,7 +98,7 @@ func Disconnect(w http.ResponseWriter, r *http.Request) {
 
 	DeleteCookie("uuid", w)
 	DeleteCookie("username", w)
-	http.Redirect(w, r, "/connection", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // UPDATE EXISTING user

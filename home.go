@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ThreadCore/api"
 	"html/template"
 	"log"
 	"net/http"
@@ -23,7 +24,12 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.Execute(w, nil)
+	homePage := struct {
+		Connected bool
+	}{
+		Connected: api.GetCookie("uuid", r) != "",
+	}
+	err = tmpl.Execute(w, homePage)
 	if err != nil {
 		log.Printf("\033[31mError executing template: %v\033[0m", err)
 		http.Error(w, "Internal error", http.StatusInternalServerError)

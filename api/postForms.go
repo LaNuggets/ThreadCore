@@ -41,11 +41,11 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	// Get image or video file or link from user
 	mediaPath := ""
 
-	profileOption := r.FormValue("profileOption")
+	profileOption := r.FormValue("mediaOption")
 	if profileOption == "link" {
-		mediaPath = r.FormValue("profileLink")
+		mediaPath = r.FormValue("mediaLink")
 	} else {
-		profile, handler, err := r.FormFile("profile")
+		profile, handler, err := r.FormFile("media")
 
 		if err == http.ErrMissingFile {
 			fmt.Println("no file uploaded")

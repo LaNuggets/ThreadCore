@@ -32,6 +32,26 @@ search.addEventListener("keypress", function(event) {
 //   });
 // });
 
+if(document.getElementById("logout")){
+  document.getElementById("logout").onclick= function() {
+    document.getElementById("disconnect").submit();
+  }
+}
+
+if(document.getElementById("connectionButton")){
+  document.getElementById("connectionButton").onclick= function() {
+    document.getElementById("connection").style.display = 'grid';
+  }
+}
+
+document.addEventListener("click", (evt) => {
+  const formEl = document.getElementById("connection");
+  let targetEl = evt.target; // clicked element
+  if(targetEl == formEl) {
+    document.getElementById("connection").style.display = 'none';
+  }
+});
+
 document.getElementById("createCommunityButton").onclick= function() {
   document.getElementById("createCommunityForm").style.display = 'grid';
 }
@@ -53,6 +73,18 @@ document.addEventListener("click", (evt) => {
   let targetEl = evt.target; // clicked element
   if(targetEl == formEl) {
     document.getElementById("createPostForm").style.display = 'none';
+  }
+});
+
+document.querySelector("article.mediaOptions").addEventListener("click", function(evt){
+  if(evt.target.type === "radio"){
+    if (evt.target.value == "link") {
+      document.getElementById("mediaFile").style.display = 'none';
+      document.getElementById("mediaLink").style.display = 'flex';
+    } else if (evt.target.value == "file") {
+      document.getElementById("mediaFile").style.display = 'flex';
+      document.getElementById("mediaLink").style.display = 'none';
+    }
   }
 });
 
