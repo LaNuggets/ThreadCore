@@ -12,35 +12,79 @@
     <title>Search</title>
 </head>
 <body>
+    <!-- Scripts -->
     <script src="/static/scripts/javascript.js" type="module"></script>
     <script src="/static/scripts/search.js" type="module"></script>
-    <div class="header">
-        <img src="/static/assets/logoForLightTheme.svg" class="logoTheme">
-        <text class="name" >ThreadCore</text>
-        <input placeholder="Search ..." class="input" name="q" id="search"/>
-        <button class="loginButton">Login
-            <svg viewBox="0 0 512 512" class="exit" ><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg>
-        </button>
-    </div>
-    <h1>COMMUNITY</h1>
-    {{if .Search}}
-    <p>{{.Search}}</p>
-    {{range .SearchedPost}}
-    <p>{{.Username}}</p>
-    <p>{{.Content}}</p>
+    <!-- Header -->
+    <header>
+        <section class="logo">
+            <p class="name"><img src="/static/assets/logoForLightTheme.svg" class="logo-image" alt="Logo">ThreadCore</p>
+        </section>
+        <section class="search-bar">
+            <input placeholder="Search Communities, Posts or Users" class="input" id="search"/>
+            <span class="placeholder">Search on ThreadCore</span>
+        </section>
+        <section class="connect-or-user">
+            <!-- <article id="connect">
+                <button class="login">
+                    Login →
+                </button>
+            </article> -->
+            <article id="connected">
+                <button class="logout">
+                    <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" version="1.1" style="enable-background:new 0 0 56.6934 56.6934;" id="Layer_1" class="icon"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg>
+                </button>
+                <button class="profile">
+                    <img id="profilePicture" src="/static/assets/mona lisa.jpg" alt="Profile Picture">
+                </button>
+            </article>
+        </section>
+    </header>
+    <div class="line"></div>
+    <section class="content">
+        <nav>
+            <a href="/" id="home" class="menu">Home</a>
+            <a href="/search/" id="popular" class="menu">Popular</a>
+            <a href="/search/" id="all" class="menu">All</a>
+            <div class="line"></div>
+            <a id="createPostButton" class="menu">Create Post</a>
+            <div class="line"></div>
+            <a id="createCommunityButton" class="menu">Create Community</a>
+        </nav>
+        <main>
+            <h1>COMMUNITY</h1>
+            {{if .Search}}
+            <p>{{.Search}}</p>
+            {{range .SearchedPost}}
+            <p>{{.Username}}</p>
+            <p>{{.Content}}</p>
 
-    {{end}}
-    {{end}}
+            {{end}}
+            {{end}}
 
-    {{if .Media}}
-    <p>{{.Media}}</p>
-    {{end}}
-    {{if .Sort}}
-    <p>{{.Sort}}</p>
-    {{end}}
-    {{if .Time}}
-    <p>{{.Time}}</p>
-    {{end}}
+            {{if .Media}}
+            <p>{{.Media}}</p>
+            {{end}}
+            {{if .Sort}}
+            <p>{{.Sort}}</p>
+            {{end}}
+            {{if .Time}}
+            <p>{{.Time}}</p>
+            {{end}}
+            <div class="honeycomb">
+                <div class="blackhoneycomb"></div>
+                <div class="orangehoneycomb"></div>
+                <div class="blackhoneycomb"></div>
+                <div class="blackhoneycomb"></div>
+                <div class="orangehoneycomb"></div>
+                <div class="orangehoneycomb"></div>
+                <div class="orangehoneycomb"></div>
+            </div>
+        </main>
+        <aside>
+        </aside>
+    </section>
+    
     <div class="media-radio" data-toggle="buttons">
         <label class="">
             <input type="radio" name="test" value="posts" id="posts">Posts

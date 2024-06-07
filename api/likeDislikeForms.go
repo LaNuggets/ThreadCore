@@ -14,7 +14,7 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected
-	userUuid := GetCookie("Uuid", r)
+	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)

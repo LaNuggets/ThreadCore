@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
-	"strconv"
 	"strings"
 )
 
@@ -118,7 +117,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := GetCookie("Uuid", r)
+	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/user/"+userToUpdate.Username, http.StatusSeeOther)
@@ -204,7 +203,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				profilePath = "/static/images/users/profile/" + strconv.Itoa(user.Id) + ext
+				profilePath = "/static/images/users/profile/" + user.Uuid + e
 				GetFileFromForm(profile, handler, err, profilePath)
 			} else {
 				fmt.Println("The file is  not in an image format")
@@ -238,7 +237,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				bannerPath = "/static/images/users/banner/" + strconv.Itoa(user.Id) + ext
+				bannerPath = "/static/images/users/banner/" + user.Uuid + ext
 				GetFileFromForm(banner, handler, err, bannerPath)
 			} else {
 				fmt.Println("The file is  not in an image format")
@@ -269,7 +268,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := GetCookie("Uuid", r)
+	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/user/"+userToDelete.Username, http.StatusSeeOther)
@@ -314,7 +313,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := GetCookie("Uuid", r)
+	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/user/"+userToFollow.Username, http.StatusSeeOther)
@@ -349,7 +348,7 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := GetCookie("Uuid", r)
+	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
 		http.Redirect(w, r, "/user/"+userToFollow.Username, http.StatusSeeOther)
