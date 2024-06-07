@@ -180,6 +180,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	//! just for testing
 	for i := 0; i < len(sortedPosts); i++ {
 		fmt.Println(sortedPosts[i].Title)
 	}
@@ -189,19 +190,24 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < len(sortedUsers); i++ {
 		fmt.Println(sortedUsers[i].Username)
 	}
+	//! just for testing
 
 	searchPage := struct {
-		Search string
-		Media  string
-		Sort   string
-		Time   string
-		// Data   []string
+		Search            string
+		Media             string
+		Sort              string
+		Time              string
+		SortedPosts       []database.PostInfo
+		sortedCommunities []database.CommunityDisplay
+		sortedUsers       []database.User
 	}{
-		Search: search,
-		Media:  media,
-		Sort:   sort,
-		Time:   ChoosenTime,
-		// Data:   data,
+		Search:            search,
+		Media:             media,
+		Sort:              sort,
+		Time:              ChoosenTime,
+		SortedPosts:       sortedPosts,
+		sortedCommunities: sortedCommunities,
+		sortedUsers:       sortedUsers,
 	}
 
 	err = tmpl.Execute(w, searchPage)

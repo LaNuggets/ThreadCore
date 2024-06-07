@@ -30,7 +30,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postId := r.FormValue("postId") // TODO : REMOVE THIS LINE AND IMPLEMENT UUID
+	postUuid := GetNewUuid()
 	title := r.FormValue("title")
 	content := r.FormValue("content")
 	id := r.FormValue("communityId")
@@ -59,7 +59,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" || e == ".mp4" || e == ".webm" || e == ".ogg" {
-				mediaPath = "/static/images/posts/" + postId + ext
+				mediaPath = "/static/images/posts/" + postUuid + ext
 				GetFileFromForm(profile, handler, err, mediaPath)
 			} else {
 				fmt.Println("The file is  not in an image or video format")
@@ -68,10 +68,10 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	post := database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: time.Now()}
+	post := database.Post{Id: 0, Uuid: postUuid, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: time.Now()}
 	database.AddPost(post)
 
-	http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
 }
 
 // UPDATE EXISTING Post
@@ -81,8 +81,8 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postId := r.FormValue("postId")
-	id, _ := strconv.Atoi(postId)
+	postUuid := r.FormValue("postUuid")
+	id, _ := strconv.Atoi(postUuid)
 	post := database.GetPostById(id)
 	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
@@ -94,17 +94,17 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
 		return
 	} else if post.User_id != user.Id {
 		fmt.Println("user not author of post") // TO-DO : Send error message for user not allowed action
-		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
 		return
 	}
 
@@ -140,7 +140,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" || e == ".mp4" || e == ".webm" || e == ".ogg" {
-				mediaPath = "/static/images/posts/" + postId + ext
+				mediaPath = "/static/images/posts/" + postUuid + ext
 				GetFileFromForm(profile, handler, err, mediaPath)
 			} else {
 				fmt.Println("The file is  not in an image or video format")
@@ -152,7 +152,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	updatedPost := database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: post.Created}
 	database.UpdatePostInfo(updatedPost)
 
-	http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
 }
 
 // DELETE Post
