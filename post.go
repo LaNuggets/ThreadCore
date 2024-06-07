@@ -2,6 +2,7 @@ package main
 
 import (
 	"ThreadCore/database"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -26,6 +27,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search", http.StatusSeeOther)
 	}
 	post := database.GetPostByUuid(postUuid)
+	fmt.Println(post)
 
 	postPage := struct {
 		Post database.PostInfo

@@ -251,9 +251,20 @@ header{
   
 }
 
-.createCommunity{
-  position: absolute;
+.form{
+  position: fixed;
+  display: none;
+  background-color: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
   form{
+    align-self: center;
+    justify-self: center;
+    height: min-content;
+    width: min-content;
     padding: 20px;
     background: var(--varwhite);
     display: flex;
@@ -291,8 +302,11 @@ header{
       padding: 5px 10px;
       outline: none;
     }
+    .textArea{
+      width:90%;
+      height: 5em;
+    }
     .button {
-      margin: 50px auto 0 auto;
       width: 120px;
       height: 40px;
       border-radius: 5px;
@@ -304,8 +318,18 @@ header{
       color: var(--varblack);
       cursor: pointer;
     }
-    .profile{
+    .fileInputs{
       display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .fileInput{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
     }
     .options{
       position: relative;
@@ -359,20 +383,20 @@ header{
     }
 
     .custum-file-upload {
-      height: 6em;
-      width: 13em;
-      display: flex;
-      flex-direction: column;
+      width: 250px;
+      height: 40px;
+      border-radius: 5px;
+      display: none;
+      flex-direction: row;
       align-items: space-between;
       gap: 20px;
       cursor: pointer;
       align-items: center;
       justify-content: center;
-      border: 2px dashed var(--varblack);
+      border: 2px solid var(--varblack);
       background-color: var(--varwhite);
-      padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0px 48px 35px -48px var(--varblack);
+      box-shadow: 4px 4px var(--varblack);
+      padding: 5px 10px;
     }
     
     .custum-file-upload .icon {
@@ -382,8 +406,9 @@ header{
     }
     
     .custum-file-upload .icon svg {
-      height: 80px;
+      height: 30px;
       fill: var(--varblack);
+      opacity: 0.8;
     }
     
     .custum-file-upload .text {
@@ -395,6 +420,7 @@ header{
     .custum-file-upload .text span {
       font-weight: 400;
       color: var(--varblack);
+      opacity: 0.8;
     }
     
     .custum-file-upload input {

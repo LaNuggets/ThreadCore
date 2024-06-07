@@ -79,7 +79,7 @@ func GetPostsBySearchString(searchString string) []PostInfo {
 
 func GetPostsByUser(userId int) []PostInfo {
 	id := strconv.Itoa(userId)
-	rows, err := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE user_id='" + id + "'")
+	rows, err := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE post.user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -107,7 +107,7 @@ func GetPostsByUser(userId int) []PostInfo {
 
 func GetPostsByCommunity(communityId int) []PostInfo {
 	id := strconv.Itoa(communityId)
-	rows, err := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE community_id='" + id + "'")
+	rows, err := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE post.community_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -135,7 +135,7 @@ func GetPostsByCommunity(communityId int) []PostInfo {
 
 func GetPostById(id int) PostInfo {
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE id = '" + id2 + "'")
+	rows, _ := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE post.id = '" + id2 + "'")
 	defer rows.Close()
 
 	temppostInfo := TempPostInfo{}
@@ -155,14 +155,13 @@ func GetPostById(id int) PostInfo {
 }
 
 func GetPostByUuid(uuid string) PostInfo {
-	rows, _ := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE uuid = '" + uuid + "'")
+	rows, _ := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.user_id, user.username, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE post.uuid = '" + uuid + "'")
 	defer rows.Close()
 
 	temppostInfo := TempPostInfo{}
 
 	for rows.Next() {
 		rows.Scan(&temppostInfo.Id, &temppostInfo.Uuid, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Community_id, &temppostInfo.Created)
-
 	}
 
 	postInfo := PostInfo{Id: temppostInfo.Id, Uuid: temppostInfo.Uuid, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Community_id: 0, CommunityName: "", Created: temppostInfo.Created}
