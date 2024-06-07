@@ -42,9 +42,13 @@
 - Filtrage listes Posts par date creation
 
 06/6:
+- Avencé sur les filtres
+- Front end home page plus formulaire
 
 07/6:
-
+- Filtrage plus affichage terminer
+- Front end home page plus formulaire terminer
+- Transformation des null en 0 dans la table de donné SQLite
 
 10/6:
 
