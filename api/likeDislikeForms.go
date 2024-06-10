@@ -17,13 +17,13 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 

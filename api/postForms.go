@@ -20,13 +20,13 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -71,7 +71,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	post := database.Post{Id: 0, Uuid: postUuid, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: time.Now()}
 	database.AddPost(post)
 
-	http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+created+!", http.StatusSeeOther)
 }
 
 // UPDATE EXISTING Post
@@ -86,7 +86,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	post := database.GetPostById(id)
 	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/?type=error&message=Post+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -94,17 +94,17 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	} else if post.User_id != user.Id {
 		fmt.Println("user not author of post") // TO-DO : Send error message for user not allowed action
-		http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=User+not+alowed+to+do+this+action+!", http.StatusSeeOther)
 		return
 	}
 
@@ -152,7 +152,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	updatedPost := database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: post.Created}
 	database.UpdatePostInfo(updatedPost)
 
-	http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+update+!", http.StatusSeeOther)
 }
 
 // DELETE Post
@@ -167,7 +167,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	post := database.GetPostById(id)
 	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
-		http.Redirect(w, r, "/search/", http.StatusSeeOther)
+		http.Redirect(w, r, "/search/?type=error&message=Post+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -175,29 +175,29 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("Uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	} else if post.User_id != user.Id {
 		fmt.Println("user not author of post") // TO-DO : Send error message for user not allowed action
-		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId+"?type=error&message=User+not+alowed+to+do+this+action+!", http.StatusSeeOther)
 		return
 	}
 
 	confirm := r.FormValue("confirm")
 	if confirm != "true" {
 		fmt.Println("user did not confirm deletion") // TO-DO : Send error message need to confirm before submiting
-		http.Redirect(w, r, "/post/"+postId, http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+postId+"?type=error&message=Confim+deletion+!", http.StatusSeeOther)
 		return
 	} else {
 		database.DeletePost(post.Id)
 	}
 
 	//Send confirmation message
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/?type=success&messagePost+succesfully+deleted+!", http.StatusSeeOther)
 }
