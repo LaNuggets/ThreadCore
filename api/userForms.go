@@ -19,7 +19,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	checkUsername := database.GetUserByUsername(username)
 	if (checkUsername != database.User{}) {
 		fmt.Println("username taken") // TO-DO : send error user not found
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=Username+taken%2C+please+choose+another+one.", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
