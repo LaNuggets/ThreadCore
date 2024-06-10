@@ -67,8 +67,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-
-	post := database.Post{Id: 0, Uuid: postUuid, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: time.Now()}
+	post := database.Post{Id: 0, Uuid: postUuid, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: (time.Now())}
 	database.AddPost(post)
 
 	http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)

@@ -45,7 +45,8 @@ type TempPostInfo struct {
 }
 
 func AddPost(post Post) {
-	query, _ := DB.Prepare("INSERT INTO post (uuid,title, content, media, user_id, community_id, created) VALUES (?, ?, ?, ?, ?, NULLIF(?, 0), ?)")
+	query, err := DB.Prepare("INSERT INTO post (uuid, title, content, media, user_id, community_id, created) VALUES (?, ?, ?, ?, ?, NULLIF(?, 0), ?)")
+	CheckErr(err)
 	query.Exec(post.Uuid, post.Title, post.Content, post.Media, post.User_id, post.Community_id, post.Created)
 	defer query.Close()
 }

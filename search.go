@@ -193,21 +193,23 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	//! just for testing
 
 	searchPage := struct {
-		Search            string
-		Media             string
-		Sort              string
-		Time              string
-		SortedPosts       []database.PostInfo
-		SortedCommunities []database.CommunityDisplay
-		SortedUsers       []database.User
+		Connected bool
+		// Search            string
+		// Media             string
+		// Sort              string
+		// Time              string
+		// SortedPosts       []database.PostInfo
+		// SortedCommunities []database.CommunityDisplay
+		// SortedUsers       []database.User
 	}{
-		Search:            search,
-		Media:             media,
-		Sort:              sort,
-		Time:              ChoosenTime,
-		SortedPosts:       sortedPosts,
-		SortedCommunities: sortedCommunities,
-		SortedUsers:       sortedUsers,
+		Connected: api.GetCookie("uuid", r) != "",
+		// Search:            search,
+		// Media:             media,
+		// Sort:              sort,
+		// Time:              ChoosenTime,
+		// SortedPosts:       sortedPosts,
+		// SortedCommunities: sortedCommunities,
+		// SortedUsers:       sortedUsers,
 	}
 
 	err = tmpl.Execute(w, searchPage)

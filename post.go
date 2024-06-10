@@ -1,8 +1,8 @@
 package main
 
 import (
+	"ThreadCore/api"
 	"ThreadCore/database"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -27,12 +27,16 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search", http.StatusSeeOther)
 	}
 	post := database.GetPostByUuid(postUuid)
-	fmt.Println(post)
+	comments := database.GetCommentsByPost(post.Id)
 
 	postPage := struct {
-		Post database.PostInfo
+		Connected bool
+		Post      database.PostInfo
+		Comments  []database.CommentInfo
 	}{
-		Post: post,
+		Connected: api.GetCookie("uuid", r) != "",
+		Post:      post,
+		Comments:  comments,
 	}
 
 	err = tmpl.Execute(w, postPage)

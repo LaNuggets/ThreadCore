@@ -1,0 +1,20 @@
+.post{
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2em;
+    .community{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        .info{
+            display: flex;
+            flex-direction: column;
+            background-color: var(--varwhite);
+            .name_time{
+                display: flex;
+            }
+        }
+    }
+}
