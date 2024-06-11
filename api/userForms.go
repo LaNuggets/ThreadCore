@@ -62,14 +62,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user := database.GetUserByUsername(username)
 	if (user == database.User{}) {
 		fmt.Println("username not found") // TO-DO : send error user not found
-		http.Redirect(w, r, "/?type=error&message=Username+taken%2C+please+choose+another+one+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
 	user2 := database.GetUserByEmail(email)
 	if (user2 == database.User{}) {
 		fmt.Println("email not found") // TO-DO : send error user not found
-		http.Redirect(w, r, "/?type=error&message=Email+taken%2C+please+choose+another+one+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=Email+not+found+!", http.StatusSeeOther)
 		return
 	}
 	if user.Uuid != user2.Uuid {

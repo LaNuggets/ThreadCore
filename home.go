@@ -24,6 +24,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal error, template not found.", http.StatusInternalServerError)
 		return
 	}
+	// user_uuid := api.GetCookie("uuid", r)
+	// user := database.GetUserByUuid(user_uuid)
 
 	userUuid := api.GetCookie("uuid", r)
 	userProfile := database.GetUserByUuid(userUuid).Profile

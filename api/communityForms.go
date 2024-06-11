@@ -331,12 +331,11 @@ func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if database.ExistsUserCommunity(user.Id, communityid) {
+	if database.ExistsUserCommunity(user.Id, communityid) && user.Id != community.User_id {
 		database.DeleteUserCommunity(user.Id, communityid)
 		http.Redirect(w, r, "/community/?type=success&message=Community+deleted+!", http.StatusSeeOther)
 	} else {
 		fmt.Println("user already not following this community")
 		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=Community+not+exist+!", http.StatusSeeOther)
-
 	}
 }
