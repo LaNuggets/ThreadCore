@@ -2,6 +2,7 @@ package main
 
 import (
 	"ThreadCore/api"
+	"ThreadCore/database"
 	"html/template"
 	"log"
 	"net/http"
@@ -24,10 +25,15 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userUuid := api.GetCookie("uuid", r)
+	userProfile := database.GetUserByUuid(userUuid).Profile
+
 	homePage := struct {
 		Connected bool
+		Profile   string
 	}{
-		Connected: api.GetCookie("uuid", r) != "",
+		Connected: userUuid != "",
+		Profile:   userProfile,
 	}
 	err = tmpl.Execute(w, homePage)
 	if err != nil {

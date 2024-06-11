@@ -30,6 +30,8 @@ func AddCommunity(community Community) {
 	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, description, user_id) VALUES (?, ?, ?, ?, ?)")
 	query.Exec(community.Profile, community.Banner, community.Name, community.Description, community.User_id)
 	defer query.Close()
+	newcommunity := GetCommunityByName(community.Name)
+	AddUserCommunity(newcommunity.User_id, newcommunity.Id)
 }
 
 func GetCommunityById(id int) Community {
