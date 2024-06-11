@@ -15,6 +15,14 @@ type Like struct {
 	User_id    int
 }
 
+type TempLike struct {
+	Id         int
+	Rating     string
+	Comment_id *int
+	Post_id    *int
+	User_id    int
+}
+
 func AddLike(like Like) {
 	query, _ := DB.Prepare("INSERT INTO like (rating, comment_id, post_id, user_id) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?)")
 	query.Exec(like.Rating, like.Comment_id, like.Post_id, like.User_id)
@@ -32,10 +40,15 @@ func GetLikesByPost(postId int) []Like {
 	likeList := make([]Like, 0)
 
 	for rows.Next() {
-		like := Like{}
-		err = rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+		templike := TempLike{}
+		err = rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
 		CheckErr(err)
-
+		like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
+		if templike.Post_id != nil {
+			like.Post_id = *templike.Post_id
+		} else if templike.Comment_id != nil {
+			like.Comment_id = *templike.Comment_id
+		}
 		likeList = append(likeList, like)
 	}
 
@@ -56,10 +69,15 @@ func GetLikesByUser(userId int) []Like {
 	likeList := make([]Like, 0)
 
 	for rows.Next() {
-		like := Like{}
-		err = rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+		templike := TempLike{}
+		err = rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
 		CheckErr(err)
-
+		like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
+		if templike.Post_id != nil {
+			like.Post_id = *templike.Post_id
+		} else if templike.Comment_id != nil {
+			like.Comment_id = *templike.Comment_id
+		}
 		likeList = append(likeList, like)
 	}
 
@@ -80,10 +98,15 @@ func GetLikesByComment(commentId int) []Like {
 	likeList := make([]Like, 0)
 
 	for rows.Next() {
-		like := Like{}
-		err = rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+		templike := TempLike{}
+		err = rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
 		CheckErr(err)
-
+		like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
+		if templike.Post_id != nil {
+			like.Post_id = *templike.Post_id
+		} else if templike.Comment_id != nil {
+			like.Comment_id = *templike.Comment_id
+		}
 		likeList = append(likeList, like)
 	}
 
@@ -98,12 +121,18 @@ func GetLikeById(id int) Like {
 	rows, _ := DB.Query("SELECT * FROM comment WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
-	like := Like{}
+	templike := TempLike{}
 
 	for rows.Next() {
-		rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+		rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
 	}
 
+	like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
+	if templike.Post_id != nil {
+		like.Post_id = *templike.Post_id
+	} else if templike.Comment_id != nil {
+		like.Comment_id = *templike.Comment_id
+	}
 	return like
 }
 
@@ -113,12 +142,18 @@ func GetLikeByUserComment(user_id int, comment_id int) Like {
 	rows, _ := DB.Query("SELECT * FROM comment WHERE user_id = '" + userId + "' AND comment_id = '" + commentId + "'")
 	defer rows.Close()
 
-	like := Like{}
+	templike := TempLike{}
 
 	for rows.Next() {
-		rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+		rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
 	}
 
+	like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
+	if templike.Post_id != nil {
+		like.Post_id = *templike.Post_id
+	} else if templike.Comment_id != nil {
+		like.Comment_id = *templike.Comment_id
+	}
 	return like
 }
 
@@ -128,12 +163,18 @@ func GetLikeByUserPost(user_id int, post_id int) Like {
 	rows, _ := DB.Query("SELECT * FROM comment WHERE user_id = '" + userId + "' AND post_id = '" + postId + "'")
 	defer rows.Close()
 
-	like := Like{}
+	templike := TempLike{}
 
 	for rows.Next() {
-		rows.Scan(&like.Id, &like.Rating, &like.Comment_id, &like.Post_id, &like.User_id)
+		rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
 	}
 
+	like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
+	if templike.Post_id != nil {
+		like.Post_id = *templike.Post_id
+	} else if templike.Comment_id != nil {
+		like.Comment_id = *templike.Comment_id
+	}
 	return like
 }
 

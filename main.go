@@ -12,7 +12,6 @@ import (
 var port = ":8080"
 
 func main() {
-
 	// Open the database connection in the global varaible DB located in database/DBglobalVariable.go
 	var err error
 	database.DB, err = sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -27,13 +26,10 @@ func main() {
 
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/community/", Community)
-	http.HandleFunc("/friends", Friends)
-	http.HandleFunc("/message", Message)
 	http.HandleFunc("/post/", Post)
 	http.HandleFunc("/user/", User)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/search/", Search)
-	http.HandleFunc("/connection", Connection)
 
 	// Forms routes
 	http.HandleFunc("/createCommunity", api.CreateCommunity)
