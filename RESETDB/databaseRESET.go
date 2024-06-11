@@ -69,6 +69,7 @@ CREATE TABLE post(
 	title VARCHAR(32), 
 	content VARCHAR(500), 
 	media VARCHAR(255), 
+	media_type VARCHAR(255),
 	user_id INTEGER, 
 	community_id INTEGER, 
 	created TIMESTAMP, 
