@@ -2,6 +2,7 @@ package main
 
 import (
 	"ThreadCore/api"
+	"ThreadCore/database"
 	"html/template"
 	"log"
 	"net/http"
@@ -23,11 +24,15 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal error, template not found.", http.StatusInternalServerError)
 		return
 	}
+	user_uuid := api.GetCookie("uuid", r)
+	user := database.GetUserByUuid(user_uuid)
 
 	homePage := struct {
 		Connected bool
+		Username string
 	}{
 		Connected: api.GetCookie("uuid", r) != "",
+		Username: user.Username,
 	}
 	err = tmpl.Execute(w, homePage)
 	if err != nil {
