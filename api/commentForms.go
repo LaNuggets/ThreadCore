@@ -38,7 +38,8 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	comment := database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentId, Content: content, Created: time.Now()}
 	database.AddComment(comment)
 
-	//http.Redirect(w, r, "/comment/"+name, http.StatusSeeOther)
+	postUuid := r.FormValue("postUuid")
+	http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
 }
 
 // UPDATE EXISTING comment

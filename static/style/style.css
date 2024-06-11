@@ -92,9 +92,9 @@ header{
     }
     
     .placeholder {
-      width: 40%;
+      width: 35%;
       position: absolute;
-      top: -10px;
+      top: -17px;
       left: 25%;
       transform: translateX(-50%);
       z-index: 2;
