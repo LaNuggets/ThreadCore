@@ -34,11 +34,11 @@ func main() {
 	database.AddCommunity(c2)
 	database.AddCommunity(c3)
 
-	p1 := database.Post{Id: 1, Title: "I like minecraft", Content: "minecraft is really cool and i like playing it a lot", User_id: 1, Community_id: 1, Created: (time.Now())}
-	p2 := database.Post{Id: 2, Title: "I like my self", Content: "I am beautiful and evrybody need to now that", User_id: 2, Community_id: 2, Created: time.Now().Add(2 * time.Minute)}
-	p3 := database.Post{Id: 3, Title: "Something about Minecraft", Content: "I want to talk about Minecraft", User_id: 1, Community_id: 1, Created: (time.Now()).Add(-(168 * time.Hour))}
-	p4 := database.Post{Id: 4, Title: "Fortinite is shit", Content: "shit shit is", User_id: 3, Community_id: 2, Created: (time.Now()).Add(-(168 * time.Hour))}
-	p5 := database.Post{Id: 5, Title: "Shit is Fortnite", Content: "is shit shit", User_id: 3, Community_id: 2, Created: (time.Now()).Add(-(744 * time.Hour))}
+	p1 := database.Post{Id: 1, Uuid: "uudsfsdfsdid", Title: "I like minecraft", Content: "minecraft is really cool and i like playing it a lot", Media: "media", User_id: 1, Community_id: 1, Created: (time.Now())}
+	p2 := database.Post{Id: 2, Uuid: "jefbfsef", Title: "I like my self", Content: "I am beautiful and evrybody need to now that", Media: "media", User_id: 2, Community_id: 2, Created: time.Now().Add(2 * time.Minute)}
+	p3 := database.Post{Id: 3, Uuid: "usdfdfsdfuid", Title: "Something about Minecraft", Content: "I want to talk about Minecraft", Media: "media", User_id: 1, Community_id: 1, Created: (time.Now()).Add(-(168 * time.Hour))}
+	p4 := database.Post{Id: 4, Uuid: "uuidsfdfsdfd", Title: "Fortinite is shit", Content: "shit shit is", Media: "media", User_id: 3, Community_id: 2, Created: (time.Now()).Add(-(168 * time.Hour))}
+	p5 := database.Post{Id: 5, Uuid: "fjdhfsj", Title: "Shit is Fortnite", Content: "is shit shit", Media: "media", User_id: 3, Community_id: 2, Created: (time.Now()).Add(-(744 * time.Hour))}
 
 	database.AddPost(p1)
 	database.AddPost(p2)

@@ -74,7 +74,7 @@ func AddComment(comment Comment) {
 
 func GetCommentsByPost(postId int) []CommentInfo {
 	id := strconv.Itoa(postId)
-	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id FROM comment WHERE post_id='" + id + "'")
+	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE post_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -104,7 +104,7 @@ func GetCommentsByPost(postId int) []CommentInfo {
 
 func GetCommentsByUser(userId int) []CommentInfo {
 	id := strconv.Itoa(userId)
-	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id FROM comment WHERE user_id='" + id + "'")
+	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -134,7 +134,7 @@ func GetCommentsByUser(userId int) []CommentInfo {
 
 func GetCommentsByComment(commentId int) []CommentInfo {
 	id := strconv.Itoa(commentId)
-	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id FROM comment WHERE comment_id='" + id + "'")
+	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE comment_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -164,7 +164,7 @@ func GetCommentsByComment(commentId int) []CommentInfo {
 
 func GetCommentById(id int) CommentInfo {
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id FROM comment WHERE id = '" + id2 + "'")
+	rows, _ := DB.Query("SELECT comment.id, comment.user_id, user.username, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	tempCommentInfo := TempCommentInfo{}

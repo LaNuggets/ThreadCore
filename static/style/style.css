@@ -217,7 +217,7 @@ header{
   nav{
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: start;
     padding-right: 3em;
     gap: 20px;
     border-right: 1px solid var(--varblack);

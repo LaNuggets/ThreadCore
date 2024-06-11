@@ -40,6 +40,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	// Get image or video file or link from user
 	mediaPath := ""
+	mediaType := ""
 
 	profileOption := r.FormValue("mediaOption")
 	if profileOption == "link" {
@@ -58,8 +59,13 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			}
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
-			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" || e == ".mp4" || e == ".webm" || e == ".ogg" {
+			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
 				mediaPath = "/static/images/posts/" + postUuid + ext
+				mediaType = "image"
+				GetFileFromForm(profile, handler, err, mediaPath)
+			} else if e == ".mp4" || e == ".webm" || e == ".ogg" {
+				mediaPath = "/static/images/posts/" + postUuid + ext
+				mediaType = "video"
 				GetFileFromForm(profile, handler, err, mediaPath)
 			} else {
 				fmt.Println("The file is  not in an image or video format")
@@ -67,8 +73,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-
-	post := database.Post{Id: 0, Uuid: postUuid, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: time.Now()}
+	post := database.Post{Id: 0, Uuid: postUuid, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: user.Id, Community_id: communityId, Created: (time.Now())}
 	database.AddPost(post)
 
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+created+!", http.StatusSeeOther)
@@ -117,6 +122,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 	// Get image or video file or link from user
 	mediaPath := ""
+	mediaType := ""
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
@@ -139,8 +145,13 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 			}
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
-			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" || e == ".mp4" || e == ".webm" || e == ".ogg" {
+			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
 				mediaPath = "/static/images/posts/" + postUuid + ext
+				mediaType = "image"
+				GetFileFromForm(profile, handler, err, mediaPath)
+			} else if e == ".mp4" || e == ".webm" || e == ".ogg" {
+				mediaPath = "/static/images/posts/" + postUuid + ext
+				mediaType = "video"
 				GetFileFromForm(profile, handler, err, mediaPath)
 			} else {
 				fmt.Println("The file is  not in an image or video format")
@@ -149,7 +160,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	updatedPost := database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, User_id: user.Id, Community_id: communityId, Created: post.Created}
+	updatedPost := database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: user.Id, Community_id: communityId, Created: post.Created}
 	database.UpdatePostInfo(updatedPost)
 
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+update+!", http.StatusSeeOther)
