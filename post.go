@@ -23,9 +23,6 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userUuid := api.GetCookie("uuid", r)
-	userProfile := database.GetUserByUuid(userUuid).Profile
-
 	url := strings.ReplaceAll(r.URL.Path, "/post/", "")
 	urlQuery := strings.Split(url, "?")
 	postUuid := urlQuery[0]
@@ -37,9 +34,19 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	comments := database.GetCommentsByPost(post.Id)
 	community := database.GetCommunityById(post.Community_id)
 
-	//Time formating
+	//Time formating for the post
 	difference := time.Now().Sub(post.Created)
 	postedTime := api.GetFormatedDuration(difference)
+
+	//Time formating for comments
+	for i := 0; i < len(comments); i++ {
+		difference := time.Now().Sub(comments[i].Created)
+		comments[i].Time = api.GetFormatedDuration(difference)
+	}
+
+	//ProfilePicture and connection check
+	userUuid := api.GetCookie("uuid", r)
+	userProfile := database.GetUserByUuid(userUuid).Profile
 
 	postPage := struct {
 		Connected bool

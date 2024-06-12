@@ -61,7 +61,7 @@
                 <section class="community">
                     <article class="profile">
                         {{if eq .Post.Community_id 0}}
-                            <img class="profilePicture" src="{{.Profile}}" alt="User Profile">
+                            <img class="profilePicture" src="{{.Post.Profile}}" alt="User Profile">
                         {{else}}
                             <img class="profilePicture" src="{{.Community.Profile}}" alt="Community Profile">
                         {{end}}
@@ -70,12 +70,12 @@
                         {{if eq .Post.Community_id 0}}
                             <article class="name_time">
                                 <p class="name">{{.Post.Username}}</p>
-                                <p class="time">{{.PostTime}}</p>
+                                <p class="time">- {{.PostTime}}</p>
                             </article>
                         {{else}}
                             <article class="name_time">
                                 <p class="name">{{.Post.CommunityName}}</p>
-                                <p class="time">{{.PostTime}}</p>
+                                <p class="time">- {{.PostTime}}</p>
                             </article>
                             <p class="username">{{.Post.Username}}</p>
                         {{end}}
@@ -117,7 +117,28 @@
                         </div>
                     </div>
                 </section>
+                <form action="/createComment" method="post" id="comment-form">
+                    <section class="comment-bar">
+                        <input placeholder="Add your Comment" class="input" id="writeComment" name="content" value=""/>
+                        <span class="placeholder">Share your Opinion on ThreadCode</span>
+                    </section>
+                    <input type="text" name="commentId" value="0" hidden>
+                    <input type="text" name="postId" value="{{.Post.Id}}" hidden>
+                    <input type="text" name="postUuid" value="{{.Post.Uuid}}" hidden>
+                    <input type="submit" hidden>
+                </form>
+                <h1>Comments</h1>
                 <section class="comments">
+                {{if .Comments}}
+                    {{range .Comments}}
+                    <article class="profile">
+                        <img class="profilePicture" src="{{.Profile}}" alt="User Profile">
+                    </article>
+                    <p>{{.Username}}</p>
+                    <p>{{.Time}}</p>
+                    <p>{{.Content}}</p>
+                    {{end}}
+                {{end}}
                 </section>
             </section>
             {{else}}
@@ -136,6 +157,9 @@
         
         </aside>
     </section>
+
+    
+    <!-- HIDDEN FORMS -->
 
     <section id="createPostForm" class="form">
         <form enctype="multipart/form-data" method="post" action="/createPost">
