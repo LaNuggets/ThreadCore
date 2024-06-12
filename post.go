@@ -26,6 +26,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	url := strings.ReplaceAll(r.URL.Path, "/post/", "")
 	urlQuery := strings.Split(url, "?")
 	postUuid := urlQuery[0]
+
 	if strings.Contains(postUuid, "/") {
 		http.Redirect(w, r, "/search", http.StatusSeeOther)
 	}
@@ -46,22 +47,64 @@ func Post(w http.ResponseWriter, r *http.Request) {
 
 	//ProfilePicture and connection check
 	userUuid := api.GetCookie("uuid", r)
-	userProfile := database.GetUserByUuid(userUuid).Profile
+	user := database.GetUserByUuid(userUuid)
+
+	followcount := 0
+	var isFollowing bool
+	if post.Community_id == 0 {
+		followcount = len(database.GetFriendsByUser(post.User_id))
+		isFollowing = database.ExistsFriend(post.User_id, user.Id)
+	} else {
+		followcount = len(database.GetUsersByCommunity(community.Id))
+		isFollowing = database.ExistsUserCommunity(user.Id, post.Community_id)
+	}
+
+	// Get likes and dislikes
+	likes := 0
+	dislikes := 0
+	allRatings := database.GetLikesByPost(post.Id)
+	for i := 0; i < len(allRatings); i++ {
+		if allRatings[i].Rating == "like" {
+			likes += 1
+		} else if allRatings[i].Rating == "dislike" {
+			dislikes += 1
+		}
+	}
+
+	userRating := database.GetLikeByUserPost(user.Id, post.Id).Rating
 
 	postPage := struct {
-		Connected bool
-		Profile   string
-		Post      database.PostInfo
-		PostTime  string
-		Community database.Community
-		Comments  []database.CommentInfo
+		Connected    bool
+		Profile      string
+		Username     string
+		Uuid         string
+		Id           int
+		Post         database.PostInfo
+		PostTime     string
+		PostExists   bool
+		PostLikes    int
+		PostDislikes int
+		UserRating   string
+		Community    database.Community
+		Comments     []database.CommentInfo
+		FollowCount  int
+		IsFollowing  bool
 	}{
-		Connected: userUuid != "",
-		Profile:   userProfile,
-		Post:      post,
-		PostTime:  postedTime,
-		Community: community,
-		Comments:  comments,
+		Connected:    userUuid != "",
+		Profile:      user.Profile,
+		Username:     api.GetCookie("username", r),
+		Uuid:         user.Uuid,
+		Id:           user.Id,
+		Post:         post,
+		PostTime:     postedTime,
+		PostExists:   post != database.PostInfo{},
+		PostLikes:    likes,
+		PostDislikes: dislikes,
+		UserRating:   userRating,
+		Community:    community,
+		Comments:     comments,
+		FollowCount:  followcount,
+		IsFollowing:  isFollowing,
 	}
 
 	err = tmpl.Execute(w, postPage)

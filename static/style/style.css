@@ -63,6 +63,7 @@ header{
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
   padding-bottom: 1em;
+  position:static;
   .logo {
     justify-self: start;
     .name{

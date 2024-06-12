@@ -271,13 +271,14 @@ func FollowCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
 		return
 	}
+	action := r.FormValue("action")
 
 	communityId := r.FormValue("communityId")
 	communityid, _ := strconv.Atoi(communityId)
 	community := database.GetCommunityById(communityid)
 	if (community == database.Community{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
-		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -285,20 +286,22 @@ func FollowCommunity(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=User+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
 	if database.ExistsUserCommunity(user.Id, communityid) {
 		fmt.Println("user already following this community")
+		http.Redirect(w, r, action+"?type=error&message=Your+are+already+following+"+community.Name+"+!", http.StatusSeeOther)
 	} else {
 		database.AddUserCommunity(user.Id, communityid)
+		http.Redirect(w, r, action+"?type=success&message=You+are+now+following+"+community.Name+"+!", http.StatusSeeOther)
 	}
 }
 
@@ -307,13 +310,14 @@ func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
 		return
 	}
+	action := r.FormValue("action")
 
 	communityId := r.FormValue("communityId")
 	communityid, _ := strconv.Atoi(communityId)
 	community := database.GetCommunityById(communityid)
 	if (community == database.Community{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
-		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -321,21 +325,21 @@ func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=User+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
 	if database.ExistsUserCommunity(user.Id, communityid) && user.Id != community.User_id {
 		database.DeleteUserCommunity(user.Id, communityid)
-		http.Redirect(w, r, "/community/?type=success&message=Community+deleted+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=success&message=You+are+not+following+"+community.Name+"+anymore+!", http.StatusSeeOther)
 	} else {
 		fmt.Println("user already not following this community")
-		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=Community+not+exist+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=Your+are+not+following+"+community.Name+"+!", http.StatusSeeOther)
 	}
 }

@@ -118,7 +118,7 @@ func GetLikesByComment(commentId int) []Like {
 
 func GetLikeById(id int) Like {
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT * FROM comment WHERE id = '" + id2 + "'")
+	rows, _ := DB.Query("SELECT * FROM like WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	templike := TempLike{}
@@ -139,7 +139,7 @@ func GetLikeById(id int) Like {
 func GetLikeByUserComment(user_id int, comment_id int) Like {
 	userId := strconv.Itoa(user_id)
 	commentId := strconv.Itoa(comment_id)
-	rows, _ := DB.Query("SELECT * FROM comment WHERE user_id = '" + userId + "' AND comment_id = '" + commentId + "'")
+	rows, _ := DB.Query("SELECT * FROM like WHERE user_id = '" + userId + "' AND comment_id = '" + commentId + "'")
 	defer rows.Close()
 
 	templike := TempLike{}
@@ -160,7 +160,7 @@ func GetLikeByUserComment(user_id int, comment_id int) Like {
 func GetLikeByUserPost(user_id int, post_id int) Like {
 	userId := strconv.Itoa(user_id)
 	postId := strconv.Itoa(post_id)
-	rows, _ := DB.Query("SELECT * FROM comment WHERE user_id = '" + userId + "' AND post_id = '" + postId + "'")
+	rows, _ := DB.Query("SELECT * FROM like WHERE user_id = '" + userId + "' AND post_id = '" + postId + "'")
 	defer rows.Close()
 
 	templike := TempLike{}
@@ -179,11 +179,11 @@ func GetLikeByUserPost(user_id int, post_id int) Like {
 }
 
 func UpdateLike(like Like) {
-	query, err := DB.Prepare("UPDATE like set rating = ?, comment_id = ?, post_id = ?, user_id = ? where id = ?")
+	query, err := DB.Prepare("UPDATE like SET rating = ? where id = ?")
 	CheckErr(err)
 	defer query.Close()
 
-	res, err := query.Exec(like.Rating, like.Comment_id, like.Post_id, like.User_id, like.Id)
+	res, err := query.Exec(like.Rating, like.Id)
 	CheckErr(err)
 
 	affected, err := res.RowsAffected()
@@ -195,7 +195,7 @@ func UpdateLike(like Like) {
 }
 
 func DeleteLike(likeId int) {
-	query, err := DB.Prepare("DELETE FROM like where id = ?")
+	query, err := DB.Prepare("DELETE FROM like WHERE id = ?")
 	CheckErr(err)
 	defer query.Close()
 

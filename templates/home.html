@@ -32,7 +32,7 @@
                     <form id="disconnect" action="/disconnect" method="post" hidden></form>
                 </button>
                 <a class="profile" href="/user/{{.Username}}">
-                    <img id="profilePicture" src="/static/assets/mona lisa.jpg" alt="Profile Picture">
+                    <img id="profilePicture" src="{{.Profile}}" alt="Profile Picture">
                 </a>
             </article>
             {{else}}

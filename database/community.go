@@ -215,7 +215,7 @@ func ExistsUserCommunity(userId int, communityId int) bool {
 
 func GetUsersByCommunity(communityId int) []User {
 	id := strconv.Itoa(communityId)
-	rows, err := DB.Query("SELECT * FROM user INNER JOIN user_community ON user.id = user_community.user_id WHERE user_community.community_id='" + id + "'")
+	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user INNER JOIN user_community ON user.id = user_community.user_id WHERE user_community.community_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()

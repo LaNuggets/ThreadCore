@@ -303,12 +303,13 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
 		return
 	}
+	action := r.FormValue("action")
 
 	uuidToFollow := r.FormValue("uuid")
 	userToFollow := database.GetUserByUuid(uuidToFollow)
 	if (userToFollow == database.User{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
-		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -316,21 +317,24 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
 	if database.ExistsFriend(user.Id, userToFollow.Id) {
 		fmt.Println("user already following this user")
+		http.Redirect(w, r, action+"?type=error&message=You+are+already+following+"+userToFollow.Username+"+!", http.StatusSeeOther)
 	} else {
 		database.AddFriend(user.Id, userToFollow.Id)
+		http.Redirect(w, r, action+"?type=success&message=You+are+now+following+"+userToFollow.Username+"+!", http.StatusSeeOther)
 	}
+
 }
 
 func UnfollowUser(w http.ResponseWriter, r *http.Request) {
@@ -346,26 +350,27 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
 		return
 	}
+	action := r.FormValue("action")
 
 	// Check if user connected and allowed to modify
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
 	if database.ExistsFriend(user.Id, userToFollow.Id) {
 		database.DeleteFriend(user.Id, userToFollow.Id)
-		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=success&message=Successfully+unfollowed+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=success&message=You+are+not+following+"+userToFollow.Username+"+anymore+!", http.StatusSeeOther)
 	} else {
 		fmt.Println("user already not following this user")
-		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=Your+actually+not+following+!", http.StatusSeeOther)
+		http.Redirect(w, r, action+"?type=error&message=Your+are+not+following+"+userToFollow.Username+"+!", http.StatusSeeOther)
 	}
 }

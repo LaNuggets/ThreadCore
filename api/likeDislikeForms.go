@@ -33,12 +33,26 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 	commentid := r.FormValue("commentId")
 	commentId, _ := strconv.Atoi(commentid)
 
-	like := database.GetLikeByUserComment(user.Id, commentId)
+	action := r.FormValue("action")
+
+	var like database.Like
+	if commentId == 0 {
+		like = database.GetLikeByUserPost(user.Id, postId)
+	} else {
+		like = database.GetLikeByUserComment(user.Id, commentId)
+	}
+
 	if (like == database.Like{}) {
 		like = database.Like{Id: 0, Rating: rating, Comment_id: commentId, Post_id: postId, User_id: user.Id}
 		database.AddLike(like)
 	} else {
-		like.Rating = rating
-		database.UpdateLike(like)
+		if like.Rating == rating {
+			database.DeleteLike(like.Id)
+		} else {
+			like.Rating = rating
+			database.UpdateLike(like)
+		}
 	}
+
+	http.Redirect(w, r, action, http.StatusSeeOther)
 }

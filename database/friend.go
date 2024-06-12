@@ -34,8 +34,9 @@ func ExistsFriend(userId int, friendId int) bool {
 	return friend != Friend{}
 }
 
-func GetFriendsByUser(userId string) []User {
-	rows, err := DB.Query("SELECT * FROM user INNER JOIN friend ON user.id = friend.user_id WHERE friend.friend_id='" + userId + "'")
+func GetFriendsByUser(userId int) []User {
+	userid := strconv.Itoa(userId)
+	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user INNER JOIN friend ON user.id = friend.user_id WHERE friend.friend_id='" + userid + "'")
 	defer rows.Close()
 
 	err = rows.Err()
