@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"net/http"
 	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -26,15 +27,15 @@ type CommunityDisplay struct {
 	Username    string
 }
 
-func AddCommunity(community Community) {
+func AddCommunity(community Community, w http.ResponseWriter, r *http.Request) {
 	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, description, user_id) VALUES (?, ?, ?, ?, ?)")
 	query.Exec(community.Profile, community.Banner, community.Name, community.Description, community.User_id)
 	defer query.Close()
-	newcommunity := GetCommunityByName(community.Name)
+	newcommunity := GetCommunityByName(community.Name, w, r)
 	AddUserCommunity(newcommunity.User_id, newcommunity.Id)
 }
 
-func GetCommunityById(id int) Community {
+func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) Community {
 	id2 := strconv.Itoa(id)
 	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
 	defer rows.Close()
@@ -48,30 +49,30 @@ func GetCommunityById(id int) Community {
 	return community
 }
 
-func GetCommunityBySearchString(searchString string) []CommunityDisplay {
+func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
 	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community INNER JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	communityList := make([]CommunityDisplay, 0)
 
 	for rows.Next() {
 		community := CommunityDisplay{}
 		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username)
-		CheckErr(err)
+		CheckErr(err, w, r)
 
 		communityList = append(communityList, community)
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return communityList
 }
 
-func GetCommunityByName(communityName string) Community {
+func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Request) Community {
 	rows, _ := DB.Query("SELECT * FROM community WHERE name = '" + communityName + "'")
 	defer rows.Close()
 
@@ -84,14 +85,14 @@ func GetCommunityByName(communityName string) Community {
 	return community
 }
 
-func GetCommunitiesByNMembers(searchString string) []CommunityDisplay {
+func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
 
 	//, COUNT(user_community.community_id)
 	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	communityList := make([]CommunityDisplay, 0)
 
@@ -102,18 +103,18 @@ func GetCommunitiesByNMembers(searchString string) []CommunityDisplay {
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return communityList
 }
 
-func GetCommunitiesByMostPost(searchString string) []CommunityDisplay {
+func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
 
 	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN post ON post.community_id = community.id JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(post.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	communityList := make([]CommunityDisplay, 0)
 
@@ -124,7 +125,7 @@ func GetCommunitiesByMostPost(searchString string) []CommunityDisplay {
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return communityList
 }
@@ -136,49 +137,49 @@ func GetCommunitiesByMostPost(searchString string) []CommunityDisplay {
 // 	defer rows.Close()
 
 // 	err = rows.Err()
-// 	CheckErr(err)
+// 	CheckErr(err, w, r)
 
 // 	communityList := make([]Community, 0)
 
 // 	for rows.Next() {
 // 		community := Community{}
 // 		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
-// 		CheckErr(err)
+// 		CheckErr(err, w, r)
 // 		communityList = append(communityList, community)
 // 	}
 
 // 	err = rows.Err()
-// 	CheckErr(err)
+// 	CheckErr(err, w, r)
 
 // 	return communityList
 // }
 
-func UpdateCommunityInfo(community Community) {
+func UpdateCommunityInfo(community Community, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("UPDATE community SET profile = ?, banner = ?, name = ?, description = ?, user_id = ? WHERE id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(community.Profile, community.Banner, community.Name, community.Description, &community.User_id, community.Id)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 community was affected")
 	}
 }
 
-func DeleteCommunity(communityId int) {
+func DeleteCommunity(communityId int, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("DELETE FROM community where id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(communityId)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 like was deleted")
@@ -213,64 +214,64 @@ func ExistsUserCommunity(userId int, communityId int) bool {
 	return user_communty != UserCommunity{}
 }
 
-func GetUsersByCommunity(communityId int) []User {
+func GetUsersByCommunity(communityId int, w http.ResponseWriter, r *http.Request) []User {
 	id := strconv.Itoa(communityId)
 	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user INNER JOIN user_community ON user.id = user_community.user_id WHERE user_community.community_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	userList := make([]User, 0)
 
 	for rows.Next() {
 		user := User{}
 		err = rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
-		CheckErr(err)
+		CheckErr(err, w, r)
 
 		userList = append(userList, user)
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return userList
 }
 
-func GetCommunitiesByUser(userId int) []Community {
+func GetCommunitiesByUser(userId int, w http.ResponseWriter, r *http.Request) []Community {
 	id := strconv.Itoa(userId)
 	rows, err := DB.Query("SELECT * FROM community INNER JOIN user_community ON community.id = user_community.community_id WHERE user_community.user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	communityList := make([]Community, 0)
 
 	for rows.Next() {
 		community := Community{}
 		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
-		CheckErr(err)
+		CheckErr(err, w, r)
 
 		communityList = append(communityList, community)
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return communityList
 }
 
-func DeleteUserCommunity(communityId int, userId int) {
+func DeleteUserCommunity(communityId int, userId int, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("DELETE FROM user_community where user_id = ? AND community_id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(userId, communityId)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 like was deleted")

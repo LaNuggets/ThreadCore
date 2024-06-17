@@ -15,7 +15,9 @@ func main() {
 	// Open the database connection in the global varaible DB located in database/DBglobalVariable.go
 	var err error
 	database.DB, err = sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
-	database.CheckErr(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// At the end of the program close the connnection
 	defer database.DB.Close()
@@ -29,6 +31,7 @@ func main() {
 	http.HandleFunc("/post/", Post)
 	http.HandleFunc("/user/", User)
 	http.HandleFunc("/404", NotFound)
+	http.HandleFunc("/500", Error)
 	http.HandleFunc("/search/", Search)
 
 	// Forms routes

@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"net/http"
 	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -29,20 +30,20 @@ func AddLike(like Like) {
 	defer query.Close()
 }
 
-func GetLikesByPost(postId int) []Like {
+func GetLikesByPost(postId int, w http.ResponseWriter, r *http.Request) []Like {
 	id := strconv.Itoa(postId)
 	rows, err := DB.Query("SELECT * FROM like WHERE post_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	likeList := make([]Like, 0)
 
 	for rows.Next() {
 		templike := TempLike{}
 		err = rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
-		CheckErr(err)
+		CheckErr(err, w, r)
 		like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
 		if templike.Post_id != nil {
 			like.Post_id = *templike.Post_id
@@ -53,25 +54,25 @@ func GetLikesByPost(postId int) []Like {
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return likeList
 }
 
-func GetLikesByUser(userId int) []Like {
+func GetLikesByUser(userId int, w http.ResponseWriter, r *http.Request) []Like {
 	id := strconv.Itoa(userId)
 	rows, err := DB.Query("SELECT * FROM like WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	likeList := make([]Like, 0)
 
 	for rows.Next() {
 		templike := TempLike{}
 		err = rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
-		CheckErr(err)
+		CheckErr(err, w, r)
 		like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
 		if templike.Post_id != nil {
 			like.Post_id = *templike.Post_id
@@ -82,25 +83,25 @@ func GetLikesByUser(userId int) []Like {
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return likeList
 }
 
-func GetLikesByComment(commentId int) []Like {
+func GetLikesByComment(commentId int, w http.ResponseWriter, r *http.Request) []Like {
 	id := strconv.Itoa(commentId)
 	rows, err := DB.Query("SELECT * FROM like WHERE comment_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	likeList := make([]Like, 0)
 
 	for rows.Next() {
 		templike := TempLike{}
 		err = rows.Scan(&templike.Id, &templike.Rating, &templike.Comment_id, &templike.Post_id, &templike.User_id)
-		CheckErr(err)
+		CheckErr(err, w, r)
 		like := Like{Id: templike.Id, Rating: templike.Rating, Comment_id: 0, Post_id: 0, User_id: templike.User_id}
 		if templike.Post_id != nil {
 			like.Post_id = *templike.Post_id
@@ -111,12 +112,12 @@ func GetLikesByComment(commentId int) []Like {
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return likeList
 }
 
-func GetLikeById(id int) Like {
+func GetLikeById(id int, w http.ResponseWriter, r *http.Request) Like {
 	id2 := strconv.Itoa(id)
 	rows, _ := DB.Query("SELECT * FROM like WHERE id = '" + id2 + "'")
 	defer rows.Close()
@@ -136,7 +137,7 @@ func GetLikeById(id int) Like {
 	return like
 }
 
-func GetLikeByUserComment(user_id int, comment_id int) Like {
+func GetLikeByUserComment(user_id int, comment_id int, w http.ResponseWriter, r *http.Request) Like {
 	userId := strconv.Itoa(user_id)
 	commentId := strconv.Itoa(comment_id)
 	rows, _ := DB.Query("SELECT * FROM like WHERE user_id = '" + userId + "' AND comment_id = '" + commentId + "'")
@@ -157,7 +158,7 @@ func GetLikeByUserComment(user_id int, comment_id int) Like {
 	return like
 }
 
-func GetLikeByUserPost(user_id int, post_id int) Like {
+func GetLikeByUserPost(user_id int, post_id int, w http.ResponseWriter, r *http.Request) Like {
 	userId := strconv.Itoa(user_id)
 	postId := strconv.Itoa(post_id)
 	rows, _ := DB.Query("SELECT * FROM like WHERE user_id = '" + userId + "' AND post_id = '" + postId + "'")
@@ -178,32 +179,32 @@ func GetLikeByUserPost(user_id int, post_id int) Like {
 	return like
 }
 
-func UpdateLike(like Like) {
+func UpdateLike(like Like, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("UPDATE like SET rating = ? where id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(like.Rating, like.Id)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 user was affected")
 	}
 }
 
-func DeleteLike(likeId int) {
+func DeleteLike(likeId int, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("DELETE FROM like WHERE id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(likeId)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 like was deleted")

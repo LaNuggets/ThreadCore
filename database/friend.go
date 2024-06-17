@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"net/http"
 	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -14,7 +15,7 @@ func AddFriend(userId int, friendId int) {
 	defer query.Close()
 }
 
-func ExistsFriend(userId int, friendId int) bool {
+func ExistsFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request) bool {
 	userid := strconv.Itoa(userId)
 	friendid := strconv.Itoa(friendId)
 
@@ -34,45 +35,45 @@ func ExistsFriend(userId int, friendId int) bool {
 	return friend != Friend{}
 }
 
-func GetFriendsByUser(userId int) []User {
+func GetFriendsByUser(userId int, w http.ResponseWriter, r *http.Request) []User {
 	userid := strconv.Itoa(userId)
 	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user INNER JOIN friend ON user.id = friend.user_id WHERE friend.friend_id='" + userid + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	userList := make([]User, 0)
 
 	for rows.Next() {
 		user := User{}
 		err = rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
-		CheckErr(err)
+		CheckErr(err, w, r)
 
 		userList = append(userList, user)
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return userList
 }
 
-func DeleteFriend(userId int, friendId int) {
+func DeleteFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("DELETE FROM friend where user_id = ? AND friend_id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(userId, friendId)
-	CheckErr(err)
+	CheckErr(err, w, r)
 	res2, err2 := query.Exec(friendId, userId)
-	CheckErr(err2)
+	CheckErr(err2, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected2, err := res2.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	total := strconv.FormatInt(affected+affected2, 10)
 	if affected+affected2 != 2 {

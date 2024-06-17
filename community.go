@@ -29,7 +29,7 @@ func Community(w http.ResponseWriter, r *http.Request) {
 	communityPage := struct {
 		Community database.Community
 	}{
-		Community: database.GetCommunityByName(communityName),
+		Community: database.GetCommunityByName(communityName, w, r),
 	}
 
 	err = tmpl.Execute(w, communityPage)

@@ -16,14 +16,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	// check valid username and email
 	username := r.FormValue("username")
-	checkUsername := database.GetUserByUsername(username)
+	checkUsername := database.GetUserByUsername(username, w, r)
 	if (checkUsername != database.User{}) {
 		fmt.Println("username taken") // TO-DO : send error user not found
 		http.Redirect(w, r, "/?type=error&message=Username+taken%2C+please+choose+another+one+!", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
-	checkEmail := database.GetUserByEmail(email)
+	checkEmail := database.GetUserByEmail(email, w, r)
 	if (checkEmail != database.User{}) {
 		fmt.Println("email taken") // TO-DO : send error email not found
 		http.Redirect(w, r, "/?type=error&message=Email+taken%2C+please+choose+another+one+!", http.StatusSeeOther)
@@ -40,7 +40,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/?type=error&message=Password+is+empty+!", http.StatusSeeOther)
 		return
 	}
-	password = HashPassword(password)
+	password = HashPassword(password, w, r)
 	uuid := GetNewUuid()
 
 	user := database.User{Id: 0, Uuid: uuid, Profile: "/static/images/profileTemplate.png", Banner: "/static/images/bannerTemplate.png", Email: email, Username: username, Password: password}
@@ -59,14 +59,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	username := r.FormValue("username")
-	user := database.GetUserByUsername(username)
+	user := database.GetUserByUsername(username, w, r)
 	if (user == database.User{}) {
 		fmt.Println("username not found") // TO-DO : send error user not found
 		http.Redirect(w, r, "/?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
-	user2 := database.GetUserByEmail(email)
+	user2 := database.GetUserByEmail(email, w, r)
 	if (user2 == database.User{}) {
 		fmt.Println("email not found") // TO-DO : send error user not found
 		http.Redirect(w, r, "/?type=error&message=Email+not+found+!", http.StatusSeeOther)
@@ -109,7 +109,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uuidToUpdate := r.FormValue("uuid")
-	userToUpdate := database.GetUserByUuid(uuidToUpdate)
+	userToUpdate := database.GetUserByUuid(uuidToUpdate, w, r)
 	if (userToUpdate == database.User{}) {
 		fmt.Println("user does not exist") // TO-DO : send error user not found
 		http.Redirect(w, r, "/?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -123,7 +123,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -136,14 +136,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	// check valid username and email
 	username := r.FormValue("username")
-	checkUsername := database.GetUserByUsername(username)
+	checkUsername := database.GetUserByUsername(username, w, r)
 	if (checkUsername != database.User{}) {
 		fmt.Println("username taken") // TO-DO : send error user not found
 		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
-	checkEmail := database.GetUserByEmail(email)
+	checkEmail := database.GetUserByEmail(email, w, r)
 	if (checkEmail != database.User{}) {
 		fmt.Println("email taken") // TO-DO : send error user not found
 		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -171,7 +171,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		password = HashPassword(password)
+		password = HashPassword(password, w, r)
 	} else {
 		password = user.Password
 	}
@@ -247,7 +247,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user = database.User{Id: user.Id, Uuid: user.Uuid, Profile: profilePath, Banner: bannerPath, Email: email, Username: username, Password: password}
-	database.UpdateUserInfo(user)
+	database.UpdateUserInfo(user, w, r)
 
 	http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=success&message=Account+successfully+update+!", http.StatusSeeOther)
 }
@@ -260,7 +260,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uuidToDelete := r.FormValue("uuid")
-	userToDelete := database.GetUserByUuid(uuidToDelete)
+	userToDelete := database.GetUserByUuid(uuidToDelete, w, r)
 	if (userToDelete == database.User{}) {
 		fmt.Println("user does not exist") // TO-DO : send error user not found
 		http.Redirect(w, r, "/?type=error&message=User+does+not+exist+!", http.StatusSeeOther)
@@ -274,7 +274,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/"+userToDelete.Username+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/user/"+userToDelete.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -291,7 +291,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/user/"+user.Username+"?type=error&message=Confirm+deletion+!", http.StatusSeeOther)
 		return
 	} else {
-		database.DeleteUser(user.Id)
+		database.DeleteUser(user.Id, w, r)
 	}
 
 	//Send confirmation message
@@ -306,7 +306,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("action")
 
 	uuidToFollow := r.FormValue("uuid")
-	userToFollow := database.GetUserByUuid(uuidToFollow)
+	userToFollow := database.GetUserByUuid(uuidToFollow, w, r)
 	if (userToFollow == database.User{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
 		http.Redirect(w, r, action+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
@@ -320,14 +320,14 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
-	if database.ExistsFriend(user.Id, userToFollow.Id) {
+	if database.ExistsFriend(user.Id, userToFollow.Id, w, r) {
 		fmt.Println("user already following this user")
 		http.Redirect(w, r, action+"?type=error&message=You+are+already+following+"+userToFollow.Username+"+!", http.StatusSeeOther)
 	} else {
@@ -344,7 +344,7 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uuidToFollow := r.FormValue("uuid")
-	userToFollow := database.GetUserByUuid(uuidToFollow)
+	userToFollow := database.GetUserByUuid(uuidToFollow, w, r)
 	if (userToFollow == database.User{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
 		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
@@ -359,15 +359,15 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
-	if database.ExistsFriend(user.Id, userToFollow.Id) {
-		database.DeleteFriend(user.Id, userToFollow.Id)
+	if database.ExistsFriend(user.Id, userToFollow.Id, w, r) {
+		database.DeleteFriend(user.Id, userToFollow.Id, w, r)
 		http.Redirect(w, r, action+"?type=success&message=You+are+not+following+"+userToFollow.Username+"+anymore+!", http.StatusSeeOther)
 	} else {
 		fmt.Println("user already not following this user")

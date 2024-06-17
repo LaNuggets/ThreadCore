@@ -29,7 +29,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 
 	cookieUuid := api.GetCookie("Uuid", r)
 
-	user := database.GetUserByUuid(cookieUuid)
+	user := database.GetUserByUuid(cookieUuid, w, r)
 
 	userPage := struct {
 		User database.User

@@ -26,7 +26,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userUuid := api.GetCookie("uuid", r)
-	userProfile := database.GetUserByUuid(userUuid).Profile
+	userProfile := database.GetUserByUuid(userUuid, w, r).Profile
 
 	homePage := struct {
 		Connected bool
