@@ -57,6 +57,39 @@
             <a id="createCommunityButton" class="menu">Create Community</a>
         </nav>
         <main>
+            {{if .Connected}}
+            <div class="Banner_PP">
+                <img class="BannerUser" src="{{.UserBanner}}" alt="Banner"></img>
+                <img class="PpUser" src="{{.UserPp}}" alt="PP"></img>
+            </div>
+            <section class="post">
+            {{range .Posts}}
+                <section class="community">
+                    <article class="info">
+                        {{if eq .Community_id 0}}
+                            <article class="name_time">
+                                <p class="name">{{.Username}}</p>
+                            </article>
+                        {{else}}
+                            <article class="name_time">
+                                <p class="name">{{.CommunityName}}</p>
+                            </article>
+                            <p class="username">{{.Username}}</p>
+                        {{end}}
+                    </article>
+                </section>
+                <div class="line"></div>
+                <h1 class="post-title">{{.Title}}</h1>
+                <p class="post-content">{{.Content}}</p>
+                {{if .Media}}
+                    {{if eq .MediaType "image"}}
+                        <img class="media" src="{{.Media}}" alt="Media">
+                    {{else if eq .MediaType "video"}}
+                        <video class="media" src="{{.Media}}" controls>Your browser does not support the video tag.</video>
+                    {{end}}
+                    {{end}}
+            {{end}}
+            {{else}}
             <div class="honeycomb">
                 <div class="blackhoneycomb"></div>
                 <div class="orangehoneycomb"></div>
@@ -66,11 +99,13 @@
                 <div class="orangehoneycomb"></div>
                 <div class="orangehoneycomb"></div>
             </div>
+            {{end}}
         </main>
         <aside>
         </aside>
     </section>
 
+<!-- Hidden Form -->
     <section id="createPostForm" class="form">
         <form enctype="multipart/form-data" method="post" action="/createPost">
             <h1 class="title">Create a Post</h1>

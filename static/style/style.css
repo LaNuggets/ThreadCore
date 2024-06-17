@@ -66,6 +66,7 @@ header{
   .logo {
     justify-self: start;
     .name{
+      cursor: pointer;
       display: flex;
       align-items: center;
       color: #f19601;
