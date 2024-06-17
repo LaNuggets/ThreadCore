@@ -24,6 +24,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal error, template not found.", http.StatusInternalServerError)
 		return
 	}
+	user_uuid := api.GetCookie("uuid", r)
+	user := database.GetUserByUuid(user_uuid, w, r)
 
 	userUuid := api.GetCookie("uuid", r)
 	userProfile := database.GetUserByUuid(userUuid, w, r).Profile
@@ -35,7 +37,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}{
 		Connected: userUuid != "",
 		Profile:   userProfile,
-		Username:  api.GetCookie("username", r),
+		Username:  user.Username,
 	}
 	err = tmpl.Execute(w, homePage)
 	if err != nil {

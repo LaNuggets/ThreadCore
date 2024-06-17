@@ -196,25 +196,25 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	//! just for testing
 
 	searchPage := struct {
-		Connected bool
-		Profile   string
-		// Search            string
-		// Media             string
-		// Sort              string
-		// Time              string
-		// SortedPosts       []database.PostInfo
-		// SortedCommunities []database.CommunityDisplay
-		// SortedUsers       []database.User
+		Connected         bool
+		Profile           string
+		Search            string
+		Media             string
+		Sort              string
+		Time              string
+		SortedPosts       []database.PostInfo
+		SortedCommunities []database.CommunityDisplay
+		SortedUsers       []database.User
 	}{
-		Connected: userUuid != "",
-		Profile:   userProfile,
-		// Search:            search,
-		// Media:             media,
-		// Sort:              sort,
-		// Time:              ChoosenTime,
-		// SortedPosts:       sortedPosts,
-		// SortedCommunities: sortedCommunities,
-		// SortedUsers:       sortedUsers,
+		Connected:         userUuid != "",
+		Profile:           userProfile,
+		Search:            search,
+		Media:             media,
+		Sort:              sort,
+		Time:              ChoosenTime,
+		SortedPosts:       sortedPosts,
+		SortedCommunities: sortedCommunities,
+		SortedUsers:       sortedUsers,
 	}
 
 	err = tmpl.Execute(w, searchPage)

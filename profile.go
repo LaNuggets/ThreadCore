@@ -27,14 +27,23 @@ func User(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 	}
 
-	cookieUuid := api.GetCookie("Uuid", r)
+	cookieUuid := api.GetCookie("uuid", r)
 
 	user := database.GetUserByUuid(cookieUuid, w, r)
+	posts := database.GetPostsByUser(user.Id, w, r)
 
 	userPage := struct {
-		User database.User
+		Connected  bool
+		UserBanner string
+		UserPp     string
+		Username   string
+		Posts      []database.PostInfo
 	}{
-		User: user,
+		Connected:  cookieUuid != "",
+		UserBanner: user.Banner,
+		UserPp:     user.Profile,
+		Username:   user.Username,
+		Posts:      posts,
 	}
 
 	err = tmpl.Execute(w, userPage)
