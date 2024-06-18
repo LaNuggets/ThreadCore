@@ -33,7 +33,9 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 	commentid := r.FormValue("commentId")
 	commentId, _ := strconv.Atoi(commentid)
 
-	action := r.FormValue("action")
+	id := r.FormValue("postUuid")
+	Id, _ := strconv.Atoi(id)
+	postUuid := database.GetPostById(Id, w, r).Uuid
 
 	var like database.Like
 	if commentId == 0 {
@@ -54,5 +56,5 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, action, http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
 }

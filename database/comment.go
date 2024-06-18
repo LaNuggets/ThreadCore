@@ -88,7 +88,7 @@ func GetCommentsByPost(postId int, w http.ResponseWriter, r *http.Request) []Com
 
 	for rows.Next() {
 		tempCommentInfo := TempCommentInfo{}
-		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.Post_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 		CheckErr(err, w, r)
 		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Profile: tempCommentInfo.Profile, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
 		if tempCommentInfo.Comment_id != nil {
@@ -118,7 +118,7 @@ func GetCommentsByUser(userId int, w http.ResponseWriter, r *http.Request) []Com
 
 	for rows.Next() {
 		tempCommentInfo := TempCommentInfo{}
-		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.Post_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 		CheckErr(err, w, r)
 		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Profile: tempCommentInfo.Profile, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
 		if tempCommentInfo.Comment_id != nil {
@@ -148,7 +148,7 @@ func GetCommentsByComment(commentId int, w http.ResponseWriter, r *http.Request)
 
 	for rows.Next() {
 		tempCommentInfo := TempCommentInfo{}
-		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.Post_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 		CheckErr(err, w, r)
 		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Profile: tempCommentInfo.Profile, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
 		if tempCommentInfo.Comment_id != nil {
@@ -174,7 +174,7 @@ func GetCommentById(id int, w http.ResponseWriter, r *http.Request) CommentInfo 
 	tempCommentInfo := TempCommentInfo{}
 
 	for rows.Next() {
-		rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+		rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.Post_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 	}
 
 	commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Profile: tempCommentInfo.Profile, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}

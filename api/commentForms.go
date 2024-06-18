@@ -38,7 +38,9 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	comment := database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentId, Content: content, Created: time.Now()}
 	database.AddComment(comment)
 
-	postUuid := r.FormValue("postUuid")
+	Id := r.FormValue("postUuid")
+	id, _ := strconv.Atoi(Id)
+	postUuid := database.GetPostById(id, w, r).Uuid
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Comment+posted+!", http.StatusSeeOther)
 }
 

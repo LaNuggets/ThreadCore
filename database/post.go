@@ -142,14 +142,13 @@ func GetPostsByCommunity(communityId int, w http.ResponseWriter, r *http.Request
 
 func GetPostById(id int, w http.ResponseWriter, r *http.Request) PostInfo {
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.media_type post.user_id, user.username, user.profile, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE post.id = '" + id2 + "'")
+	rows, _ := DB.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.media_type, post.user_id, user.username, user.profile, post.community_id, post.created FROM post INNER JOIN user ON user.id = post.user_id WHERE post.id = '" + id2 + "'")
 	defer rows.Close()
 
 	temppostInfo := TempPostInfo{}
 
 	for rows.Next() {
 		rows.Scan(&temppostInfo.Id, &temppostInfo.Uuid, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.MediaType, &temppostInfo.User_id, &temppostInfo.Username, &temppostInfo.Profile, &temppostInfo.Community_id, &temppostInfo.Created)
-
 	}
 
 	postInfo := PostInfo{Id: temppostInfo.Id, Uuid: temppostInfo.Uuid, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, MediaType: temppostInfo.MediaType, User_id: temppostInfo.User_id, Username: temppostInfo.Username, Profile: temppostInfo.Profile, Community_id: 0, CommunityName: "", Created: temppostInfo.Created}
