@@ -58,6 +58,34 @@ body {
     }
 }
 
+.usernameLink{
+  text-decoration: none;
+  color: var(--varblack);
+}
+
+.usernameLink:hover{
+  text-decoration: underline;
+}
+
+.classic-button{
+  padding: 0.5em 0.2em 0.5em 0.2em;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 2px solid var(--varblack);
+    background-color: var(--varorange);
+    box-shadow: 4px 4px var(--varblack);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--varblack);
+    cursor: pointer;
+}
+
+.classic-button:active{
+  box-shadow: 0px 0px var(--varblack);
+  transform: translate(3px, 3px);
+}
+
 header{
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
@@ -336,9 +364,14 @@ header{
       justify-content: center;
       gap: 20px;
     }
+    .otherOptions{
+      width: 165px;
+    }
+    .updateOptions{
+      width: 327px;
+    }
     .options{
       position: relative;
-      width: 165px;
       height: 32px;
       background-color: var(--varwhite);
       border: 2px solid var(--varblack);

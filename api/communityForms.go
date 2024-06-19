@@ -140,7 +140,12 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newName := r.FormValue("newName")
+	newName := r.FormValue("name")
+	if newName == "" {
+		fmt.Println("name empty") // TO-DO : Send error message for user not allowed action
+		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=No+community+name+was+sent+!", http.StatusSeeOther)
+		return
+	}
 
 	r.ParseMultipartForm(10 << 20)
 
@@ -216,7 +221,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	community = database.Community{Id: community.Id, Profile: profilePath, Banner: bannerPath, Name: newName, Description: description, User_id: user.Id}
 	database.UpdateCommunityInfo(community, w, r)
 
-	http.Redirect(w, r, "/community/"+newName+"?type=error&message=Community+successfully+update+!", http.StatusSeeOther)
+	http.Redirect(w, r, "/community/"+newName+"?type=success&message=Community+successfully+updated+!", http.StatusSeeOther)
 }
 
 // DELETE COMMUNITY

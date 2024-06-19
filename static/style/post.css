@@ -91,14 +91,6 @@
       border: 3px solid var(--varblack);
   }
 }
-.usernameLink{
-  text-decoration: none;
-  color: var(--varblack);
-}
-
-.usernameLink:hover{
-  text-decoration: underline;
-}
 
 .comment{
   padding-bottom: 2em;
