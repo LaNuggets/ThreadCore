@@ -98,21 +98,26 @@
         {{if .SortedPosts}}
         <section class="post">
         {{range .SortedPosts}}
+        <section class="postHover">
+            <a href="/post/{{.Uuid}}" class="link">
             <section class="community">
                 <article class="info">
                     {{if eq .Community_id 0}}
                         <article class="name_time">
+                            <img class="PP" src="{{.Profile}}"></img>
                             <p class="name">{{.Username}}</p>
+                            <p class="PostTime">- {{.Time}}</p>
                         </article>
                     {{else}}
                         <article class="name_time">
+                            <img class="PP" src="{{.Profile}}"></img>
                             <p class="name">{{.CommunityName}}</p>
+                            <p class="PostTime">- {{.Time}}</p>
                         </article>
                         <p class="username">{{.Username}}</p>
                     {{end}}
                 </article>
             </section>
-            <div class="line"></div>
             <h1 class="post-title">{{.Title}}</h1>
             <p class="post-content">{{.Content}}</p>
                 {{if .Media}}
@@ -122,13 +127,23 @@
                         <video class="media" src="{{.Media}}" controls>Your browser does not support the video tag.</video>
                     {{end}}
                 {{end}}
+                <div class="line"></div>
+            </section>
+        </a>
             {{end}}
             {{else if .SortedCommunities}}
                 {{range .SortedCommunities}}
+                <a href="/community/{{.Name}}" class="link">
                 <article class="filtred_Communities">
-                    <p class="communities_Name">{{.Name}}</p>
+                    <img class="communities_Banner" src="{{.Banner}}"></img>
+                    <img class="communities_Picture" src="{{.Profile}}"></img>
+                    <div class="name_Desc">
+                    <h1 class="communities_Name">{{.Name}}</h1>
                 <p class="communities_Description">{{.Description}}</p>
+            </div>
+                <div class="line"></div>
                 </article>
+            </a>
             {{end}}
                 {{else if .SortedUsers}}
                 <article class="filtred_Users">

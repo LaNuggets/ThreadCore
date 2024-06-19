@@ -24,6 +24,7 @@ body {
     .wrapper {
       --varwhite: #eae7df;
       --varblack: #323232;
+      --varhover: #3232321a;
       --varorange: #f19601;
 
 
@@ -47,6 +48,7 @@ body {
     .wrapper {
       --varwhite: #323232;
       --varblack: #eae7df;
+      --varhover: #eae7df21;
       --varorange: #f19601;
 
       --font-color: #eae7df;

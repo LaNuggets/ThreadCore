@@ -33,6 +33,7 @@ type PostInfo struct {
 	Community_id  int
 	CommunityName string
 	Created       time.Time
+	Time          string
 }
 
 type TempPostInfo struct {
@@ -47,6 +48,7 @@ type TempPostInfo struct {
 	Profile      string
 	Community_id *int
 	Created      time.Time
+	Time         string
 }
 
 func AddPost(post Post) {

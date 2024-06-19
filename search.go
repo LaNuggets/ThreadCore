@@ -24,7 +24,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userUuid := api.GetCookie("uuid", r)
-	userProfile := database.GetUserByUuid(userUuid).Profile
+	user := database.GetUserByUuid(userUuid)
+	userProfile := user.Profile
+	username := user.Username
 
 	search := r.URL.Query().Get("q")
 	media := r.URL.Query().Get("media") // media options  : posts, communities, users
@@ -34,6 +36,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	var sortedPosts []database.PostInfo
 	var sortedCommunities []database.CommunityDisplay
 	var sortedUsers []database.User
+	var difference time.Duration
 
 	switch media {
 	case "posts":
@@ -42,11 +45,18 @@ func Search(w http.ResponseWriter, r *http.Request) {
 			searchedPost := database.GetPostByPopular(search)
 			switch ChoosenTime {
 			case "all_time":
+				for i := 0; i < len(searchedPost); i++ {
+					difference = time.Now().Sub(searchedPost[i].Created)
+					searchedPost[i].Time = api.GetFormatedDuration(difference)
+				}
 				sortedPosts = searchedPost
 			case "year":
 				var YearTime = (time.Now().Add(-(time.Hour * 8764)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -54,6 +64,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour * 744)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -61,6 +74,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour * 168)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -68,6 +84,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour * 24)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -75,6 +94,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -84,11 +106,18 @@ func Search(w http.ResponseWriter, r *http.Request) {
 			api.NewestPost(searchedPost)
 			switch ChoosenTime {
 			case "all_time":
+				for i := 0; i < len(searchedPost); i++ {
+					difference = time.Now().Sub(searchedPost[i].Created)
+					searchedPost[i].Time = api.GetFormatedDuration(difference)
+				}
 				sortedPosts = searchedPost
 			case "year":
 				var YearTime = (time.Now().Add(-(time.Hour * 8764)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -96,6 +125,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour * 744)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -103,6 +135,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour * 168)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -110,6 +145,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour * 24)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -117,6 +155,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -125,11 +166,18 @@ func Search(w http.ResponseWriter, r *http.Request) {
 			searchedPost := database.GetPostByMostComment(search)
 			switch ChoosenTime {
 			case "all_time":
+				for i := 0; i < len(searchedPost); i++ {
+					difference = time.Now().Sub(searchedPost[i].Created)
+					searchedPost[i].Time = api.GetFormatedDuration(difference)
+				}
 				sortedPosts = searchedPost
 			case "year":
 				var YearTime = (time.Now().Add(-(time.Hour * 8764)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -137,6 +185,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var monthTime = (time.Now().Add(-(time.Hour * 744)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(monthTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -144,6 +195,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var weekTime = (time.Now().Add(-(time.Hour * 168)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(weekTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -151,6 +205,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var dayTime = (time.Now().Add(-(time.Hour * 24)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(dayTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -158,6 +215,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var hourTime = (time.Now().Add(-(time.Hour)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(hourTime)) {
+						//Time formating for the post
+						difference = time.Now().Sub(searchedPost[i].Created)
+						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
 					}
 				}
@@ -185,7 +245,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 
 	//! just for testing
 	for i := 0; i < len(sortedPosts); i++ {
-		fmt.Println(sortedPosts[i].Title)
+		fmt.Println(sortedPosts[i].Time)
 	}
 	for i := 0; i < len(sortedCommunities); i++ {
 		fmt.Println(sortedCommunities[i].Name)
@@ -202,6 +262,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Media             string
 		Sort              string
 		Time              string
+		Username          string
 		SortedPosts       []database.PostInfo
 		SortedCommunities []database.CommunityDisplay
 		SortedUsers       []database.User
@@ -212,6 +273,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Media:             media,
 		Sort:              sort,
 		Time:              ChoosenTime,
+		Username:          username,
 		SortedPosts:       sortedPosts,
 		SortedCommunities: sortedCommunities,
 		SortedUsers:       sortedUsers,

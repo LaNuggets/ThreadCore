@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ThreadCore/api"
 	"ThreadCore/database"
 	"html/template"
 	"log"
@@ -26,10 +27,14 @@ func Community(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 	}
 
+	userUuid := api.GetCookie("uuid", r)
+
 	communityPage := struct {
 		Community database.Community
+		Connected bool
 	}{
 		Community: database.GetCommunityByName(communityName),
+		Connected: userUuid != "",
 	}
 
 	err = tmpl.Execute(w, communityPage)
