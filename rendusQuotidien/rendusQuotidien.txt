@@ -51,11 +51,18 @@
 - Transformation des null en 0 dans la table de donné SQLite
 
 10/6:
+- Fix la table like de la BDD
+- Fix following sa propre communautée
+- Page Profile
 
 11/6:
+- Messages d'erreur personalisées sur le front end
+- Front end de la page Post
+- Fonctionalite front-end de creation de commentaire ainsi que liker ou disliker un post
 
 12/6:
-
+- Terminer la page Post avec fonctionalites de like et dilike + commentaires et informations
+- debut front end de la page Search
 
 24/6: 
 

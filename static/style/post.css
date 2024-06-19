@@ -92,6 +92,20 @@
   }
 }
 
+.comment{
+  padding-bottom: 2em;
+}
+.comment-subcomment {
+  padding: 2em;
+  padding-left: 0;
+}
+
+.subComments {
+  border-left: 1px solid var(--varblack);
+  margin-left: 2em;
+  padding-left: 2em;
+}
+
 aside{
     border-left: 1px solid var(--varblack);
     .side-bar{

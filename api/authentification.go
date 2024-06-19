@@ -12,9 +12,9 @@ import (
 
 // BCRYPT PASSWORD
 
-func HashPassword(password string) string {
+func HashPassword(password string, w http.ResponseWriter, r *http.Request) string {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	database.CheckErr(err)
+	database.CheckErr(err, w, r)
 	return string(bytes)
 }
 

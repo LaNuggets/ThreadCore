@@ -20,7 +20,7 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/search/?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -33,13 +33,15 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 	commentid := r.FormValue("commentId")
 	commentId, _ := strconv.Atoi(commentid)
 
-	action := r.FormValue("action")
+	id := r.FormValue("postUuid")
+	Id, _ := strconv.Atoi(id)
+	postUuid := database.GetPostById(Id, w, r).Uuid
 
 	var like database.Like
 	if commentId == 0 {
-		like = database.GetLikeByUserPost(user.Id, postId)
+		like = database.GetLikeByUserPost(user.Id, postId, w, r)
 	} else {
-		like = database.GetLikeByUserComment(user.Id, commentId)
+		like = database.GetLikeByUserComment(user.Id, commentId, w, r)
 	}
 
 	if (like == database.Like{}) {
@@ -47,12 +49,12 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 		database.AddLike(like)
 	} else {
 		if like.Rating == rating {
-			database.DeleteLike(like.Id)
+			database.DeleteLike(like.Id, w, r)
 		} else {
 			like.Rating = rating
-			database.UpdateLike(like)
+			database.UpdateLike(like, w, r)
 		}
 	}
 
-	http.Redirect(w, r, action, http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+postUuid, http.StatusSeeOther)
 }

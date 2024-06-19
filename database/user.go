@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"net/http"
 	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -23,12 +24,12 @@ func AddUser(user User) {
 	defer query.Close()
 }
 
-func GetUserByEmail(email string) User {
+func GetUserByEmail(email string, w http.ResponseWriter, r *http.Request) User {
 	rows, err := DB.Query("SELECT * FROM user WHERE email='" + email + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	user := User{}
 
@@ -39,7 +40,7 @@ func GetUserByEmail(email string) User {
 	return user
 }
 
-func GetUserById(id int) User {
+func GetUserById(id int, w http.ResponseWriter, r *http.Request) User {
 	id2 := strconv.Itoa(id)
 	rows, _ := DB.Query("SELECT * FROM user WHERE id = '" + id2 + "'")
 	defer rows.Close()
@@ -53,7 +54,7 @@ func GetUserById(id int) User {
 	return user
 }
 
-func GetUserByUuid(uuid string) User {
+func GetUserByUuid(uuid string, w http.ResponseWriter, r *http.Request) User {
 	rows, _ := DB.Query("SELECT * FROM user WHERE uuid = '" + uuid + "'")
 	defer rows.Close()
 
@@ -66,12 +67,12 @@ func GetUserByUuid(uuid string) User {
 	return user
 }
 
-func GetUserByUsername(username string) User {
+func GetUserByUsername(username string, w http.ResponseWriter, r *http.Request) User {
 	rows, err := DB.Query("SELECT * FROM user WHERE username='" + username + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	user := User{}
 
@@ -82,124 +83,124 @@ func GetUserByUsername(username string) User {
 	return user
 }
 
-func GetUserBySearchString(searchString string) []User {
+func GetUserBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []User {
 	rows, err := DB.Query("SELECT * FROM user WHERE username LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	userList := make([]User, 0)
 
 	for rows.Next() {
 		userDisplay := User{}
 		err = rows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
-		CheckErr(err)
+		CheckErr(err, w, r)
 
 		userList = append(userList, userDisplay)
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return userList
 }
 
-func GetUserByMostPopular(searchString string) []User {
+func GetUserByMostPopular(searchString string, w http.ResponseWriter, r *http.Request) []User {
 	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN friend ON friend.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(friend.user_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	userList := make([]User, 0)
 
 	for rows.Next() {
 		userDisplay := User{}
 		err = rows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
-		CheckErr(err)
+		CheckErr(err, w, r)
 
 		userList = append(userList, userDisplay)
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return userList
 }
 
-func GetUserByMostPost(searchString string) []User {
+func GetUserByMostPost(searchString string, w http.ResponseWriter, r *http.Request) []User {
 	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN post ON post.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(post.user_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	userList := make([]User, 0)
 
 	for rows.Next() {
 		userDisplay := User{}
 		err = rows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
-		CheckErr(err)
+		CheckErr(err, w, r)
 
 		userList = append(userList, userDisplay)
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return userList
 }
 
-func GetUserByMostComment(searchString string) []User {
+func GetUserByMostComment(searchString string, w http.ResponseWriter, r *http.Request) []User {
 	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN comment ON comment.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(comment.user_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	userList := make([]User, 0)
 
 	for rows.Next() {
 		userDisplay := User{}
 		err = rows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
-		CheckErr(err)
+		CheckErr(err, w, r)
 
 		userList = append(userList, userDisplay)
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return userList
 }
 
-func UpdateUserInfo(user User) {
+func UpdateUserInfo(user User, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("UPDATE user set uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? where id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(user.Uuid, user.Profile, user.Banner, user.Username, user.Email, user.Password, user.Id)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 user was affected")
 	}
 }
 
-func DeleteUser(userId int) {
+func DeleteUser(userId int, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("DELETE FROM user where id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(userId)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 user was deleted")

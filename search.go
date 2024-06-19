@@ -24,7 +24,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userUuid := api.GetCookie("uuid", r)
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	userProfile := user.Profile
 	username := user.Username
 
@@ -42,7 +42,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	case "posts":
 		switch sort {
 		case "popular":
-			searchedPost := database.GetPostByPopular(search)
+			searchedPost := database.GetPostByPopular(search, w, r)
 			switch ChoosenTime {
 			case "all_time":
 				for i := 0; i < len(searchedPost); i++ {
@@ -102,7 +102,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		case "new":
-			searchedPost := database.GetPostsBySearchString(search)
+			searchedPost := database.GetPostsBySearchString(search, w, r)
 			api.NewestPost(searchedPost)
 			switch ChoosenTime {
 			case "all_time":
@@ -163,7 +163,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		case "most_comments":
-			searchedPost := database.GetPostByMostComment(search)
+			searchedPost := database.GetPostByMostComment(search, w, r)
 			switch ChoosenTime {
 			case "all_time":
 				for i := 0; i < len(searchedPost); i++ {
@@ -227,19 +227,19 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	case "communities":
 		switch sort {
 		case "popular":
-			sortedCommunities = database.GetCommunitiesByNMembers(search)
+			sortedCommunities = database.GetCommunitiesByNMembers(search, w, r)
 		case "new":
-			sortedCommunities = database.GetCommunitiesByMostPost(search)
+			sortedCommunities = database.GetCommunitiesByMostPost(search, w, r)
 		}
 
 	case "users":
 		switch sort {
 		case "popular":
-			sortedUsers = database.GetUserByMostPopular(search)
+			sortedUsers = database.GetUserByMostPopular(search, w, r)
 		case "new":
-			sortedUsers = database.GetUserByMostPost(search)
+			sortedUsers = database.GetUserByMostPost(search, w, r)
 		case "most_comments":
-			sortedUsers = database.GetUserByMostComment(search)
+			sortedUsers = database.GetUserByMostComment(search, w, r)
 		}
 	}
 

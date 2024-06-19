@@ -2,13 +2,15 @@ package database
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
+	"net/http"
 )
 
 var DB *sql.DB
 
-func CheckErr(err error) {
+func CheckErr(err error, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		http.Redirect(w, r, "/500", http.StatusSeeOther)
 	}
 }

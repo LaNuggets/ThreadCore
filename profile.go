@@ -29,8 +29,8 @@ func User(w http.ResponseWriter, r *http.Request) {
 
 	cookieUuid := api.GetCookie("uuid", r)
 
-	user := database.GetUserByUuid(cookieUuid)
-	posts := database.GetPostsByUser(user.Id)
+	user := database.GetUserByUuid(cookieUuid, w, r)
+	posts := database.GetPostsByUser(user.Id, w, r)
 
 	userPage := struct {
 		Connected  bool

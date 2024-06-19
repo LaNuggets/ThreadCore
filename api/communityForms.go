@@ -22,7 +22,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/search/?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -30,7 +30,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := r.FormValue("name")
-	community := database.GetCommunityByName(name)
+	community := database.GetCommunityByName(name, w, r)
 	if (community != database.Community{}) {
 		fmt.Println("Community already exists") // TO-DO : Send error message for invalid name
 		http.Redirect(w, r, "/search/?type=error&message=Community+name+already+exist+!", http.StatusSeeOther)
@@ -101,7 +101,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 
 	description := r.FormValue("description")
 	community = database.Community{Id: 0, Profile: profilePath, Banner: bannerPath, Name: name, Description: description, User_id: user.Id}
-	database.AddCommunity(community)
+	database.AddCommunity(community, w, r)
 
 	http.Redirect(w, r, "/community/"+name+"?type=success&message=Community+successfully+create+!", http.StatusSeeOther)
 }
@@ -115,7 +115,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 
 	id := r.FormValue("communityId")
 	id2, _ := strconv.Atoi(id)
-	community := database.GetCommunityById(id2)
+	community := database.GetCommunityById(id2, w, r)
 	if (community == database.Community{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
 		http.Redirect(w, r, "/search/?type=error&message=Community+not+found+!", http.StatusSeeOther)
@@ -129,7 +129,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -140,7 +140,12 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newName := r.FormValue("newName")
+	newName := r.FormValue("name")
+	if newName == "" {
+		fmt.Println("name empty") // TO-DO : Send error message for user not allowed action
+		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=No+community+name+was+sent+!", http.StatusSeeOther)
+		return
+	}
 
 	r.ParseMultipartForm(10 << 20)
 
@@ -214,9 +219,9 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 
 	description := r.FormValue("description")
 	community = database.Community{Id: community.Id, Profile: profilePath, Banner: bannerPath, Name: newName, Description: description, User_id: user.Id}
-	database.UpdateCommunityInfo(community)
+	database.UpdateCommunityInfo(community, w, r)
 
-	http.Redirect(w, r, "/community/"+newName+"?type=error&message=Community+successfully+update+!", http.StatusSeeOther)
+	http.Redirect(w, r, "/community/"+newName+"?type=success&message=Community+successfully+updated+!", http.StatusSeeOther)
 }
 
 // DELETE COMMUNITY
@@ -228,7 +233,7 @@ func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
 
 	id := r.FormValue("communityId")
 	id2, _ := strconv.Atoi(id)
-	community := database.GetCommunityById(id2)
+	community := database.GetCommunityById(id2, w, r)
 	if (community == database.Community{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
 		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=Community+does+not+exist+!", http.StatusSeeOther)
@@ -242,7 +247,7 @@ func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -259,7 +264,7 @@ func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=Confirm+deletion+!", http.StatusSeeOther)
 		return
 	} else {
-		database.DeleteCommunity(community.Id)
+		database.DeleteCommunity(community.Id, w, r)
 	}
 
 	//Send confirmation message
@@ -275,7 +280,7 @@ func FollowCommunity(w http.ResponseWriter, r *http.Request) {
 
 	communityId := r.FormValue("communityId")
 	communityid, _ := strconv.Atoi(communityId)
-	community := database.GetCommunityById(communityid)
+	community := database.GetCommunityById(communityid, w, r)
 	if (community == database.Community{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
 		http.Redirect(w, r, action+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
@@ -289,7 +294,7 @@ func FollowCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -314,7 +319,7 @@ func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
 
 	communityId := r.FormValue("communityId")
 	communityid, _ := strconv.Atoi(communityId)
-	community := database.GetCommunityById(communityid)
+	community := database.GetCommunityById(communityid, w, r)
 	if (community == database.Community{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
 		http.Redirect(w, r, action+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
@@ -328,7 +333,7 @@ func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -336,7 +341,7 @@ func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if database.ExistsUserCommunity(user.Id, communityid) && user.Id != community.User_id {
-		database.DeleteUserCommunity(user.Id, communityid)
+		database.DeleteUserCommunity(user.Id, communityid, w, r)
 		http.Redirect(w, r, action+"?type=success&message=You+are+not+following+"+community.Name+"+anymore+!", http.StatusSeeOther)
 	} else {
 		fmt.Println("user already not following this community")

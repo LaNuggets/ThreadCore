@@ -2,6 +2,7 @@ package database
 
 import (
 	"log"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -51,14 +52,14 @@ func AddComment(comment Comment) {
 // 	defer rows.Close()
 
 // 	err = rows.Err()
-// 	CheckErr(err)
+// 	CheckErr(err, w, r)
 
 // 	commentList := make([]CommentInfo, 0)
 
 // 	for rows.Next() {
 // 		tempCommentInfo := TempCommentInfo{}
 // 		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
-// 		CheckErr(err)
+// 		CheckErr(err, w, r)
 // 		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
 // 		if tempCommentInfo.Comment_id != nil {
 // 			commentInfo.Comment_id = *tempCommentInfo.Comment_id
@@ -70,25 +71,25 @@ func AddComment(comment Comment) {
 // 	}
 
 // 	err = rows.Err()
-// 	CheckErr(err)
+// 	CheckErr(err, w, r)
 
 // 	return commentList
 // }
 
-func GetCommentsByPost(postId int) []CommentInfo {
+func GetCommentsByPost(postId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
 	id := strconv.Itoa(postId)
 	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE post_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	commentList := make([]CommentInfo, 0)
 
 	for rows.Next() {
 		tempCommentInfo := TempCommentInfo{}
-		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
-		CheckErr(err)
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.Post_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+		CheckErr(err, w, r)
 		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Profile: tempCommentInfo.Profile, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
 		if tempCommentInfo.Comment_id != nil {
 			commentInfo.Comment_id = *tempCommentInfo.Comment_id
@@ -100,25 +101,25 @@ func GetCommentsByPost(postId int) []CommentInfo {
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return commentList
 }
 
-func GetCommentsByUser(userId int) []CommentInfo {
+func GetCommentsByUser(userId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
 	id := strconv.Itoa(userId)
 	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	commentList := make([]CommentInfo, 0)
 
 	for rows.Next() {
 		tempCommentInfo := TempCommentInfo{}
-		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
-		CheckErr(err)
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.Post_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+		CheckErr(err, w, r)
 		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Profile: tempCommentInfo.Profile, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
 		if tempCommentInfo.Comment_id != nil {
 			commentInfo.Comment_id = *tempCommentInfo.Comment_id
@@ -130,25 +131,25 @@ func GetCommentsByUser(userId int) []CommentInfo {
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return commentList
 }
 
-func GetCommentsByComment(commentId int) []CommentInfo {
+func GetCommentsByComment(commentId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
 	id := strconv.Itoa(commentId)
 	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE comment_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	commentList := make([]CommentInfo, 0)
 
 	for rows.Next() {
 		tempCommentInfo := TempCommentInfo{}
-		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
-		CheckErr(err)
+		err = rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.Post_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+		CheckErr(err, w, r)
 		commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Profile: tempCommentInfo.Profile, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
 		if tempCommentInfo.Comment_id != nil {
 			commentInfo.Comment_id = *tempCommentInfo.Comment_id
@@ -160,12 +161,12 @@ func GetCommentsByComment(commentId int) []CommentInfo {
 	}
 
 	err = rows.Err()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	return commentList
 }
 
-func GetCommentById(id int) CommentInfo {
+func GetCommentById(id int, w http.ResponseWriter, r *http.Request) CommentInfo {
 	id2 := strconv.Itoa(id)
 	rows, _ := DB.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE id = '" + id2 + "'")
 	defer rows.Close()
@@ -173,7 +174,7 @@ func GetCommentById(id int) CommentInfo {
 	tempCommentInfo := TempCommentInfo{}
 
 	for rows.Next() {
-		rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.User_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
+		rows.Scan(&tempCommentInfo.Id, &tempCommentInfo.User_id, &tempCommentInfo.Username, &tempCommentInfo.Profile, &tempCommentInfo.Post_id, &tempCommentInfo.Comment_id, &tempCommentInfo.Content, &tempCommentInfo.Created)
 	}
 
 	commentInfo := CommentInfo{Id: tempCommentInfo.Id, User_id: tempCommentInfo.User_id, Username: tempCommentInfo.Username, Profile: tempCommentInfo.Profile, Post_id: 0, Comment_id: 0, Content: tempCommentInfo.Content, Created: tempCommentInfo.Created}
@@ -187,32 +188,32 @@ func GetCommentById(id int) CommentInfo {
 	return commentInfo
 }
 
-func UpdateCommentInfo(comment Comment) {
+func UpdateCommentInfo(comment Comment, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("UPDATE comment set user_id = ?, post_id = ?, comment_id = ?, content = ?, created = ? where id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(comment.User_id, comment.Post_id, comment.Comment_id, comment.Content, comment.Created, comment.Id)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 comment was affected")
 	}
 }
 
-func DeleteComment(commentId int) {
+func DeleteComment(commentId int, w http.ResponseWriter, r *http.Request) {
 	query, err := DB.Prepare("DELETE FROM comment where id = ?")
-	CheckErr(err)
+	CheckErr(err, w, r)
 	defer query.Close()
 
 	res, err := query.Exec(commentId)
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
-	CheckErr(err)
+	CheckErr(err, w, r)
 
 	if affected > 1 {
 		log.Fatal("Error : More than 1 comment was deleted")

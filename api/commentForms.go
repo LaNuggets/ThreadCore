@@ -22,7 +22,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/search/?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -38,7 +38,9 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	comment := database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentId, Content: content, Created: time.Now()}
 	database.AddComment(comment)
 
-	postUuid := r.FormValue("postUuid")
+	Id := r.FormValue("postUuid")
+	id, _ := strconv.Atoi(Id)
+	postUuid := database.GetPostById(id, w, r).Uuid
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Comment+posted+!", http.StatusSeeOther)
 }
 
@@ -51,7 +53,7 @@ func UpdateComment(w http.ResponseWriter, r *http.Request) {
 
 	commentId := r.FormValue("commentId")
 	commentid, _ := strconv.Atoi(commentId)
-	comment := database.GetCommentById(commentid)
+	comment := database.GetCommentById(commentid, w, r)
 	if (comment == database.CommentInfo{}) {
 		fmt.Println("comment does not exist") // TO-DO : send error comment not found
 		http.Redirect(w, r, "/search/?type=error&message=Comment+not+found+!", http.StatusSeeOther)
@@ -65,7 +67,7 @@ func UpdateComment(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/comment/"+commentId+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/comment/"+commentId+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -95,7 +97,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 
 	commentId := r.FormValue("commentId")
 	commentid, _ := strconv.Atoi(commentId)
-	comment := database.GetCommentById(commentid)
+	comment := database.GetCommentById(commentid, w, r)
 	if (comment == database.CommentInfo{}) {
 		fmt.Println("comment does not exist") // TO-DO : send error comment not found
 		http.Redirect(w, r, "/comment/"+commentId+"?type=error&message=Comment+not+found+!", http.StatusSeeOther)
@@ -109,7 +111,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/comment/"+commentId+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/comment/"+commentId+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -126,7 +128,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/comment/"+commentId+"?type=error&message=Confirm+deletion+!", http.StatusSeeOther)
 		return
 	} else {
-		database.DeleteComment(comment.Id)
+		database.DeleteComment(comment.Id, w, r)
 	}
 
 	//Send confirmation message

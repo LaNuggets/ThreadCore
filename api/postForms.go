@@ -23,7 +23,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/search/?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -74,7 +74,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	post := database.Post{Id: 0, Uuid: postUuid, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: user.Id, Community_id: communityId, Created: (time.Now())}
-	database.AddPost(post)
+	database.AddPost(post, w, r)
 
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+created+!", http.StatusSeeOther)
 }
@@ -88,7 +88,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 	postUuid := r.FormValue("postUuid")
 	id, _ := strconv.Atoi(postUuid)
-	post := database.GetPostById(id)
+	post := database.GetPostById(id, w, r)
 	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
 		http.Redirect(w, r, "/search/?type=error&message=Post+not+found+!", http.StatusSeeOther)
@@ -102,7 +102,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -161,7 +161,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updatedPost := database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: user.Id, Community_id: communityId, Created: post.Created}
-	database.UpdatePostInfo(updatedPost)
+	database.UpdatePostInfo(updatedPost, w, r)
 
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+update+!", http.StatusSeeOther)
 }
@@ -175,7 +175,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 
 	postId := r.FormValue("PostId")
 	id, _ := strconv.Atoi(postId)
-	post := database.GetPostById(id)
+	post := database.GetPostById(id, w, r)
 	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
 		http.Redirect(w, r, "/search/?type=error&message=Post+not+found+!", http.StatusSeeOther)
@@ -189,7 +189,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/post/"+postId+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
-	user := database.GetUserByUuid(userUuid)
+	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
 		http.Redirect(w, r, "/post/"+postId+"?type=error&message=User+not+found+!", http.StatusSeeOther)
@@ -206,7 +206,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/post/"+postId+"?type=error&message=Confim+deletion+!", http.StatusSeeOther)
 		return
 	} else {
-		database.DeletePost(post.Id)
+		database.DeletePost(post.Id, w, r)
 	}
 
 	//Send confirmation message
