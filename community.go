@@ -37,6 +37,8 @@ func Community(w http.ResponseWriter, r *http.Request) {
 	followcount := len(database.GetUsersByCommunity(community.Id, w, r))
 	isFollowing := database.ExistsUserCommunity(user.Id, community.Id)
 
+	//postList := database.GetPostsByCommunity(community.Id, w, r)
+
 	type UserPageInfo struct {
 		Connected bool
 		Profile   string

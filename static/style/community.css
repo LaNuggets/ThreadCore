@@ -21,7 +21,7 @@
   .BannerUser{
     align-self: center;
     width:95%;
-    height: 15em;
+    height: 10em;
     border-radius: 20px;
     object-fit:cover;
   }
