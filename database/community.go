@@ -18,7 +18,7 @@ type Community struct {
 	User_id     int
 }
 
-type CommunityDisplay struct {
+type CommunityInfo struct {
 	Id          int
 	Profile     string
 	Banner      string
@@ -26,6 +26,7 @@ type CommunityDisplay struct {
 	Description string
 	User_id     int
 	Username    string
+	UserProfile string
 }
 
 func AddCommunity(community Community, w http.ResponseWriter, r *http.Request) {
@@ -42,7 +43,7 @@ func AddCommunity(community Community, w http.ResponseWriter, r *http.Request) {
 	AddUserCommunity(newcommunity.User_id, newcommunity.Id, w, r)
 }
 
-func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) Community {
+func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
@@ -50,36 +51,36 @@ func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) Community 
 	defer db.Close()
 
 	id2 := strconv.Itoa(id)
-	rows, _ := db.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
+	rows, _ := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community JOIN user ON user.id = community.user_id WHERE community.id = '" + id2 + "'")
 	defer rows.Close()
 
-	community := Community{}
+	community := CommunityInfo{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
 	}
 
 	return community
 }
 
-func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
+func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community INNER JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%'")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community INNER JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err, w, r)
 
-	communityList := make([]CommunityDisplay, 0)
+	communityList := make([]CommunityInfo, 0)
 
 	for rows.Next() {
-		community := CommunityDisplay{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username)
+		community := CommunityInfo{}
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
 		CheckErr(err, w, r)
 
 		communityList = append(communityList, community)
@@ -91,26 +92,26 @@ func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *h
 	return communityList
 }
 
-func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Request) Community {
+func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Request) CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, _ := db.Query("SELECT * FROM community WHERE name = '" + communityName + "'")
+	rows, _ := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community JOIN user ON user.id = community.user_id WHERE community.name = '" + communityName + "'")
 	defer rows.Close()
 
-	community := Community{}
+	community := CommunityInfo{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
 	}
 
 	return community
 }
 
-func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
+func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *http.Request) []CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
@@ -118,17 +119,17 @@ func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *htt
 	defer db.Close()
 
 	//, COUNT(user_community.community_id)
-	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err, w, r)
 
-	communityList := make([]CommunityDisplay, 0)
+	communityList := make([]CommunityInfo, 0)
 
 	for rows.Next() {
-		community := CommunityDisplay{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username)
+		community := CommunityInfo{}
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
 		communityList = append(communityList, community)
 	}
 
@@ -138,24 +139,24 @@ func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *htt
 	return communityList
 }
 
-func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
+func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *http.Request) []CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN post ON post.community_id = community.id JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(post.community_id) DESC")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community JOIN post ON post.community_id = community.id JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(post.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
 	CheckErr(err, w, r)
 
-	communityList := make([]CommunityDisplay, 0)
+	communityList := make([]CommunityInfo, 0)
 
 	for rows.Next() {
-		community := CommunityDisplay{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username)
+		community := CommunityInfo{}
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
 		communityList = append(communityList, community)
 	}
 

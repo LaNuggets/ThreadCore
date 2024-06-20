@@ -34,7 +34,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	ChoosenTime := r.URL.Query().Get("time")
 
 	var sortedPosts []database.PostInfo
-	var sortedCommunities []database.CommunityDisplay
+	var sortedCommunities []database.CommunityInfo
 	var sortedUsers []database.User
 	var difference time.Duration
 
@@ -260,7 +260,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Profile           string
 		Username          string
 		SortedPosts       []database.PostInfo
-		SortedCommunities []database.CommunityDisplay
+		SortedCommunities []database.CommunityInfo
 		SortedUsers       []database.User
 	}{
 		Connected:         userUuid != "",

@@ -3,7 +3,6 @@ package main
 import (
 	"ThreadCore/api"
 	"ThreadCore/database"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -168,7 +167,7 @@ func Community(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	case "most_comments":
-		searchedPost := database.GetPostByMostCommentByCOmmunity(community.Id, w, r)
+		searchedPost := database.GetPostByMostCommentByCommunity(community.Id, w, r)
 		switch ChoosenTime {
 		case "all_time":
 			for i := 0; i < len(searchedPost); i++ {
@@ -228,6 +227,7 @@ func Community(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+
 	type SortedPostsInfo struct {
 		Post         database.PostInfo
 		PostLikes    int
@@ -253,9 +253,6 @@ func Community(w http.ResponseWriter, r *http.Request) {
 		sortedPostsInfo = append(sortedPostsInfo, sortedPost)
 	}
 
-	fmt.Println(sortedPostsInfo)
-	fmt.Println(sort, ChoosenTime)
-
 	type UserPageInfo struct {
 		Connected bool
 		Profile   string
@@ -273,7 +270,7 @@ func Community(w http.ResponseWriter, r *http.Request) {
 
 	communityPage := struct {
 		User            UserPageInfo
-		Community       database.Community
+		Community       database.CommunityInfo
 		CommunityExists bool
 		FollowCount     int
 		IsFollowing     bool
@@ -281,7 +278,7 @@ func Community(w http.ResponseWriter, r *http.Request) {
 	}{
 		User:            userInfo,
 		Community:       community,
-		CommunityExists: community != database.Community{},
+		CommunityExists: community != database.CommunityInfo{},
 		FollowCount:     followcount,
 		IsFollowing:     isFollowing,
 		SortedPosts:     sortedPostsInfo,

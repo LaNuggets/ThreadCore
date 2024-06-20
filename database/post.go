@@ -225,7 +225,7 @@ func GetPostByMostComment(searchString string, w http.ResponseWriter, r *http.Re
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, err := db.Query("SELECT post.id, post.title, post.content, post.media, post.media_type, post.user_id, user.username, user.profile, post.community_id, community.name, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN comment ON comment.post_id = post.id WHERE post.title LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY post.id ORDER BY COUNT(comment.post_id) DESC")
+	rows, err := db.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.media_type, post.user_id, user.username, user.profile, post.community_id, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN comment ON comment.post_id = post.id WHERE post.title LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY post.id ORDER BY COUNT(comment.post_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -258,7 +258,7 @@ func GetPostByPopular(searchString string, w http.ResponseWriter, r *http.Reques
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, err := db.Query("SELECT post.id, post.title, post.content, post.media, post.media_type, post.user_id, user.username, post.community_id, community.name, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' AND post.title LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
+	rows, err := db.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.media_type, post.user_id, user.username, user.profile, post.community_id, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' AND post.title LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -292,7 +292,7 @@ func GetPostByPopularByCommunity(communityId int, w http.ResponseWriter, r *http
 	defer db.Close()
 
 	communityid := strconv.Itoa(communityId)
-	rows, err := db.Query("SELECT post.id, post.title, post.content, post.media, post.media_type, post.user_id, user.username, post.community_id, community.name, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' AND post.community_id = " + communityid + " GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
+	rows, err := db.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.media_type, post.user_id, user.username, user.profile, post.community_id, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' AND post.community_id = " + communityid + " GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -318,7 +318,7 @@ func GetPostByPopularByCommunity(communityId int, w http.ResponseWriter, r *http
 	return postList
 }
 
-func GetPostByMostCommentByCOmmunity(communityId int, w http.ResponseWriter, r *http.Request) []PostInfo {
+func GetPostByMostCommentByCommunity(communityId int, w http.ResponseWriter, r *http.Request) []PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
@@ -326,7 +326,7 @@ func GetPostByMostCommentByCOmmunity(communityId int, w http.ResponseWriter, r *
 	defer db.Close()
 
 	communityid := strconv.Itoa(communityId)
-	rows, err := db.Query("SELECT post.id, post.title, post.content, post.media, post.media_type, post.user_id, user.username, user.profile, post.community_id, community.name, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN comment ON comment.post_id = post.id WHERE post.community_id = " + communityid + " GROUP BY post.id ORDER BY COUNT(comment.post_id) DESC")
+	rows, err := db.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.media_type, post.user_id, user.username, user.profile, post.community_id, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN comment ON comment.post_id = post.id WHERE post.community_id = " + communityid + " GROUP BY post.id ORDER BY COUNT(comment.post_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
