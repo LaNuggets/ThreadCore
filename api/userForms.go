@@ -286,12 +286,19 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	confirm := r.FormValue("confirm")
+	password := r.FormValue("password")
 	if confirm != "true" {
 		fmt.Println("user did not confirm deletion") // TO-DO : Send error message need to confirm before submiting
 		http.Redirect(w, r, "/user/"+user.Username+"?type=error&message=Confirm+deletion+!", http.StatusSeeOther)
 		return
 	} else {
-		database.DeleteUser(user.Id, w, r)
+		if !CheckPasswordHash(password, userToDelete.Password) {
+			fmt.Println("user did input the right password") // TO-DO : Send error message need to confirm before submiting
+			http.Redirect(w, r, "/user/"+user.Username+"?type=error&message=Wrong+password+!", http.StatusSeeOther)
+			return
+		} else {
+			database.DeleteUser(user.Id, w, r)
+		}
 	}
 
 	//Send confirmation message

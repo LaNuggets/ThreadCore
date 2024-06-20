@@ -258,14 +258,12 @@ func Community(w http.ResponseWriter, r *http.Request) {
 		Profile   string
 		Username  string
 		Uuid      string
-		Id        int
 	}
 	userInfo := UserPageInfo{
 		Connected: userUuid != "",
 		Profile:   user.Profile,
 		Username:  api.GetCookie("username", r),
 		Uuid:      user.Uuid,
-		Id:        user.Id,
 	}
 
 	communityPage := struct {

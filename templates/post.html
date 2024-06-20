@@ -91,7 +91,7 @@
                     </section>
                     <div class="line"></div>
                     <h1 class="post-title">{{.Post.Title}}</h1>
-                    <p class="post-content">{{.Post.Content}}</p>
+                    <pre class="post-content">{{.Post.Content}}</pre>
                     {{if .Post.Media}}
                         {{if eq .Post.MediaType "image"}}
                             <img class="media" src="{{.Post.Media}}" alt="Media">
@@ -344,8 +344,8 @@
                         {{end}}
                     {{end}}
                 </article>
-                <p class="following">{{.FollowCount}} Members</p>
-                <p class="description">{{.Community.Description}}</p>
+                <p class="following">{{.FollowCount}} Member{{if eq .FollowCount 1}}{{else}}s{{end}}</p>
+                <pre class="description">{{.Community.Description}}</pre>
                 {{end}}
             </section>
             {{end}}

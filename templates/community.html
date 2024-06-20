@@ -59,8 +59,6 @@
       <main>
         {{if .Community}}
             {{if .CommunityExists}}
-            
-            
             <section class="community">
                 <section class="Banner_PP">
                     <img class="BannerUser" src="{{.Community.Banner}}" alt="Banner"></img>
@@ -92,6 +90,7 @@
                 {{if .SortedPosts}}
                 <section class="posts">
                     {{range .SortedPosts}}
+                    <div class="line-post"></div>
                     <section class="post">
                         <section class="community">
                             <a class="profile" href="/user/{{.Post.Username}}">
@@ -102,13 +101,12 @@
                                     <a class="usernameLink" href="/user/{{.Post.Username}}">
                                         <p class="name">{{.Post.Username}}</p>
                                     </a>
-                                    <p class="psot-time">- {{.Post.Time}}</p>
+                                    <p class="post-time">- {{.Post.Time}}</p>
                                 </article>
                             </article>
                         </section>
-                        <div class="line"></div>
                         <h1 class="post-title">{{.Post.Title}}</h1>
-                        <p class="post-content">{{.Post.Content}}</p>
+                        <pre class="post-content">{{.Post.Content}}</pre>
                         {{if .Post.Media}}
                             {{if eq .Post.MediaType "image"}}
                                 <img class="media" src="{{.Post.Media}}" alt="Media">
@@ -317,7 +315,7 @@
             {{if .CommunityExists}}
             <section class="side-bar">
                 <article class="side-info">
-                    {{if eq .Community.User_id .User.Id}}
+                    {{if eq .Community.User_uuid .User.Uuid}}
                         <a id="updateCommunityButton" class="classic-button modifyCommunity">Update Community Info</a>
                         <a id="deleteCommunityButton" class="classic-button modifyCommunity">Delete Community</a>
                     {{else}}
@@ -341,7 +339,7 @@
                     {{end}}
                 </article>
                 <p class="following">{{.FollowCount}} Member{{if eq .FollowCount 1}}{{else}}s{{end}}</p>
-                <p class="description">{{.Community.Description}}</p>
+                <pre class="description">{{.Community.Description}}</pre>
                 <h1>Community Owner :</h1>
                 <section class="community-creator">
                     <a class="profile" href="/user/{{.Community.Username}}">

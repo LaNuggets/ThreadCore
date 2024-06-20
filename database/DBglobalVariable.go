@@ -11,3 +11,12 @@ func CheckErr(err error, w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/500", http.StatusSeeOther)
 	}
 }
+
+func ContainsPost(postList []PostInfo, postToFind PostInfo) bool {
+	for _, post := range postList {
+		if post.Uuid == postToFind.Uuid {
+			return true
+		}
+	}
+	return false
+}

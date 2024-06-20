@@ -24,6 +24,7 @@
   }
   .profilePicture{
       height: 3em;
+      width: 3em;
       border-radius: 50%;
   }
   .community{
@@ -130,6 +131,7 @@ aside{
       }
       .profilePicture{
         height: 3em;
+        width: 3em;
         border-radius: 50%;
         border-radius: 100%;
         border-radius: 50%;
