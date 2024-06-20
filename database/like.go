@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strconv"
@@ -24,15 +25,27 @@ type TempLike struct {
 	User_id    int
 }
 
-func AddLike(like Like) {
-	query, _ := DB.Prepare("INSERT INTO like (rating, comment_id, post_id, user_id) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?)")
+func AddLike(like Like, w http.ResponseWriter, r *http.Request) {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, _ := db.Prepare("INSERT INTO like (rating, comment_id, post_id, user_id) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?)")
 	query.Exec(like.Rating, like.Comment_id, like.Post_id, like.User_id)
 	defer query.Close()
 }
 
 func GetLikesByPost(postId int, w http.ResponseWriter, r *http.Request) []Like {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id := strconv.Itoa(postId)
-	rows, err := DB.Query("SELECT * FROM like WHERE post_id='" + id + "'")
+	rows, err := db.Query("SELECT * FROM like WHERE post_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -60,8 +73,14 @@ func GetLikesByPost(postId int, w http.ResponseWriter, r *http.Request) []Like {
 }
 
 func GetLikesByUser(userId int, w http.ResponseWriter, r *http.Request) []Like {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id := strconv.Itoa(userId)
-	rows, err := DB.Query("SELECT * FROM like WHERE user_id='" + id + "'")
+	rows, err := db.Query("SELECT * FROM like WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -89,8 +108,14 @@ func GetLikesByUser(userId int, w http.ResponseWriter, r *http.Request) []Like {
 }
 
 func GetLikesByComment(commentId int, w http.ResponseWriter, r *http.Request) []Like {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id := strconv.Itoa(commentId)
-	rows, err := DB.Query("SELECT * FROM like WHERE comment_id='" + id + "'")
+	rows, err := db.Query("SELECT * FROM like WHERE comment_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -118,8 +143,14 @@ func GetLikesByComment(commentId int, w http.ResponseWriter, r *http.Request) []
 }
 
 func GetLikeById(id int, w http.ResponseWriter, r *http.Request) Like {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT * FROM like WHERE id = '" + id2 + "'")
+	rows, _ := db.Query("SELECT * FROM like WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	templike := TempLike{}
@@ -138,9 +169,15 @@ func GetLikeById(id int, w http.ResponseWriter, r *http.Request) Like {
 }
 
 func GetLikeByUserComment(user_id int, comment_id int, w http.ResponseWriter, r *http.Request) Like {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	userId := strconv.Itoa(user_id)
 	commentId := strconv.Itoa(comment_id)
-	rows, _ := DB.Query("SELECT * FROM like WHERE user_id = '" + userId + "' AND comment_id = '" + commentId + "'")
+	rows, _ := db.Query("SELECT * FROM like WHERE user_id = '" + userId + "' AND comment_id = '" + commentId + "'")
 	defer rows.Close()
 
 	templike := TempLike{}
@@ -159,9 +196,15 @@ func GetLikeByUserComment(user_id int, comment_id int, w http.ResponseWriter, r 
 }
 
 func GetLikeByUserPost(user_id int, post_id int, w http.ResponseWriter, r *http.Request) Like {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	userId := strconv.Itoa(user_id)
 	postId := strconv.Itoa(post_id)
-	rows, _ := DB.Query("SELECT * FROM like WHERE user_id = '" + userId + "' AND post_id = '" + postId + "'")
+	rows, _ := db.Query("SELECT * FROM like WHERE user_id = '" + userId + "' AND post_id = '" + postId + "'")
 	defer rows.Close()
 
 	templike := TempLike{}
@@ -180,7 +223,13 @@ func GetLikeByUserPost(user_id int, post_id int, w http.ResponseWriter, r *http.
 }
 
 func UpdateLike(like Like, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("UPDATE like SET rating = ? where id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("UPDATE like SET rating = ? where id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
@@ -196,7 +245,13 @@ func UpdateLike(like Like, w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteLike(likeId int, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("DELETE FROM like WHERE id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("DELETE FROM like WHERE id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 

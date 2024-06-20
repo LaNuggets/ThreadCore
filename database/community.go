@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strconv"
@@ -28,16 +29,28 @@ type CommunityDisplay struct {
 }
 
 func AddCommunity(community Community, w http.ResponseWriter, r *http.Request) {
-	query, _ := DB.Prepare("INSERT INTO community (profile, banner, name, description, user_id) VALUES (?, ?, ?, ?, ?)")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, _ := db.Prepare("INSERT INTO community (profile, banner, name, description, user_id) VALUES (?, ?, ?, ?, ?)")
 	query.Exec(community.Profile, community.Banner, community.Name, community.Description, community.User_id)
 	defer query.Close()
 	newcommunity := GetCommunityByName(community.Name, w, r)
-	AddUserCommunity(newcommunity.User_id, newcommunity.Id)
+	AddUserCommunity(newcommunity.User_id, newcommunity.Id, w, r)
 }
 
 func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) Community {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
+	rows, _ := db.Query("SELECT * FROM community WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	community := Community{}
@@ -50,7 +63,13 @@ func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) Community 
 }
 
 func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
-	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community INNER JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%'")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community INNER JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -73,7 +92,13 @@ func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *h
 }
 
 func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Request) Community {
-	rows, _ := DB.Query("SELECT * FROM community WHERE name = '" + communityName + "'")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, _ := db.Query("SELECT * FROM community WHERE name = '" + communityName + "'")
 	defer rows.Close()
 
 	community := Community{}
@@ -86,9 +111,14 @@ func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Req
 }
 
 func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
 
 	//, COUNT(user_community.community_id)
-	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -109,8 +139,13 @@ func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *htt
 }
 
 func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *http.Request) []CommunityDisplay {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
 
-	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN post ON post.community_id = community.id JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(post.community_id) DESC")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username FROM community JOIN post ON post.community_id = community.id JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(post.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -133,7 +168,7 @@ func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *htt
 // func GetCommunitiesByNComment() []Community {
 
 // 	//, COUNT(user_community.community_id)
-// 	rows, err := DB.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id FROM community JOIN comment ON comment.community_id = community.id GROUP BY community.id ORDER BY COUNT(comment.post_id) DESC")
+// 	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id FROM community JOIN comment ON comment.community_id = community.id GROUP BY community.id ORDER BY COUNT(comment.post_id) DESC")
 // 	defer rows.Close()
 
 // 	err = rows.Err()
@@ -155,7 +190,13 @@ func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *htt
 // }
 
 func UpdateCommunityInfo(community Community, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("UPDATE community SET profile = ?, banner = ?, name = ?, description = ?, user_id = ? WHERE id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("UPDATE community SET profile = ?, banner = ?, name = ?, description = ?, user_id = ? WHERE id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
@@ -171,7 +212,13 @@ func UpdateCommunityInfo(community Community, w http.ResponseWriter, r *http.Req
 }
 
 func DeleteCommunity(communityId int, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("DELETE FROM community where id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("DELETE FROM community where id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
@@ -188,17 +235,29 @@ func DeleteCommunity(communityId int, w http.ResponseWriter, r *http.Request) {
 
 // USER_COMMUNITY Table handler
 
-func AddUserCommunity(userId int, communityId int) {
-	query, _ := DB.Prepare("INSERT INTO user_community (user_id, community_id) VALUES (?, ?)")
+func AddUserCommunity(userId int, communityId int, w http.ResponseWriter, r *http.Request) {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, _ := db.Prepare("INSERT INTO user_community (user_id, community_id) VALUES (?, ?)")
 	query.Exec(userId, communityId)
 	defer query.Close()
 }
 
-func ExistsUserCommunity(userId int, communityId int) bool {
+func ExistsUserCommunity(userId int, communityId int, w http.ResponseWriter, r *http.Request) bool {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	userid := strconv.Itoa(userId)
 	communityid := strconv.Itoa(communityId)
 
-	rows, _ := DB.Query("SELECT * FROM user_community WHERE user_id = '" + userid + "' AND community_id = '" + communityid + "'")
+	rows, _ := db.Query("SELECT * FROM user_community WHERE user_id = '" + userid + "' AND community_id = '" + communityid + "'")
 	defer rows.Close()
 
 	type UserCommunity struct {
@@ -215,8 +274,14 @@ func ExistsUserCommunity(userId int, communityId int) bool {
 }
 
 func GetUsersByCommunity(communityId int, w http.ResponseWriter, r *http.Request) []User {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id := strconv.Itoa(communityId)
-	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user INNER JOIN user_community ON user.id = user_community.user_id WHERE user_community.community_id='" + id + "'")
+	rows, err := db.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user INNER JOIN user_community ON user.id = user_community.user_id WHERE user_community.community_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -239,8 +304,14 @@ func GetUsersByCommunity(communityId int, w http.ResponseWriter, r *http.Request
 }
 
 func GetCommunitiesByUser(userId int, w http.ResponseWriter, r *http.Request) []Community {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id := strconv.Itoa(userId)
-	rows, err := DB.Query("SELECT * FROM community INNER JOIN user_community ON community.id = user_community.community_id WHERE user_community.user_id='" + id + "'")
+	rows, err := db.Query("SELECT * FROM community INNER JOIN user_community ON community.id = user_community.community_id WHERE user_community.user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -262,8 +333,14 @@ func GetCommunitiesByUser(userId int, w http.ResponseWriter, r *http.Request) []
 	return communityList
 }
 
-func DeleteUserCommunity(communityId int, userId int, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("DELETE FROM user_community where user_id = ? AND community_id = ?")
+func DeleteUserCommunity(userId int, communityId int, w http.ResponseWriter, r *http.Request) {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("DELETE FROM user_community WHERE user_id = ? AND community_id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 

@@ -301,11 +301,11 @@ func FollowCommunity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if database.ExistsUserCommunity(user.Id, communityid) {
+	if database.ExistsUserCommunity(user.Id, communityid, w, r) {
 		fmt.Println("user already following this community")
 		http.Redirect(w, r, action+"?type=error&message=Your+are+already+following+"+community.Name+"+!", http.StatusSeeOther)
 	} else {
-		database.AddUserCommunity(user.Id, communityid)
+		database.AddUserCommunity(user.Id, communityid, w, r)
 		http.Redirect(w, r, action+"?type=success&message=You+are+now+following+"+community.Name+"+!", http.StatusSeeOther)
 	}
 }
@@ -340,7 +340,7 @@ func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if database.ExistsUserCommunity(user.Id, communityid) && user.Id != community.User_id {
+	if database.ExistsUserCommunity(user.Id, communityid, w, r) && user.Id != community.User_id {
 		database.DeleteUserCommunity(user.Id, communityid, w, r)
 		http.Redirect(w, r, action+"?type=success&message=You+are+not+following+"+community.Name+"+anymore+!", http.StatusSeeOther)
 	} else {

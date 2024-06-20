@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strconv"
@@ -8,18 +9,30 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func AddFriend(userId int, friendId int) {
-	query, _ := DB.Prepare("INSERT INTO friend (user_id, friend_id) VALUES (?, ?)")
+func AddFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request) {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, _ := db.Prepare("INSERT INTO friend (user_id, friend_id) VALUES (?, ?)")
 	query.Exec(userId, friendId)
 	query.Exec(friendId, userId)
 	defer query.Close()
 }
 
 func ExistsFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request) bool {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	userid := strconv.Itoa(userId)
 	friendid := strconv.Itoa(friendId)
 
-	rows, _ := DB.Query("SELECT * FROM friend WHERE user_id = '" + userid + "' AND friend_id = '" + friendid + "'")
+	rows, _ := db.Query("SELECT * FROM friend WHERE user_id = '" + userid + "' AND friend_id = '" + friendid + "'")
 	defer rows.Close()
 
 	type Friend struct {
@@ -36,8 +49,14 @@ func ExistsFriend(userId int, friendId int, w http.ResponseWriter, r *http.Reque
 }
 
 func GetFriendsByUser(userId int, w http.ResponseWriter, r *http.Request) []User {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	userid := strconv.Itoa(userId)
-	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user INNER JOIN friend ON user.id = friend.user_id WHERE friend.friend_id='" + userid + "'")
+	rows, err := db.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user INNER JOIN friend ON user.id = friend.user_id WHERE friend.friend_id='" + userid + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -60,7 +79,13 @@ func GetFriendsByUser(userId int, w http.ResponseWriter, r *http.Request) []User
 }
 
 func DeleteFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("DELETE FROM friend where user_id = ? AND friend_id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("DELETE FROM friend where user_id = ? AND friend_id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 

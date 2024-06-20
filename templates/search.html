@@ -76,7 +76,7 @@
                   </div>  
                 </div>
               </div>
-              <div class="sortAndTime">
+        <div class="sortAndTime">
             <div class="sort-select">
                 <select class="sort">
                     <option value="popular" id="popular">Popular</option>
@@ -128,19 +128,20 @@
                     {{end}}
                 {{end}}
                 <div class="line"></div>
-            </section>
-        </a>
+            </a>
+        </section>
+            
             {{end}}
-            {{else if .SortedCommunities}}
-                {{range .SortedCommunities}}
-                <a href="/community/{{.Name}}" class="link">
-                <article class="filtred_Communities">
-                    <img class="communities_Banner" src="{{.Banner}}"></img>
-                    <img class="communities_Picture" src="{{.Profile}}"></img>
-                    <div class="name_Desc">
-                    <h1 class="communities_Name">{{.Name}}</h1>
-                <p class="communities_Description">{{.Description}}</p>
-            </div>
+        {{else if .SortedCommunities}}
+            {{range .SortedCommunities}}
+            <a href="/community/{{.Name}}" class="link">
+            <article class="filtred_Communities">
+                <img class="communities_Banner" src="{{.Banner}}"></img>
+                <img class="communities_Picture" src="{{.Profile}}"></img>
+                <div class="name_Desc">
+                <h1 class="communities_Name">{{.Name}}</h1>
+            <p class="communities_Description">{{.Description}}</p>
+        </div>
                 <div class="line"></div>
                 </article>
             </a>

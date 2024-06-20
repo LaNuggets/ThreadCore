@@ -84,7 +84,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		isFollowing = database.ExistsFriend(post.User_id, user.Id, w, r)
 	} else {
 		followcount = len(database.GetUsersByCommunity(community.Id, w, r))
-		isFollowing = database.ExistsUserCommunity(user.Id, post.Community_id)
+		isFollowing = database.ExistsUserCommunity(user.Id, post.Community_id, w, r)
 	}
 
 	// Get likes and dislikes

@@ -35,7 +35,14 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 
 	id := r.FormValue("postUuid")
 	Id, _ := strconv.Atoi(id)
-	postUuid := database.GetPostById(Id, w, r).Uuid
+	post := database.GetPostById(Id, w, r)
+	postUuid := post.Uuid
+
+	if post.User_id == user.Id {
+		fmt.Println("cannot dislike your own post") // TO-DO : Send error message for user not found
+		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=You+cannot+dislike+your+own+post+!", http.StatusSeeOther)
+		return
+	}
 
 	var like database.Like
 	if commentId == 0 {
@@ -46,7 +53,7 @@ func LikeDislike(w http.ResponseWriter, r *http.Request) {
 
 	if (like == database.Like{}) {
 		like = database.Like{Id: 0, Rating: rating, Comment_id: commentId, Post_id: postId, User_id: user.Id}
-		database.AddLike(like)
+		database.AddLike(like, w, r)
 	} else {
 		if like.Rating == rating {
 			database.DeleteLike(like.Id, w, r)

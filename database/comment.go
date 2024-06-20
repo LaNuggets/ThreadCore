@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strconv"
@@ -41,14 +42,21 @@ type TempCommentInfo struct {
 	Created    time.Time
 }
 
-func AddComment(comment Comment) {
-	query, _ := DB.Prepare("INSERT INTO comment (user_id, post_id, comment_id, content, created) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?, ?)")
+func AddComment(comment Comment, w http.ResponseWriter, r *http.Request) {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, _ := db.Prepare("INSERT INTO comment (user_id, post_id, comment_id, content, created) VALUES (?, NULLIF(?, 0), NULLIF(?, 0), ?, ?)")
 	query.Exec(comment.User_id, comment.Post_id, comment.Comment_id, comment.Content, comment.Created)
 	defer query.Close()
+
 }
 
 // func GetCommentsBySearchString(searchString string) []CommentInfo {
-// 	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE comment.content LIKE '%" + searchString + "%'")
+// 	rows, err := db.Query("SELECT comment.id, comment.user_id, user.username, post.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE comment.content LIKE '%" + searchString + "%'")
 // 	defer rows.Close()
 
 // 	err = rows.Err()
@@ -77,8 +85,14 @@ func AddComment(comment Comment) {
 // }
 
 func GetCommentsByPost(postId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id := strconv.Itoa(postId)
-	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE post_id='" + id + "'")
+	rows, err := db.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE post_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -107,8 +121,14 @@ func GetCommentsByPost(postId int, w http.ResponseWriter, r *http.Request) []Com
 }
 
 func GetCommentsByUser(userId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id := strconv.Itoa(userId)
-	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE user_id='" + id + "'")
+	rows, err := db.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -137,8 +157,14 @@ func GetCommentsByUser(userId int, w http.ResponseWriter, r *http.Request) []Com
 }
 
 func GetCommentsByComment(commentId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id := strconv.Itoa(commentId)
-	rows, err := DB.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE comment_id='" + id + "'")
+	rows, err := db.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE comment_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -167,8 +193,14 @@ func GetCommentsByComment(commentId int, w http.ResponseWriter, r *http.Request)
 }
 
 func GetCommentById(id int, w http.ResponseWriter, r *http.Request) CommentInfo {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE id = '" + id2 + "'")
+	rows, _ := db.Query("SELECT comment.id, comment.user_id, user.username, user.profile, comment.post_id, comment.comment_id, comment.content, comment.created FROM comment INNER JOIN user ON user.id = comment.user_id WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	tempCommentInfo := TempCommentInfo{}
@@ -189,7 +221,13 @@ func GetCommentById(id int, w http.ResponseWriter, r *http.Request) CommentInfo 
 }
 
 func UpdateCommentInfo(comment Comment, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("UPDATE comment set user_id = ?, post_id = ?, comment_id = ?, content = ?, created = ? where id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("UPDATE comment set user_id = ?, post_id = ?, comment_id = ?, content = ?, created = ? where id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
@@ -205,7 +243,13 @@ func UpdateCommentInfo(comment Comment, w http.ResponseWriter, r *http.Request) 
 }
 
 func DeleteComment(commentId int, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("DELETE FROM comment where id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("DELETE FROM comment where id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 

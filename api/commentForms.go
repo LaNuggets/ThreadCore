@@ -36,7 +36,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	content := r.FormValue("content")
 
 	comment := database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentId, Content: content, Created: time.Now()}
-	database.AddComment(comment)
+	database.AddComment(comment, w, r)
 
 	Id := r.FormValue("postUuid")
 	id, _ := strconv.Atoi(Id)
@@ -83,7 +83,7 @@ func UpdateComment(w http.ResponseWriter, r *http.Request) {
 	content := r.FormValue("content")
 
 	commentUpdate := database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentid, Content: content, Created: time.Now()}
-	database.AddComment(commentUpdate)
+	database.AddComment(commentUpdate, w, r)
 
 	http.Redirect(w, r, "/comment/"+commentId+"?type=success&message=Comment+successfully+update+!", http.StatusSeeOther)
 }
