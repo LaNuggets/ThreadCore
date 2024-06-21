@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style/style.css">
     <link rel="stylesheet" href="/static/style/profile.css">
+    <link rel="stylesheet" href="/static/style/notfound.css">
     <link href="../static/assets/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
     <link href="../static/assets/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
-
-
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Zen+Dots&display=swap" rel="stylesheet">
     <title>Profile</title>
 </head>
 <body class="wrapper">
     <!-- Scripts -->
     <script src="/static/scripts/javascript.js" type="module"></script>
+    <script src="/static/scripts/profile.js" type="module"></script>
 
     <!-- Header -->
     <header>
@@ -26,15 +26,15 @@
             <span class="placeholder">Search on ThreadCore</span>
         </section>
         <section class="connect-or-user">
-            {{if .Connected}}
+            {{if .User.Connected}}
             <article id="connected">
                 <button class="logout" id="logout">
                     <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" version="1.1" style="enable-background:new 0 0 56.6934 56.6934;" id="Layer_1" class="icon"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg>
                     <form id="disconnect" action="/disconnect" method="post" hidden></form>
                 </button>
-                <button class="profile">
-                    <img id="profilePicture" src="/static/images/profileTemplate.png" alt="Profile Picture">
-                </button>
+                <a class="profile" href="/user/{{.User.Username}}">
+                  <img id="profilePicture" src="{{.User.Profile}}" alt="Profile Picture">
+              </a>
             </article>
             {{else}}
             <article id="connect">
@@ -57,55 +57,313 @@
             <a id="createCommunityButton" class="menu">Create Community</a>
         </nav>
         <main>
-            {{if .Connected}}
-            <div class="Banner_PP">
-                <img class="BannerUser" src="{{.UserBanner}}" alt="Banner"></img>
-                <img class="PpUser" src="{{.UserPp}}" alt="PP"></img>
-            </div>
-            <section class="post">
-            {{range .Posts}}
-                <section class="community">
-                    <article class="info">
-                        {{if eq .Community_id 0}}
-                            <article class="name_time">
-                                <p class="name">{{.Username}}</p>
+          {{if .Profile}}
+              {{if .ProfileExists}}
+              <section class="community">
+                  <section class="Banner_PP">
+                      <img class="BannerUser" src="{{.Profile.Banner}}" alt="Banner"></img>
+                      <img class="PpUser" src="{{.Profile.Profile}}" alt="PP"></img>
+                  </section>
+                  <section class="community-info">
+                      <p class="title">{{.Profile.Username}}</p>
+                      <a id="createPostButton2" class="classic-button">Create Post</a>
+                  </section>
+                  <div class="sortAndTime">
+                      <div class="sort-select">
+                          <select class="sort">
+                              <option value="popular" id="popular">Popular</option>
+                              <option value="new" id="new">New</option>
+                              <option value="most_comments" id="most_comments">Most Comments</option>
+                          </select>
+                      </div>
+                      <div class="time-select">
+                          <select class="time">
+                              <option value="all_time" id="all_time">All Time</option>
+                              <option value="year" id="year">Year</option>
+                              <option value="month" id="month">Month</option>
+                              <option value="week" id="week">Week</option>
+                              <option value="day" id="day">Day</option>
+                              <option value="hour" id="hour">Hour</option>
+                          </select>
+                      </div>
+                  </div>
+                  {{if .SortedPosts}}
+                  <section class="posts">
+                      {{range .SortedPosts}}
+                      <div class="line-post"></div>
+                      <section class="post">
+                        <section class="community">
+                            {{if eq .Post.Community_id 0}}
+                                <a class="profile" href="/user/{{.Post.Username}}">
+                                    <img class="profilePicture" src="{{.Post.Profile}}" alt="User Profile">
+                                </a>
+                            {{else}}
+                                <a class="profile" href="/community/{{.Post.CommunityName}}">
+                                    <img class="profilePicture" src="{{.Post.CommunityProfile}}" alt="Community Profile">
+                                </a>
+                            {{end}}
+                            <article class="info">
+                                {{if eq .Post.Community_id 0}}
+                                    <article class="name_time">
+                                        <a class="usernameLink" href="/user/{{.Post.Username}}">
+                                            <p class="name">{{.Post.Username}}</p>
+                                        </a>
+                                        <p class="post-time">- {{.Post.Time}}</p>
+                                    </article>
+                                {{else}}
+                                    <article class="name_time">
+                                        <a class="usernameLink" href="/community/{{.Post.CommunityName}}">
+                                            <p class="name">{{.Post.CommunityName}}</p>
+                                        </a>
+                                        <p class="post-time">- {{.Post.Time}}</p>
+                                    </article>
+                                    <p class="username">{{.Post.Username}}</p>
+                                {{end}}
                             </article>
-                        {{else}}
-                            <article class="name_time">
-                                <p class="name">{{.CommunityName}}</p>
-                            </article>
-                            <p class="username">{{.Username}}</p>
-                        {{end}}
-                    </article>
-                </section>
-                <div class="line"></div>
-                <h1 class="post-title">{{.Title}}</h1>
-                <p class="post-content">{{.Content}}</p>
-                {{if .Media}}
-                    {{if eq .MediaType "image"}}
-                        <img class="media" src="{{.Media}}" alt="Media">
-                    {{else if eq .MediaType "video"}}
-                        <video class="media" src="{{.Media}}" controls>Your browser does not support the video tag.</video>
-                    {{end}}
-                    {{end}}
-            {{end}}
-            {{else}}
-            <div class="honeycomb">
-                <div class="blackhoneycomb"></div>
-                <div class="orangehoneycomb"></div>
-                <div class="blackhoneycomb"></div>
-                <div class="blackhoneycomb"></div>
-                <div class="orangehoneycomb"></div>
-                <div class="orangehoneycomb"></div>
-                <div class="orangehoneycomb"></div>
-            </div>
-            {{end}}
-        </main>
-        <aside>
-        </aside>
+                        </section>
+                        <a href="/post/{{.Post.Uuid}}" class="link">
+                          <h1 class="post-title">{{.Post.Title}}</h1>
+                          <pre class="post-content">{{.Post.Content}}</pre>
+                          {{if .Post.Media}}
+                              {{if eq .Post.MediaType "image"}}
+                                  <img class="media" src="{{.Post.Media}}" alt="Media">
+                              {{else if eq .Post.MediaType "video"}}
+                                  <video class="media" src="{{.Post.Media}}" controls>Your browser does not support the video tag.</video>
+                              {{else}}
+                                  <img class="media" src="{{.Post.Media}}" alt="Media">
+                              {{end}}
+                          {{end}}
+                          <section  class="like-dislike-container">
+                              <div class="icons-box">
+                                  <form class="icons" action="/likeDislike" method="post" id="like">
+                                      <label class="btn-label" for="like-checkbox">
+                                          <span class="like-text-content">{{.PostLikes}}</span>
+                                          <input type="text" name="rating" value="like" hidden>
+                                          <input type="text" name="postId" value="{{.Post.Id}}" hidden>
+                                          <input type="text" name="commentId" value="0" hidden>
+                                          <input type="text" name="postUuid" value="{{.Post.Id}}" hidden>
+                                          <input class="input-box" id="like-checkbox" type="checkbox" name="checkbox" {{if eq .UserRating "like"}} checked {{end}} onchange="document.getElementById('like').submit()">
+                                          <svg class="svgs" id="icon-like-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z"></path></svg>
+                                          <svg class="svgs" id="icon-like-regular" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M323.8 34.8c-38.2-10.9-78.1 11.2-89 49.4l-5.7 20c-3.7 13-10.4 25-19.5 35l-51.3 56.4c-8.9 9.8-8.2 25 1.6 33.9s25 8.2 33.9-1.6l51.3-56.4c14.1-15.5 24.4-34 30.1-54.1l5.7-20c3.6-12.7 16.9-20.1 29.7-16.5s20.1 16.9 16.5 29.7l-5.7 20c-5.7 19.9-14.7 38.7-26.6 55.5c-5.2 7.3-5.8 16.9-1.7 24.9s12.3 13 21.3 13L448 224c8.8 0 16 7.2 16 16c0 6.8-4.3 12.7-10.4 15c-7.4 2.8-13 9-14.9 16.7s.1 15.8 5.3 21.7c2.5 2.8 4 6.5 4 10.6c0 7.8-5.6 14.3-13 15.7c-8.2 1.6-15.1 7.3-18 15.1s-1.6 16.7 3.6 23.3c2.1 2.7 3.4 6.1 3.4 9.9c0 6.7-4.2 12.6-10.2 14.9c-11.5 4.5-17.7 16.9-14.4 28.8c.4 1.3 .6 2.8 .6 4.3c0 8.8-7.2 16-16 16H286.5c-12.6 0-25-3.7-35.5-10.7l-61.7-41.1c-11-7.4-25.9-4.4-33.3 6.7s-4.4 25.9 6.7 33.3l61.7 41.1c18.4 12.3 40 18.8 62.1 18.8H384c34.7 0 62.9-27.6 64-62c14.6-11.7 24-29.7 24-50c0-4.5-.5-8.8-1.3-13c15.4-11.7 25.3-30.2 25.3-51c0-6.5-1-12.8-2.8-18.7C504.8 273.7 512 257.7 512 240c0-35.3-28.6-64-64-64l-92.3 0c4.7-10.4 8.7-21.2 11.8-32.2l5.7-20c10.9-38.2-11.2-78.1-49.4-89zM32 192c-17.7 0-32 14.3-32 32V448c0 17.7 14.3 32 32 32H96c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32H32z"></path></svg>
+                                          <div class="fireworks">
+                                              <div class="checked-like-fx"></div>
+                                          </div>
+                                      </label>
+                                  </form>
+                                  <form class="icons" action="/likeDislike" method="post" id="dislike">
+                                      <label class="btn-label" for="dislike-checkbox">
+                                          <input type="text" name="rating" value="dislike" hidden>
+                                          <input type="text" name="postId" value="{{.Post.Id}}" hidden>
+                                          <input type="text" name="commentId" value="0" hidden>
+                                          <input type="text" name="postUuid" value="{{.Post.Id}}" hidden>
+                                          <input class="input-box" id="dislike-checkbox" type="checkbox" name="checkbox" {{if eq .UserRating "dislike"}} checked {{end}} onchange="document.getElementById('dislike').submit()">
+                                          <div class="fireworks">
+                                              <div class="checked-dislike-fx"></div>
+                                          </div>
+                                          <svg class="svgs" id="icon-dislike-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M313.4 32.9c26 5.2 42.9 30.5 37.7 56.5l-2.3 11.4c-5.3 26.7-15.1 52.1-28.8 75.2H464c26.5 0 48 21.5 48 48c0 18.5-10.5 34.6-25.9 42.6C497 275.4 504 288.9 504 304c0 23.4-16.8 42.9-38.9 47.1c4.4 7.3 6.9 15.8 6.9 24.9c0 21.3-13.9 39.4-33.1 45.6c.7 3.3 1.1 6.8 1.1 10.4c0 26.5-21.5 48-48 48H294.5c-19 0-37.5-5.6-53.3-16.1l-38.5-25.7C176 420.4 160 390.4 160 358.3V320 272 247.1c0-29.2 13.3-56.7 36-75l7.4-5.9c26.5-21.2 44.6-51 51.2-84.2l2.3-11.4c5.2-26 30.5-42.9 56.5-37.7zM32 192H96c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32z"></path></svg>
+                                          <svg class="svgs" id="icon-dislike-regular" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M323.8 34.8c-38.2-10.9-78.1 11.2-89 49.4l-5.7 20c-3.7 13-10.4 25-19.5 35l-51.3 56.4c-8.9 9.8-8.2 25 1.6 33.9s25 8.2 33.9-1.6l51.3-56.4c14.1-15.5 24.4-34 30.1-54.1l5.7-20c3.6-12.7 16.9-20.1 29.7-16.5s20.1 16.9 16.5 29.7l-5.7 20c-5.7 19.9-14.7 38.7-26.6 55.5c-5.2 7.3-5.8 16.9-1.7 24.9s12.3 13 21.3 13L448 224c8.8 0 16 7.2 16 16c0 6.8-4.3 12.7-10.4 15c-7.4 2.8-13 9-14.9 16.7s.1 15.8 5.3 21.7c2.5 2.8 4 6.5 4 10.6c0 7.8-5.6 14.3-13 15.7c-8.2 1.6-15.1 7.3-18 15.1s-1.6 16.7 3.6 23.3c2.1 2.7 3.4 6.1 3.4 9.9c0 6.7-4.2 12.6-10.2 14.9c-11.5 4.5-17.7 16.9-14.4 28.8c.4 1.3 .6 2.8 .6 4.3c0 8.8-7.2 16-16 16H286.5c-12.6 0-25-3.7-35.5-10.7l-61.7-41.1c-11-7.4-25.9-4.4-33.3 6.7s-4.4 25.9 6.7 33.3l61.7 41.1c18.4 12.3 40 18.8 62.1 18.8H384c34.7 0 62.9-27.6 64-62c14.6-11.7 24-29.7 24-50c0-4.5-.5-8.8-1.3-13c15.4-11.7 25.3-30.2 25.3-51c0-6.5-1-12.8-2.8-18.7C504.8 273.7 512 257.7 512 240c0-35.3-28.6-64-64-64l-92.3 0c4.7-10.4 8.7-21.2 11.8-32.2l5.7-20c10.9-38.2-11.2-78.1-49.4-89zM32 192c-17.7 0-32 14.3-32 32V448c0 17.7 14.3 32 32 32H96c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32H32z"></path></svg>
+                                          <span class="dislike-text-content">{{.PostDislikes}}</span>
+                                        </label>
+                                    </form>
+                                </div>
+                            </section>
+                        </a>
+                      </section>
+                      {{end}}
+                  </section>
+                  {{else}}
+                  <section class="notfound">
+                      <h3>No Posts have been posted or found on this User</h3>
+                      <button class="button" onclick="window.location.href='/'" >Back to home</button>
+                      <div class="main_wrapper">
+                          <div class="main">
+                              <div class="antenna">
+                              <div class="antenna_shadow"></div>
+                              <div class="a1"></div>
+                              <div class="a1d"></div>
+                              <div class="a2"></div>
+                              <div class="a2d"></div>
+                              <div class="a_base"></div>
+                              </div>
+                              <div class="tv">
+                              <div class="cruve">
+                                  <svg
+                                  xml:space="preserve"
+                                  viewBox="0 0 189.929 189.929"
+                                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  version="1.1"
+                                  class="curve_svg"
+                                  >
+                                  <path
+                                      d="M70.343,70.343c-30.554,30.553-44.806,72.7-39.102,115.635l-29.738,3.951C-5.442,137.659,11.917,86.34,49.129,49.13
+                                  C86.34,11.918,137.664-5.445,189.928,1.502l-3.95,29.738C143.041,25.54,100.895,39.789,70.343,70.343z"
+                                  ></path>
+                                  </svg>
+                              </div>
+                              <div class="display_div">
+                                  <div class="screen_out">
+                                  <div class="screen_out1">
+                                      <div class="screen">
+                                      <span class="notfound_text"> NOT FOUND</span>
+                                      </div>
+                                  </div>
+                                  </div>
+                              </div>
+                              <div class="lines">
+                                  <div class="line1"></div>
+                                  <div class="line2"></div>
+                                  <div class="line3"></div>
+                              </div>
+                              <div class="buttons_div">
+                                  <div class="b1"><div></div></div>
+                                  <div class="b2"></div>
+                                  <div class="speakers">
+                                  <div class="g1">
+                                      <div class="g11"></div>
+                                      <div class="g12"></div>
+                                      <div class="g13"></div>
+                                  </div>
+                                  <div class="g"></div>
+                                  <div class="g"></div>
+                                  </div>
+                              </div>
+                              </div>
+                              <div class="bottom">
+                              <div class="base1"></div>
+                              <div class="base2"></div>
+                              <div class="base3"></div>
+                              </div>
+                          </div>
+                          <div class="text_404">
+                              <div class="text_4041">4</div>
+                              <div class="text_4042">0</div>
+                              <div class="text_4043">4</div>
+                          </div>
+                      </div>
+                  </section>
+                  {{end}}
+              </section>
+              {{else}}
+              <section class="notfound">
+                  <h3>This User does not exists or has been deleted</h3>
+                  <button class="button" onclick="window.location.href='/'" >Back to home</button>
+                  <div class="main_wrapper">
+                      <div class="main">
+                          <div class="antenna">
+                          <div class="antenna_shadow"></div>
+                          <div class="a1"></div>
+                          <div class="a1d"></div>
+                          <div class="a2"></div>
+                          <div class="a2d"></div>
+                          <div class="a_base"></div>
+                          </div>
+                          <div class="tv">
+                          <div class="cruve">
+                              <svg
+                              xml:space="preserve"
+                              viewBox="0 0 189.929 189.929"
+                              xmlns:xlink="http://www.w3.org/1999/xlink"
+                              xmlns="http://www.w3.org/2000/svg"
+                              version="1.1"
+                              class="curve_svg"
+                              >
+                              <path
+                                  d="M70.343,70.343c-30.554,30.553-44.806,72.7-39.102,115.635l-29.738,3.951C-5.442,137.659,11.917,86.34,49.129,49.13
+                              C86.34,11.918,137.664-5.445,189.928,1.502l-3.95,29.738C143.041,25.54,100.895,39.789,70.343,70.343z"
+                              ></path>
+                              </svg>
+                          </div>
+                          <div class="display_div">
+                              <div class="screen_out">
+                              <div class="screen_out1">
+                                  <div class="screen">
+                                  <span class="notfound_text"> NOT FOUND</span>
+                                  </div>
+                              </div>
+                              </div>
+                          </div>
+                          <div class="lines">
+                              <div class="line1"></div>
+                              <div class="line2"></div>
+                              <div class="line3"></div>
+                          </div>
+                          <div class="buttons_div">
+                              <div class="b1"><div></div></div>
+                              <div class="b2"></div>
+                              <div class="speakers">
+                              <div class="g1">
+                                  <div class="g11"></div>
+                                  <div class="g12"></div>
+                                  <div class="g13"></div>
+                              </div>
+                              <div class="g"></div>
+                              <div class="g"></div>
+                              </div>
+                          </div>
+                          </div>
+                          <div class="bottom">
+                          <div class="base1"></div>
+                          <div class="base2"></div>
+                          <div class="base3"></div>
+                          </div>
+                      </div>
+                      <div class="text_404">
+                          <div class="text_4041">4</div>
+                          <div class="text_4042">0</div>
+                          <div class="text_4043">4</div>
+                      </div>
+                  </div>
+              </section>
+              {{end}}
+          {{else}}
+              <div class="honeycomb">
+                  <div class="blackhoneycomb"></div>
+                  <div class="orangehoneycomb"></div>
+                  <div class="blackhoneycomb"></div>
+                  <div class="blackhoneycomb"></div>
+                  <div class="orangehoneycomb"></div>
+                  <div class="orangehoneycomb"></div>
+                  <div class="orangehoneycomb"></div>
+              </div>
+          {{end}}
+      </main>
+      <aside>
+          {{if .Profile}}
+              {{if .ProfileExists}}
+              <section class="side-bar">
+                  <article class="side-info">
+                      {{if eq .Profile.Uuid .User.Uuid}}
+                          <a id="updateUserButton" class="classic-button modifyCommunity">Update Account Info</a>
+                          <a id="deleteUserButton" class="classic-button modifyCommunity">Delete Account</a>
+                      {{else}}
+                          {{if .IsFollowing}}
+                          <form method="post" action="/unfollowUser">
+                              <input type="text" name="uuid" value="{{.Profile.Uuid}}" hidden>
+                              <input type="text" name="action" value="/user/{{.Profile.Username}}" hidden>
+                              <button type="submit" class="button">
+                                  Unfollow
+                              </button>
+                          </form>
+                          {{else}}
+                          <form method="post" action="/followUser">
+                              <input type="text" name="uuid" value="{{.Profile.Uuid}}" hidden>
+                              <input type="text" name="action" value="/user/{{.Profile.Username}}" hidden>
+                              <button type="submit" class="button">
+                                  Follow
+                              </button>
+                          </form>
+                          {{end}}
+                      {{end}}
+                  </article>
+                  <p class="following">{{.FollowCount}} Follower{{if eq .FollowCount 1}}{{else}}s{{end}}</p>
+              </section>
+              {{end}}
+          {{end}}
+      </aside>
     </section>
 
-<!-- Hidden Form -->
+  <!-- CREATE POST IN THIS COMMUNITY -->
     <section id="createPostForm" class="form">
         <form enctype="multipart/form-data" method="post" action="/createPost">
             <h1 class="title">Create a Post</h1>
@@ -145,7 +403,7 @@
         </form>
     </section>
 
-
+<!-- CREATE NEW COMMUNITY -->
     <section id="createCommunityForm" class="form">
         <form enctype="multipart/form-data" method="post" action="/createCommunity">
             <h1 class="title">Create a new Community</h1>
@@ -217,6 +475,147 @@
             <input class="button" type="submit" value="Create" >
         </form>
     </section>
+
+     <!-- UPDATE THE CURRENT USER -->
+  <section id="updateUserForm" class="form">
+    <form enctype="multipart/form-data" method="post" action="/updateUserInfo">
+        <h1 class="title">Update User {{.Profile.Username}}</h1>
+        
+        <section class="updateUserSection">
+            <article class="updateUserArticle">
+                <p class="subtitle">Change your Username</p>
+                <input class="textInput" type="text" placeholder="Username" name="username" value="{{.Profile.Username}}" required>
+            </article>
+            <article class="updateUserArticle">
+                <p class="subtitle">Change your Email</p>
+                <input class="textInput" name="email" placeholder="Email" type="email" value="{{.Profile.Email}}" required>
+            </article>
+        </section>
+        <p class="subtitle">Change your password (Optional)</p>
+        <section class="updateUserSection">
+            <input class="textInput" name="password" placeholder="Old Password" type="password" autocomplete="on">
+            <input class="textInput" name="newPassword" placeholder="New Password" type="password" autocomplete="on">
+            <input class="textInput" name="newPasswordConfirm" placeholder="Confirm New Password" type="password" autocomplete="on">
+        </section>
+
+        <section class="fileInputs">
+            <article class="fileInput">
+                <!-- profile -->
+                <p class="subtitle">Choose the Profile Picture</p>
+                <article class="options updateProfileOptions updateOptions">
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="profileOption" value="link" checked>
+                        <div class="btn">
+                            <span class="span">Link</span>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="profileOption" value="file">
+                        <div class="btn">
+                            <span class="span">File</span>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="profileOption" value="keep">
+                        <div class="btn">
+                            <span class="span">Keep</span>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="profileOption" value="remove">
+                        <div class="btn">
+                            <span class="span">Remove</span>
+                        </div>
+                    </div>
+                </article>
+                <input id="updateProfileLink" class="textInput" type="text" placeholder="Profile picture link" name="profileLink">
+                <label id="updateProfileFile" class="custum-file-upload" for="profile2">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24"><g stroke-width="0" id="SVGRepo_bgCarrier"></g><g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <path fill="" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" clip-rule="evenodd" fill-rule="evenodd"></path> </g></svg>
+                    </div>
+                    <div class="text">
+                        <span>Click to upload image</span>
+                    </div>
+                    <input type="file" id="profile2" name="profile" accept="image/*">
+                </label>
+            </article>
+            <article class="fileInput">
+                <!-- Banner -->
+                <p class="subtitle">Choose the Banner</p>
+                <article class="options updateBannerOptions updateOptions">
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="bannerOption" value="link" checked>
+                        <div class="btn">
+                            <span class="span">Link</span>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="bannerOption" value="file">
+                        <div class="btn">
+                            <span class="span">File</span>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="bannerOption" value="keep">
+                        <div class="btn">
+                            <span class="span">Keep</span>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="bannerOption" value="remove">
+                        <div class="btn">
+                            <span class="span">Remove</span>
+                        </div>
+                    </div>
+                </article>
+                
+                <input id="updateBannerLink" class="textInput" type="text" placeholder="Banner link" name="bannerLink">
+                <label id="updateBannerFile" class="custum-file-upload" for="banner2">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24"><g stroke-width="0" id="SVGRepo_bgCarrier"></g><g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <path fill="" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" clip-rule="evenodd" fill-rule="evenodd"></path> </g></svg>
+                    </div>
+                    <div class="text">
+                        <span>Click to upload image</span>
+                    </div>
+                    <input type="file" id="banner2" name="banner" accept="image/*">
+                </label>
+            </article>
+        </section>
+        <input type="text" name="uuid" value="{{.Profile.Uuid}}" hidden>
+        <input class="button" type="submit" value="Update" >
+    </form>
+</section>
+
+<!-- DELETE THE CURRENT USER -->
+<section id="deleteUserForm" class="form">
+    <form enctype="multipart/form-data" method="post" action="/deleteUserInfo">
+        <h1 class="title">Delete User {{.Profile.Username}}</h1>
+
+        <section class="fileInputs">
+            <article class="fileInput">
+                <!-- profile -->
+                <p class="subtitle">Confirm Deletion of {{.Profile.Username}}</p>
+                <article class="options profileOptions otherOptions">
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="confirm" value="false" checked>
+                        <div class="btn">
+                            <span class="span">No</span>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="confirm" value="true">
+                        <div class="btn">
+                            <span class="span">Yes</span>
+                        </div>
+                    </div>
+                </article>
+            </article>
+        </section>
+        <input class="textInput" name="password" placeholder="Password" type="password" required autocomplete="on">
+        <input type="text" name="uuid" value="{{.Profile.Uuid}}" hidden>
+        <input class="button" type="submit" value="Delete" >
+    </form>
+</section>
 
     <section id="connection">
         <label class="switch">

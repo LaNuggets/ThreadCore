@@ -13,6 +13,15 @@ body {
   width: 100%;
 }
 
+pre{
+  font-family:'Oswald', sans-serif;
+  font-size: large;
+}
+
+img{
+  object-fit: cover;
+}
+
 @media (prefers-color-scheme: light) {
     body {
         background-color: #eae7df;
@@ -367,10 +376,10 @@ header{
       gap: 20px;
     }
     .otherOptions{
-      width: 165px;
+      width: 10.3em;
     }
     .updateOptions{
-      width: 327px;
+      width: 20.4em;
     }
     .options{
       position: relative;
