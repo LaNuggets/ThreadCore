@@ -75,6 +75,9 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 	post := database.Post{Id: 0, Uuid: postUuid, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: user.Id, Community_id: communityId, Created: (time.Now())}
 	database.AddPost(post, w, r)
+	createdPost := database.GetPostByUuid(postUuid, w, r)
+	like := database.Like{Id: 0, Rating: "like", Comment_id: 0, Post_id: createdPost.Id, User_id: user.Id}
+	database.AddLike(like, w, r)
 
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+created+!", http.StatusSeeOther)
 }

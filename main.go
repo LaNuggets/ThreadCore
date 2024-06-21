@@ -2,8 +2,6 @@ package main
 
 import (
 	"ThreadCore/api"
-	"ThreadCore/database"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,16 +10,6 @@ import (
 var port = ":8080"
 
 func main() {
-	// Open the database connection in the global varaible DB located in database/DBglobalVariable.go
-	var err error
-	database.DB, err = sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// At the end of the program close the connnection
-	defer database.DB.Close()
-
 	FileServer := http.FileServer(http.Dir("static"))
 
 	http.Handle("/static/", http.StripPrefix("/static/", FileServer))

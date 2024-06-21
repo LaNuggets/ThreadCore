@@ -33,7 +33,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	ChoosenTime := r.URL.Query().Get("time")
 
 	var sortedPosts []database.PostInfo
-	var sortedCommunities []database.CommunityDisplay
+	var sortedCommunities []database.CommunityInfo
 	var sortedUsers []database.User
 	var difference time.Duration
 
@@ -245,21 +245,13 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	searchPage := struct {
 		Connected         bool
 		Profile           string
-		Search            string
-		Media             string
-		Sort              string
-		Time              string
 		Username          string
 		SortedPosts       []database.PostInfo
-		SortedCommunities []database.CommunityDisplay
+		SortedCommunities []database.CommunityInfo
 		SortedUsers       []database.User
 	}{
 		Connected:         userUuid != "",
 		Profile:           userProfile,
-		Search:            search,
-		Media:             media,
-		Sort:              sort,
-		Time:              ChoosenTime,
 		Username:          username,
 		SortedPosts:       sortedPosts,
 		SortedCommunities: sortedCommunities,

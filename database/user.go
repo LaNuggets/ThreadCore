@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"strconv"
@@ -18,14 +19,26 @@ type User struct {
 	Password string
 }
 
-func AddUser(user User) {
-	query, _ := DB.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
+func AddUser(user User, w http.ResponseWriter, r *http.Request) {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, _ := db.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
 	query.Exec(user.Uuid, user.Profile, user.Banner, user.Email, user.Username, user.Password)
 	defer query.Close()
 }
 
 func GetUserByEmail(email string, w http.ResponseWriter, r *http.Request) User {
-	rows, err := DB.Query("SELECT * FROM user WHERE email='" + email + "'")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM user WHERE email='" + email + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -41,8 +54,14 @@ func GetUserByEmail(email string, w http.ResponseWriter, r *http.Request) User {
 }
 
 func GetUserById(id int, w http.ResponseWriter, r *http.Request) User {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
 	id2 := strconv.Itoa(id)
-	rows, _ := DB.Query("SELECT * FROM user WHERE id = '" + id2 + "'")
+	rows, _ := db.Query("SELECT * FROM user WHERE id = '" + id2 + "'")
 	defer rows.Close()
 
 	user := User{}
@@ -55,7 +74,13 @@ func GetUserById(id int, w http.ResponseWriter, r *http.Request) User {
 }
 
 func GetUserByUuid(uuid string, w http.ResponseWriter, r *http.Request) User {
-	rows, _ := DB.Query("SELECT * FROM user WHERE uuid = '" + uuid + "'")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, _ := db.Query("SELECT * FROM user WHERE uuid = '" + uuid + "'")
 	defer rows.Close()
 
 	user := User{}
@@ -68,7 +93,13 @@ func GetUserByUuid(uuid string, w http.ResponseWriter, r *http.Request) User {
 }
 
 func GetUserByUsername(username string, w http.ResponseWriter, r *http.Request) User {
-	rows, err := DB.Query("SELECT * FROM user WHERE username='" + username + "'")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM user WHERE username='" + username + "'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -84,7 +115,13 @@ func GetUserByUsername(username string, w http.ResponseWriter, r *http.Request) 
 }
 
 func GetUserBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []User {
-	rows, err := DB.Query("SELECT * FROM user WHERE username LIKE '%" + searchString + "%'")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM user WHERE username LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -107,7 +144,13 @@ func GetUserBySearchString(searchString string, w http.ResponseWriter, r *http.R
 }
 
 func GetUserByMostPopular(searchString string, w http.ResponseWriter, r *http.Request) []User {
-	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN friend ON friend.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(friend.user_id) DESC")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN friend ON friend.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(friend.user_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -130,7 +173,13 @@ func GetUserByMostPopular(searchString string, w http.ResponseWriter, r *http.Re
 }
 
 func GetUserByMostPost(searchString string, w http.ResponseWriter, r *http.Request) []User {
-	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN post ON post.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(post.user_id) DESC")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN post ON post.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(post.user_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -153,7 +202,13 @@ func GetUserByMostPost(searchString string, w http.ResponseWriter, r *http.Reque
 }
 
 func GetUserByMostComment(searchString string, w http.ResponseWriter, r *http.Request) []User {
-	rows, err := DB.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN comment ON comment.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(comment.user_id) DESC")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user JOIN comment ON comment.user_id = user.id WHERE username LIKE '%" + searchString + "%' GROUP BY user.id ORDER BY COUNT(comment.user_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -176,7 +231,13 @@ func GetUserByMostComment(searchString string, w http.ResponseWriter, r *http.Re
 }
 
 func UpdateUserInfo(user User, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("UPDATE user set uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? where id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("UPDATE user set uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? where id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
@@ -192,7 +253,13 @@ func UpdateUserInfo(user User, w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteUser(userId int, w http.ResponseWriter, r *http.Request) {
-	query, err := DB.Prepare("DELETE FROM user where id = ?")
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("DELETE FROM user where id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 

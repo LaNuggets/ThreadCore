@@ -44,7 +44,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	uuid := GetNewUuid()
 
 	user := database.User{Id: 0, Uuid: uuid, Profile: "/static/images/profileTemplate.png", Banner: "/static/images/bannerTemplate.png", Email: email, Username: username, Password: password}
-	database.AddUser(user)
+	database.AddUser(user, w, r)
 
 	SetCookie("uuid", user.Uuid, w)
 	SetCookie("username", user.Username, w)
@@ -331,7 +331,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("user already following this user")
 		http.Redirect(w, r, action+"?type=error&message=You+are+already+following+"+userToFollow.Username+"+!", http.StatusSeeOther)
 	} else {
-		database.AddFriend(user.Id, userToFollow.Id)
+		database.AddFriend(user.Id, userToFollow.Id, w, r)
 		http.Redirect(w, r, action+"?type=success&message=You+are+now+following+"+userToFollow.Username+"+!", http.StatusSeeOther)
 	}
 
