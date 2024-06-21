@@ -63,11 +63,11 @@
                     <section class="community">
                         {{if eq .Post.Community_id 0}}
                             <a class="profile" href="/user/{{.Post.Username}}">
-                                <img class="profilePicture" src="{{.Post.Profile}}" alt="User Profile">
+                                <img id="profilePicture" src="{{.Post.Profile}}" alt="User Profile">
                             </a>
                         {{else}}
                             <a class="profile" href="/community/{{.Post.CommunityName}}">
-                                <img class="profilePicture" src="{{.Community.Profile}}" alt="Community Profile">
+                                <img id="profilePicture" src="{{.Community.Profile}}" alt="Community Profile">
                             </a>
                         {{end}}
                         <article class="info">

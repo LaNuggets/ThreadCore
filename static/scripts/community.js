@@ -72,7 +72,6 @@ document.querySelector("article.updateProfileOptions").addEventListener("click",
     }
   });
 
-  
 // USERINPUT WITH MEDIA QUERY
 
 // get query value in url from key
@@ -101,7 +100,6 @@ if (timeOption != null) {
         window.location.search = searchParams.toString();
     }
 }
-
 
 document.querySelector("div.sort-select").addEventListener(`change`, (e) => {
     const select = e.target;

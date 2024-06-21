@@ -111,52 +111,54 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	uuidToUpdate := r.FormValue("uuid")
 	userToUpdate := database.GetUserByUuid(uuidToUpdate, w, r)
 	if (userToUpdate == database.User{}) {
-		fmt.Println("user does not exist") // TO-DO : send error user not found
-		http.Redirect(w, r, "/?type=error&message=User+not+found+!", http.StatusSeeOther)
+		fmt.Println("user does not exist")
+		http.Redirect(w, r, "/?type=error&message=User+does+not+exist+!", http.StatusSeeOther)
 		return
 	}
 
 	// Check if user connected and allowed to modify
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
-		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
+		fmt.Println("no uuid found in cookie")
 		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
-		fmt.Println("user not found") // TO-DO : Send error message for user not found
+		fmt.Println("user not found")
 		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	} else if userToUpdate.Id != user.Id {
-		fmt.Println("user not author of user") // TO-DO : Send error message for user not allowed action
-		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+alowed+to+do+this+action+!", http.StatusSeeOther)
+		fmt.Println("user not author of user")
+		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=You+are+not+the+owner+of+this+account+!", http.StatusSeeOther)
 		return
 	}
 
 	// check valid username and email
 	username := r.FormValue("username")
 	checkUsername := database.GetUserByUsername(username, w, r)
-	if (checkUsername != database.User{}) {
-		fmt.Println("username taken") // TO-DO : send error user not found
-		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
+	if (checkUsername != database.User{} && checkUsername.Uuid != userUuid) {
+		fmt.Println("username taken")
+		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=Username+taken+!", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
 	checkEmail := database.GetUserByEmail(email, w, r)
-	if (checkEmail != database.User{}) {
-		fmt.Println("email taken") // TO-DO : send error user not found
-		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
+	if (checkEmail != database.User{} && checkEmail.Uuid != userUuid) {
+		fmt.Println("email taken")
+		http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=Email+taken+!", http.StatusSeeOther)
 		return
 	}
 
 	password := ""
-	passwordOption := r.FormValue("passwordOption")
-	if passwordOption == "change" {
-		oldPassword := r.FormValue("oldPassword")
-		password = r.FormValue("password")
-		passwordConfirm := r.FormValue("passwordConfirm")
 
+	oldPassword := r.FormValue("oldPassword")
+	password = r.FormValue("password")
+	passwordConfirm := r.FormValue("passwordConfirm")
+
+	if oldPassword == "" {
+		password = user.Password
+	} else {
 		if !CheckPasswordHash(oldPassword, user.Password) {
 			fmt.Println("Wrong password") // TO-DO : Send error message for wrong password
 			http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=Wrong+Password+!", http.StatusSeeOther)
@@ -167,14 +169,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 			return
 		} else if password == "" {
 			fmt.Println("password is null") // TO-DO : Send error message for input password
-			http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=Password+empty+!", http.StatusSeeOther)
+			http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=New+password+empty+!", http.StatusSeeOther)
 			return
 		}
-
-		password = HashPassword(password, w, r)
-	} else {
-		password = user.Password
 	}
+
+	password = HashPassword(password, w, r)
 
 	r.ParseMultipartForm(10 << 20)
 
@@ -203,7 +203,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				profilePath = "/static/images/users/profile/" + user.Uuid + e
+				profilePath = "/static/images/users/profiles/" + user.Uuid + e
 				GetFileFromForm(profile, handler, err, profilePath)
 			} else {
 				fmt.Println("The file is  not in an image format")
@@ -237,7 +237,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				bannerPath = "/static/images/users/banner/" + user.Uuid + ext
+				bannerPath = "/static/images/users/banners/" + user.Uuid + ext
 				GetFileFromForm(banner, handler, err, bannerPath)
 			} else {
 				fmt.Println("The file is  not in an image format")
