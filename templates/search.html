@@ -125,6 +125,8 @@
                         <img class="media" src="{{.Media}}" alt="Media">
                     {{else if eq .MediaType "video"}}
                         <video class="media" src="{{.Media}}" controls>Your browser does not support the video tag.</video>
+                        {{else}}
+                        <img class="media" src="{{.Media}}" alt="Media">
                     {{end}}
                 {{end}}
                 <div class="line"></div>
@@ -141,14 +143,21 @@
                     <h1 class="communities_Name">{{.Name}}</h1>
                 <p class="communities_Description">{{.Description}}</p>
             </div>
-                <div class="line"></div>
+                <div class="line_communities"></div>
                 </article>
             </a>
             {{end}}
                 {{else if .SortedUsers}}
                 <article class="filtred_Users">
                     {{range .SortedUsers}}
-                    <p class="users_Username">{{.Username}}</p>
+                    <a href="/user/{{.Username}}" class="link">
+                    <article class="user_PP_name">
+                        <img class="user_Banner" src="{{.Banner}}"></img>
+                        <img class="user_Picture" src="{{.Profile}}"></img>
+                        <h1 class="user_name">{{.Username}}</h1>
+                    <div class="line_user"></div>
+                    </article>
+                </a>
                 {{end}}
             </article>
         {{end}}

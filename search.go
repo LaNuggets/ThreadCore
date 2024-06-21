@@ -3,7 +3,6 @@ package main
 import (
 	"ThreadCore/api"
 	"ThreadCore/database"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -242,18 +241,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 			sortedUsers = database.GetUserByMostComment(search, w, r)
 		}
 	}
-
-	//! just for testing
-	for i := 0; i < len(sortedPosts); i++ {
-		fmt.Println(sortedPosts[i].Time)
-	}
-	for i := 0; i < len(sortedCommunities); i++ {
-		fmt.Println(sortedCommunities[i].Name)
-	}
-	for i := 0; i < len(sortedUsers); i++ {
-		fmt.Println(sortedUsers[i].Username)
-	}
-	//! just for testing
 
 	searchPage := struct {
 		Connected         bool
