@@ -213,8 +213,8 @@
 }
 
 .filtred_Communities{
-  margin-top: 2%;
-  margin-left: 5%;
+margin: 1em;
+padding: 1em;
   width: 770px;
 }
 
@@ -279,8 +279,8 @@ cursor: pointer;
 }
 
 .user_PP_name{
-  margin-top: 2%;
-  margin-left: 5%;
+margin: 1em;
+padding: 1em;
   width: 770px;
   height: 250px;
 }
