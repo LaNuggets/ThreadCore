@@ -9,6 +9,9 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+/*
+!AddFriend function open data base and add friend by using the INSERT INTO sql command she take as argument two int type and a writer and request.
+*/
 func AddFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -22,6 +25,9 @@ func AddFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request)
 	defer query.Close()
 }
 
+/*
+!ExistsFriend function open data base and check if two user are friend by using the SELECT * FROM and WHERE sql command she take as argument two int type and a writer and request and return a boolean.
+*/
 func ExistsFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request) bool {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -48,6 +54,9 @@ func ExistsFriend(userId int, friendId int, w http.ResponseWriter, r *http.Reque
 	return friend != Friend{}
 }
 
+/*
+!GetFriendsByUser function open data base and get friend of an user by using the SELECT * FROM and WHERE sql command she take as argument an int type and a writer and request and return a slice of user.
+*/
 func GetFriendsByUser(userId int, w http.ResponseWriter, r *http.Request) []User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -78,6 +87,9 @@ func GetFriendsByUser(userId int, w http.ResponseWriter, r *http.Request) []User
 	return userList
 }
 
+/*
+!DeleteFriend function open data base and delete a friend relation by using the DELETE FROM and WHERE sql command she take as argument two int type and a writer and request.
+*/
 func DeleteFriend(userId int, friendId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")

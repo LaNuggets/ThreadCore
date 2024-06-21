@@ -19,6 +19,9 @@ type User struct {
 	Password string
 }
 
+/*
+!AddUser function open data base and add an user to it with the INSERT INTO sql command she take as argument an User type and a writer and request.
+*/
 func AddUser(user User, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -31,6 +34,9 @@ func AddUser(user User, w http.ResponseWriter, r *http.Request) {
 	defer query.Close()
 }
 
+/*
+!GetUserByEmail function is used to get a user by is email by using the SELECT * FROM sql command. She take as argument a string, a writer,a request and return an User type.
+*/
 func GetUserByEmail(email string, w http.ResponseWriter, r *http.Request) User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -53,6 +59,9 @@ func GetUserByEmail(email string, w http.ResponseWriter, r *http.Request) User {
 	return user
 }
 
+/*
+!GetUserById function is used to get a user by is id by using the SELECT * FROM sql command. She take as argument a int, a writer, a request and return an User type.
+*/
 func GetUserById(id int, w http.ResponseWriter, r *http.Request) User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -73,6 +82,9 @@ func GetUserById(id int, w http.ResponseWriter, r *http.Request) User {
 	return user
 }
 
+/*
+!GetUserByUuid function is used to get a user by is uuid by using the SELECT * FROM sql command. She take as argument a string, a writer, a request and return an User type.
+*/
 func GetUserByUuid(uuid string, w http.ResponseWriter, r *http.Request) User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -92,6 +104,9 @@ func GetUserByUuid(uuid string, w http.ResponseWriter, r *http.Request) User {
 	return user
 }
 
+/*
+!GetUserByUsername function is used to get a user by is username by using the SELECT * FROM sql command. She take as argument a string, a writer, a request and return an User type.
+*/
 func GetUserByUsername(username string, w http.ResponseWriter, r *http.Request) User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -114,6 +129,9 @@ func GetUserByUsername(username string, w http.ResponseWriter, r *http.Request) 
 	return user
 }
 
+/*
+!GetUserBySearchString function is used to get a user by a searched string by using the SELECT * FROM and WHERE LIKE sql command. She take as argument a string, a writer, a request and return an slice of User type.
+*/
 func GetUserBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -143,6 +161,9 @@ func GetUserBySearchString(searchString string, w http.ResponseWriter, r *http.R
 	return userList
 }
 
+/*
+!GetUserByMostPopular function is used to sort user by most popular and by a searched string by using SELECT * FROM and WHERE LIKE sql command. She take as argument a string, a writer, a request and return an slice of User type.
+*/
 func GetUserByMostPopular(searchString string, w http.ResponseWriter, r *http.Request) []User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -172,6 +193,9 @@ func GetUserByMostPopular(searchString string, w http.ResponseWriter, r *http.Re
 	return userList
 }
 
+/*
+!GetUserByMostPost function is used to sort user by most post they did and by a searched string by using SELECT * FROM and WHERE LIKE sql command. She take as argument a string, a writer, a request and return an slice of User type.
+*/
 func GetUserByMostPost(searchString string, w http.ResponseWriter, r *http.Request) []User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -201,6 +225,9 @@ func GetUserByMostPost(searchString string, w http.ResponseWriter, r *http.Reque
 	return userList
 }
 
+/*
+!GetUserByMostComment function is used to sort user by most comment they did and by a searched string by using SELECT * FROM and WHERE LIKE sql command. She take as argument a string, a writer, a request and return an slice of User type.
+*/
 func GetUserByMostComment(searchString string, w http.ResponseWriter, r *http.Request) []User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -230,6 +257,9 @@ func GetUserByMostComment(searchString string, w http.ResponseWriter, r *http.Re
 	return userList
 }
 
+/*
+!UpdateUserInfo function is used to update user inforamation by using UPDATE sql command. She take as argument a user type, a writer, a request.
+*/
 func UpdateUserInfo(user User, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -252,6 +282,9 @@ func UpdateUserInfo(user User, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+!DeleteUser function is used to delete user by using DELETE sql command. She take as argument an int, a writer, a request.
+*/
 func DeleteUser(userId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")

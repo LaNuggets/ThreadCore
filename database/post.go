@@ -53,6 +53,9 @@ type TempPostInfo struct {
 	Time         string
 }
 
+/*
+!AddUser function open data base and add an psot to it with the INSERT INTO sql command she take as argument an Post type and a writer and request.
+*/
 func AddPost(post Post, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -66,6 +69,9 @@ func AddPost(post Post, w http.ResponseWriter, r *http.Request) {
 	defer query.Close()
 }
 
+/*
+!GetPostsBySearchString function open data base and get post by search string by using the SELECT sql command she take as argument a string type, a writer, a request and return a sice of PostInfo.
+*/
 func GetPostsBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -99,6 +105,9 @@ func GetPostsBySearchString(searchString string, w http.ResponseWriter, r *http.
 	return postList
 }
 
+/*
+!GetPostsByUser function open data base and get post by an user id by using the SELECT sql command she take as argument an int type, a writer, a request and return a sice of PostInfo.
+*/
 func GetPostsByUser(userId int, w http.ResponseWriter, r *http.Request) []PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -133,6 +142,9 @@ func GetPostsByUser(userId int, w http.ResponseWriter, r *http.Request) []PostIn
 	return postList
 }
 
+/*
+!GetPostsByCommunity function open data base and get post by a community id by using the SELECT sql command she take as argument an int type, a writer, a request and return a sice of PostInfo.
+*/
 func GetPostsByCommunity(communityId int, w http.ResponseWriter, r *http.Request) []PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -167,6 +179,9 @@ func GetPostsByCommunity(communityId int, w http.ResponseWriter, r *http.Request
 	return postList
 }
 
+/*
+!GetPostById function open data base and get post by an id by using the SELECT sql command she take as argument an int type, a writer, a request and return a PostInfo.
+*/
 func GetPostById(id int, w http.ResponseWriter, r *http.Request) PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -193,6 +208,9 @@ func GetPostById(id int, w http.ResponseWriter, r *http.Request) PostInfo {
 	return postInfo
 }
 
+/*
+!GetPostByUuid function open data base and get post by an uuid by using the SELECT sql command she take as argument a string type, a writer, a request and return a PostInfo.
+*/
 func GetPostByUuid(uuid string, w http.ResponseWriter, r *http.Request) PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -218,6 +236,9 @@ func GetPostByUuid(uuid string, w http.ResponseWriter, r *http.Request) PostInfo
 	return postInfo
 }
 
+/*
+!GetPostByMostComment function open data base and sort post by most commented and by searched string by using the SELECT sql command she take as argument a string type, a writer, a request and return a slice of PostInfo.
+*/
 func GetPostByMostComment(searchString string, w http.ResponseWriter, r *http.Request) []PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -251,6 +272,9 @@ func GetPostByMostComment(searchString string, w http.ResponseWriter, r *http.Re
 	return postList
 }
 
+/*
+!GetPostByPopular function open data base and sort post by most followed and by searched string by using the SELECT sql command she take as argument a string type, a writer, a request and return a slice of PostInfo.
+*/
 func GetPostByPopular(searchString string, w http.ResponseWriter, r *http.Request) []PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -284,6 +308,9 @@ func GetPostByPopular(searchString string, w http.ResponseWriter, r *http.Reques
 	return postList
 }
 
+/*
+!GetPostByPopularByCommunity function open data base and sort post by most followed in a given community by using the SELECT sql command she take as argument an int type, a writer, a request and return a slice of PostInfo.
+*/
 func GetPostByPopularByCommunity(communityId int, w http.ResponseWriter, r *http.Request) []PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -318,6 +345,9 @@ func GetPostByPopularByCommunity(communityId int, w http.ResponseWriter, r *http
 	return postList
 }
 
+/*
+!GetPostByMostCommentByCommunity function open data base and sort post by most commented in a given community by using the SELECT sql command she take as argument an int type, a writer, a request and return a slice of PostInfo.
+*/
 func GetPostByMostCommentByCommunity(communityId int, w http.ResponseWriter, r *http.Request) []PostInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -352,6 +382,9 @@ func GetPostByMostCommentByCommunity(communityId int, w http.ResponseWriter, r *
 	return postList
 }
 
+/*
+!UpdatePostInfo function open data base and update post information by using the SELECT sql command she take as argument an Post type, a writer, a request.
+*/
 func UpdatePostInfo(post Post, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -374,6 +407,9 @@ func UpdatePostInfo(post Post, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+!DeletePost function open data base and delete post information by using the DELETE sql command she take as argument an int type, a writer, a request.
+*/
 func DeletePost(postId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")

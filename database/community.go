@@ -29,6 +29,9 @@ type CommunityInfo struct {
 	UserProfile string
 }
 
+/*
+!AddCommunity function open data base and add community by using the INSERT INTO sql command she take as argument an Community type and a writer and request.
+*/
 func AddCommunity(community Community, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -43,6 +46,9 @@ func AddCommunity(community Community, w http.ResponseWriter, r *http.Request) {
 	AddUserCommunity(newcommunity.User_id, newcommunity.Id, w, r)
 }
 
+/*
+!GetCommunityById function open data base and get community by id by using the SELECT FROM sql command she take as argument an int type and a writer and request and return a CommunityInfo type.
+*/
 func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -63,6 +69,9 @@ func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) CommunityI
 	return community
 }
 
+/*
+!GetCommunityBySearchString function open data base and get community by searched string by using the SELECT FROM sql command she take as argument a string type and a writer and request and return a slice of CommunityInfo type.
+*/
 func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *http.Request) []CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -92,6 +101,9 @@ func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *h
 	return communityList
 }
 
+/*
+!GetCommunityByName function open data base and get community by name by using the SELECT FROM sql command she take as argument a string type and a writer and request and return a CommunityInfo type.
+*/
 func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Request) CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -111,6 +123,9 @@ func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Req
 	return community
 }
 
+/*
+!GetCommunitiesByNMembers function open data base and get community by searched string and by most members by using the SELECT FROM sql command she take as argument a string type and a writer and request and return a slice of CommunityInfo type.
+*/
 func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *http.Request) []CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -139,6 +154,9 @@ func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *htt
 	return communityList
 }
 
+/*
+!GetCommunitiesByMostPost function open data base and get community by searched string and by most post by using the SELECT FROM sql command she take as argument a string type and a writer and request and return a slice of CommunityInfo type.
+*/
 func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *http.Request) []CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -189,7 +207,9 @@ func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *htt
 
 // 	return communityList
 // }
-
+/*
+!GetCommunitiesByMostPost function open data base and update community inforamtion by using the UPDATE sql command she take as argument a Community type and a writer and request.
+*/
 func UpdateCommunityInfo(community Community, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -212,6 +232,9 @@ func UpdateCommunityInfo(community Community, w http.ResponseWriter, r *http.Req
 	}
 }
 
+/*
+!DeleteCommunity function open data base and delete community by using the DELETE sql command she take as argument a Community type and a writer and request.
+*/
 func DeleteCommunity(communityId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -235,7 +258,9 @@ func DeleteCommunity(communityId int, w http.ResponseWriter, r *http.Request) {
 }
 
 // USER_COMMUNITY Table handler
-
+/*
+!DeleteCommunity function open data base and add a user to a community by using the INSERT INTO sql command she take as argument two int type and a writer and request.
+*/
 func AddUserCommunity(userId int, communityId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -248,6 +273,9 @@ func AddUserCommunity(userId int, communityId int, w http.ResponseWriter, r *htt
 	defer query.Close()
 }
 
+/*
+!ExistsUserCommunity function open data base and check if a user is on a community by using the SELECT * FROM sql command she take as argument two int type and a writer and request and return a boolean.
+*/
 func ExistsUserCommunity(userId int, communityId int, w http.ResponseWriter, r *http.Request) bool {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -274,6 +302,9 @@ func ExistsUserCommunity(userId int, communityId int, w http.ResponseWriter, r *
 	return user_communty != UserCommunity{}
 }
 
+/*
+!GetUsersByCommunity function open data base and get users on a community by using the SELECT * FROM sql command she take as argument an int type and a writer and request and return a slice of User.
+*/
 func GetUsersByCommunity(communityId int, w http.ResponseWriter, r *http.Request) []User {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -304,6 +335,9 @@ func GetUsersByCommunity(communityId int, w http.ResponseWriter, r *http.Request
 	return userList
 }
 
+/*
+!GetCommunitiesByUser function open data base and get communities on a user by using the SELECT * FROM sql command she take as argument an int type and a writer and request and return a slice of Community.
+*/
 func GetCommunitiesByUser(userId int, w http.ResponseWriter, r *http.Request) []Community {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -334,6 +368,9 @@ func GetCommunitiesByUser(userId int, w http.ResponseWriter, r *http.Request) []
 	return communityList
 }
 
+/*
+!DeleteUserCommunity function open data base and delete a user on a community by using the DELETE sql command she take as argument two int type and a writer and request.
+*/
 func DeleteUserCommunity(userId int, communityId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")

@@ -25,6 +25,9 @@ type TempLike struct {
 	User_id    int
 }
 
+/*
+!AddLike function open data base and add like by using the INSERT INTO sql command she take as argument an Like type and a writer and request.
+*/
 func AddLike(like Like, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -37,6 +40,9 @@ func AddLike(like Like, w http.ResponseWriter, r *http.Request) {
 	defer query.Close()
 }
 
+/*
+!GetLikesByPost function open data base and get likes on a post by using the SELECT * FROM and WHERE sql command she take as argument an int type and a writer and request and return a slice of like.
+*/
 func GetLikesByPost(postId int, w http.ResponseWriter, r *http.Request) []Like {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -72,6 +78,9 @@ func GetLikesByPost(postId int, w http.ResponseWriter, r *http.Request) []Like {
 	return likeList
 }
 
+/*
+!GetLikesByUser function open data base and get likes on an user by using the SELECT * FROM and WHERE sql command she take as argument an int type and a writer and request and return a slice of like.
+*/
 func GetLikesByUser(userId int, w http.ResponseWriter, r *http.Request) []Like {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -107,6 +116,9 @@ func GetLikesByUser(userId int, w http.ResponseWriter, r *http.Request) []Like {
 	return likeList
 }
 
+/*
+!GetLikesByComment function open data base and get likes on a comment by using the SELECT * FROM and WHERE sql command she take as argument an int type and a writer and request and return a slice of like.
+*/
 func GetLikesByComment(commentId int, w http.ResponseWriter, r *http.Request) []Like {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -142,6 +154,9 @@ func GetLikesByComment(commentId int, w http.ResponseWriter, r *http.Request) []
 	return likeList
 }
 
+/*
+!GetLikeById function open data base and get like by an id by using the SELECT * FROM and WHERE sql command she take as argument an int type and a writer and request and return a like.
+*/
 func GetLikeById(id int, w http.ResponseWriter, r *http.Request) Like {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -168,6 +183,9 @@ func GetLikeById(id int, w http.ResponseWriter, r *http.Request) Like {
 	return like
 }
 
+/*
+!GetLikeByUserComment function open data base and get likes of an user on comment by using the SELECT * FROM and WHERE sql command she take as argument two int type and a writer and request and return a like.
+*/
 func GetLikeByUserComment(user_id int, comment_id int, w http.ResponseWriter, r *http.Request) Like {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -195,6 +213,9 @@ func GetLikeByUserComment(user_id int, comment_id int, w http.ResponseWriter, r 
 	return like
 }
 
+/*
+!GetLikeByUserPost function open data base and get likes of an user on post by using the SELECT * FROM and WHERE sql command she take as argument two int type and a writer and request and return a like.
+*/
 func GetLikeByUserPost(user_id int, post_id int, w http.ResponseWriter, r *http.Request) Like {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -222,6 +243,9 @@ func GetLikeByUserPost(user_id int, post_id int, w http.ResponseWriter, r *http.
 	return like
 }
 
+/*
+!UpdateLike function open data base and update the like status UPDATE sql command she take as argument an int type and a writer and request.
+*/
 func UpdateLike(like Like, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -244,6 +268,9 @@ func UpdateLike(like Like, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+!UpdateLike function open data base and delete the like DELETE sql command she take as argument an int type and a writer and request.
+*/
 func DeleteLike(likeId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")

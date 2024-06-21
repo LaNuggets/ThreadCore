@@ -22,6 +22,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	/*
+		!Get user with cookies
+	*/
 	userUuid := api.GetCookie("uuid", r)
 	user := database.GetUserByUuid(userUuid, w, r)
 	userProfile := user.Profile
@@ -36,6 +39,10 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	var sortedCommunities []database.CommunityInfo
 	var sortedUsers []database.User
 	var difference time.Duration
+
+	/*
+	  !Switch case for sorting post, communities, user by time(past year, past month, past week, past day, past hour) and by most popular, newest, most comment, most post, most members
+	*/
 
 	switch media {
 	case "posts":
@@ -242,6 +249,9 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	/*
+		!Structur to send data to html
+	*/
 	searchPage := struct {
 		Connected         bool
 		Profile           string

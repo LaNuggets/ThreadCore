@@ -42,6 +42,9 @@ type TempCommentInfo struct {
 	Created    time.Time
 }
 
+/*
+!AddComment function open data base and add comment by using the INSERT INTO sql command she take as argument an comment type and a writer and request.
+*/
 func AddComment(comment Comment, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -83,7 +86,9 @@ func AddComment(comment Comment, w http.ResponseWriter, r *http.Request) {
 
 // 	return commentList
 // }
-
+/*
+!GetCommentsByPost function open data base and get comments by post by using the SELECT sql command she take as argument an int type and a writer and request and return a slice of CommentInfo.
+*/
 func GetCommentsByPost(postId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -120,6 +125,9 @@ func GetCommentsByPost(postId int, w http.ResponseWriter, r *http.Request) []Com
 	return commentList
 }
 
+/*
+!GetCommentsByUser function open data base and get comments by user by using the SELECT sql command she take as argument an int type and a writer and request and return a slice of CommentInfo.
+*/
 func GetCommentsByUser(userId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -156,6 +164,9 @@ func GetCommentsByUser(userId int, w http.ResponseWriter, r *http.Request) []Com
 	return commentList
 }
 
+/*
+!GetCommentsByComment function open data base and get comments by comment by using the SELECT sql command she take as argument an int type and a writer and request and return a slice of CommentInfo.
+*/
 func GetCommentsByComment(commentId int, w http.ResponseWriter, r *http.Request) []CommentInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -192,6 +203,9 @@ func GetCommentsByComment(commentId int, w http.ResponseWriter, r *http.Request)
 	return commentList
 }
 
+/*
+!GetCommentById function open data base and get comments by id by using the SELECT sql command she take as argument an int type and a writer and request and return a slice of CommentInfo.
+*/
 func GetCommentById(id int, w http.ResponseWriter, r *http.Request) CommentInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -220,6 +234,9 @@ func GetCommentById(id int, w http.ResponseWriter, r *http.Request) CommentInfo 
 	return commentInfo
 }
 
+/*
+!UpdateCommentInfo function open data base and update comment information by using the UPDATE sql command she take as argument an Comment type and a writer and request.
+*/
 func UpdateCommentInfo(comment Comment, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
@@ -242,6 +259,9 @@ func UpdateCommentInfo(comment Comment, w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+/*
+!DeleteComment function open data base and delete comment by using the DELETE sql command she take as argument an int type and a writer and request.
+*/
 func DeleteComment(commentId int, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
