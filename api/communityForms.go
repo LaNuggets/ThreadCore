@@ -60,7 +60,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				profilePath = "/static/images/communities/profile/" + name + ext
+				profilePath = "/static/images/communities/profiles/" + name + ext
 				GetFileFromForm(profile, handler, err, profilePath)
 			} else {
 				fmt.Println("The file is  not in an image format")
@@ -90,7 +90,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				bannerPath = "/static/images/communities/banner/" + name + ext
+				bannerPath = "/static/images/communities/banners/" + name + ext
 				GetFileFromForm(banner, handler, err, bannerPath)
 			} else {
 				fmt.Println("The file is  not in an image format")
@@ -174,7 +174,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				profilePath = "/static/images/communities/profile/" + strconv.Itoa(community.Id) + ext
+				profilePath = "/static/images/communities/profiles/" + strconv.Itoa(community.Id) + ext
 				GetFileFromForm(profile, handler, err, profilePath)
 			} else {
 				fmt.Println("The file is  not in an image format")
@@ -208,7 +208,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				bannerPath = "/static/images/communities/banner/" + strconv.Itoa(community.Id) + ext
+				bannerPath = "/static/images/communities/banners/" + strconv.Itoa(community.Id) + ext
 				GetFileFromForm(banner, handler, err, bannerPath)
 			} else {
 				fmt.Println("The file is  not in an image format")

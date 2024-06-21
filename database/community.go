@@ -25,6 +25,7 @@ type CommunityInfo struct {
 	Name        string
 	Description string
 	User_id     int
+	User_uuid   string
 	Username    string
 	UserProfile string
 }
@@ -57,13 +58,13 @@ func GetCommunityById(id int, w http.ResponseWriter, r *http.Request) CommunityI
 	defer db.Close()
 
 	id2 := strconv.Itoa(id)
-	rows, _ := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community JOIN user ON user.id = community.user_id WHERE community.id = '" + id2 + "'")
+	rows, _ := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.uuid, user.username, user.profile FROM community JOIN user ON user.id = community.user_id WHERE community.id = '" + id2 + "'")
 	defer rows.Close()
 
 	community := CommunityInfo{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.User_uuid, &community.Username, &community.UserProfile)
 	}
 
 	return community
@@ -79,7 +80,7 @@ func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *h
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community INNER JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%'")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.uuid, user.username, user.profile FROM community INNER JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%'")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -89,7 +90,7 @@ func GetCommunityBySearchString(searchString string, w http.ResponseWriter, r *h
 
 	for rows.Next() {
 		community := CommunityInfo{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.User_uuid, &community.Username, &community.UserProfile)
 		CheckErr(err, w, r)
 
 		communityList = append(communityList, community)
@@ -111,13 +112,13 @@ func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Req
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, _ := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community JOIN user ON user.id = community.user_id WHERE community.name = '" + communityName + "'")
+	rows, _ := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.uuid, user.username, user.profile FROM community JOIN user ON user.id = community.user_id WHERE community.name = '" + communityName + "'")
 	defer rows.Close()
 
 	community := CommunityInfo{}
 
 	for rows.Next() {
-		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
+		rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.User_uuid, &community.Username, &community.UserProfile)
 	}
 
 	return community
@@ -134,7 +135,7 @@ func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *htt
 	defer db.Close()
 
 	//, COUNT(user_community.community_id)
-	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.uuid, user.username, user.profile FROM community JOIN user_community ON user_community.community_id = community.id JOIN user ON user.id = user_community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(user_community.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -144,7 +145,7 @@ func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *htt
 
 	for rows.Next() {
 		community := CommunityInfo{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.User_uuid, &community.Username, &community.UserProfile)
 		communityList = append(communityList, community)
 	}
 
@@ -164,7 +165,7 @@ func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *htt
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.username, user.profile FROM community JOIN post ON post.community_id = community.id JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(post.community_id) DESC")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id, user.uuid, user.username, user.profile FROM community JOIN post ON post.community_id = community.id JOIN user ON user.id = community.user_id WHERE community.name LIKE '%" + searchString + "%' OR user.username LIKE '%" + searchString + "%' GROUP BY community.id ORDER BY COUNT(post.community_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -174,7 +175,7 @@ func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *htt
 
 	for rows.Next() {
 		community := CommunityInfo{}
-		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.Username, &community.UserProfile)
+		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id, &community.User_uuid, &community.Username, &community.UserProfile)
 		communityList = append(communityList, community)
 	}
 
