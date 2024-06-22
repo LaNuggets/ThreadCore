@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// !The NotFound function is used to create the 404 pages when the chosen path does not existe. She take as argument a writer and a request.
 func NotFound(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles("./templates/notFound.html")

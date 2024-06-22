@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// !The Error function is used to create the error page which appears when the serveur encouter an error. She take as arguments a writer and a request.
 func Error(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, err := template.ParseFiles("./templates/error.html")

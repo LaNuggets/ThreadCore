@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// ! The Post function is used to create the post page. This page diplay all the information about a certin post like the content, is creator, the comment, the number of like/dislike.
 func Post(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/post/" {
 		http.Redirect(w, r, "/search", http.StatusSeeOther)
@@ -35,7 +36,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	comments := database.GetCommentsByPost(post.Id, w, r)
 	community := database.GetCommunityById(post.Community_id, w, r)
 
-	//Time formating for the post
+	//!Time formating for the post
 	difference := time.Now().Sub(post.Created)
 	postedTime := api.GetFormatedDuration(difference)
 
@@ -47,13 +48,13 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		SubComments     []database.CommentInfo
 	}
 
-	//ProfilePicture and connection check
+	//!ProfilePicture and connection check
 	userUuid := api.GetCookie("uuid", r)
 	user := database.GetUserByUuid(userUuid, w, r)
 
 	commentInfo := []CommentsPageInfo{}
 
-	//Time formating for comments + get comment answers
+	//!Time formating for comments + get comment answers
 	for i := 0; i < len(comments); i++ {
 		difference := time.Now().Sub(comments[i].Created)
 		comments[i].Time = api.GetFormatedDuration(difference)
@@ -76,7 +77,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		fullComment := CommentsPageInfo{Comment: comments[i], CommentLikes: likes, CommentDislikes: dislikes, UserRating: userRating, SubComments: subComments}
 		commentInfo = append(commentInfo, fullComment)
 	}
-
+	//!Check if the post is in a community
 	followcount := 0
 	var isFollowing bool
 	if post.Community_id == 0 {
@@ -87,7 +88,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		isFollowing = database.ExistsUserCommunity(user.Id, post.Community_id, w, r)
 	}
 
-	// Get likes and dislikes
+	// !Get likes and dislikes
 	likes := 0
 	dislikes := 0
 	allRatings := database.GetLikesByPost(post.Id, w, r)

@@ -10,13 +10,14 @@ import (
 	"time"
 )
 
+// !The Community function is used to create the commuity page. This page is used to display the communities based on the curent filter. She take as argument a writer and a request.
 func Community(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/community/" {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 		return
 	}
 
-	tmpl, err := template.ParseFiles("./templates/community.html") // Read the home page
+	tmpl, err := template.ParseFiles("./templates/community.html")
 	if err != nil {
 		log.Printf("\033[31mError parsing template: %v\033[0m", err)
 		http.Error(w, "Internal error, template not found.", http.StatusInternalServerError)
@@ -28,13 +29,13 @@ func Community(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
 	}
 
-	//ProfilePicture and connection check
+	//!ProfilePicture and connection check
 	userUuid := api.GetCookie("uuid", r)
 	user := database.GetUserByUuid(userUuid, w, r)
 
 	community := database.GetCommunityByName(communityName, w, r)
 
-	//Following info
+	//!Following info
 	followcount := len(database.GetUsersByCommunity(community.Id, w, r))
 	isFollowing := database.ExistsUserCommunity(user.Id, community.Id, w, r)
 
@@ -44,6 +45,9 @@ func Community(w http.ResponseWriter, r *http.Request) {
 	var sortedPosts []database.PostInfo
 	var difference time.Duration
 
+	/*
+	  !Switch case for sorting communities by time(past year, past month, past week, past day, past hour) and by most post, most members.
+	*/
 	switch sort {
 	case "popular":
 		searchedPost := database.GetPostByPopularByCommunity(community.Id, w, r)
@@ -236,7 +240,7 @@ func Community(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var sortedPostsInfo []SortedPostsInfo
-	//Get rating info on each posts
+	//!Get rating info on each posts
 	for i := 0; i < len(sortedPosts); i++ {
 		likes := 0
 		dislikes := 0

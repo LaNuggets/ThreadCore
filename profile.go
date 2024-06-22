@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// ! The User function is used to create the user profile page. This page display all the information about ann user like is nulber of follower, his post
 func User(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/user/" {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
@@ -43,7 +44,9 @@ func User(w http.ResponseWriter, r *http.Request) {
 
 	var sortedPosts []database.PostInfo
 	var difference time.Duration
-
+	/*
+	  !Switch case for sorting post by time(past year, past month, past week, past day, past hour) and by most popular, newest and most comment.
+	*/
 	switch sort {
 	case "popular":
 		searchedPost := database.GetPostByPopularByUser(profile.Id, w, r)
@@ -236,7 +239,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var sortedPostsInfo []SortedPostsInfo
-	//Get rating info on each posts
+	//!Get rating info on each posts
 	for i := 0; i < len(sortedPosts); i++ {
 		likes := 0
 		dislikes := 0

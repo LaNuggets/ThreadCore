@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// ! The Search function is used to create the search page. This page allow user find search poost, communities and other user by using filter and search bar. She take as argument a writer and a request.
 func Search(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/search/" {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
