@@ -51,6 +51,10 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	//!ProfilePicture and connection check
 	userUuid := api.GetCookie("uuid", r)
 	user := database.GetUserByUuid(userUuid, w, r)
+	// Delete cookie if not existing in database
+	if (user == database.User{} && userUuid != "") {
+		api.DeleteCookie(userUuid, w)
+	}
 
 	commentInfo := []CommentsPageInfo{}
 
@@ -110,7 +114,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		Id        int
 	}
 	userInfo := UserPageInfo{
-		Connected: userUuid != "",
+		Connected: user.Uuid != "",
 		Profile:   user.Profile,
 		Username:  api.GetCookie("username", r),
 		Uuid:      user.Uuid,

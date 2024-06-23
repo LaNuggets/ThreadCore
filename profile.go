@@ -32,6 +32,10 @@ func User(w http.ResponseWriter, r *http.Request) {
 	//ProfilePicture and connection check
 	userUuid := api.GetCookie("uuid", r)
 	user := database.GetUserByUuid(userUuid, w, r)
+	// Delete cookie if not existing in database
+	if (user == database.User{} && userUuid != "") {
+		api.DeleteCookie(userUuid, w)
+	}
 
 	profile := database.GetUserByUsername(username, w, r)
 
@@ -263,7 +267,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 		Uuid      string
 	}
 	userInfo := UserPageInfo{
-		Connected: userUuid != "",
+		Connected: user.Uuid != "",
 		Profile:   user.Profile,
 		Username:  user.Username,
 		Uuid:      user.Uuid,

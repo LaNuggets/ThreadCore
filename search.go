@@ -28,6 +28,10 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	*/
 	userUuid := api.GetCookie("uuid", r)
 	user := database.GetUserByUuid(userUuid, w, r)
+	// Delete cookie if not existing in database
+	if (user == database.User{} && userUuid != "") {
+		api.DeleteCookie(userUuid, w)
+	}
 
 	search := r.URL.Query().Get("q")
 	media := r.URL.Query().Get("media") // media options  : posts, communities, users
@@ -257,7 +261,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Uuid      string
 	}
 	userInfo := UserPageInfo{
-		Connected: userUuid != "",
+		Connected: user.Uuid != "",
 		Profile:   user.Profile,
 		Username:  user.Username,
 		Uuid:      user.Uuid,
