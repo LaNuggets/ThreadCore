@@ -3,7 +3,6 @@ package main
 import (
 	"ThreadCore/api"
 	"ThreadCore/database"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -51,7 +50,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		switch sort {
 		case "popular":
 			searchedPost := database.GetPostByPopular(search, w, r)
-			fmt.Println(searchedPost)
 			switch ChoosenTime {
 			case "all_time":
 				for i := 0; i < len(searchedPost); i++ {
