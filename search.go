@@ -243,10 +243,8 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		switch sort {
 		case "popular":
 			sortedUsers = database.GetUserByMostPopular(search, w, r)
-		case "new":
-			sortedUsers = database.GetUserByMostPost(search, w, r)
 		case "most_comments":
-			sortedUsers = database.GetUserByMostComment(search, w, r)
+			sortedUsers = database.GetUserByMostPost(search, w, r)
 		}
 	}
 
