@@ -1,10 +1,40 @@
 // get query value in url from key
 const urlParams = new URLSearchParams(window.location.search);
 
+// SEARCH BAR VALUE FROM URL QUERY
+const searchString = urlParams.get('q');
+if (searchString != null) {
+    document.getElementById("search").value = searchString
+}
+
+// URL QUERY FROM SEARCH BAR INPUT
+let search = document.getElementById("search");
+
+search.addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    if ('URLSearchParams' in window) {
+      var searchParams = new URLSearchParams(window.location.search);
+      searchParams.set("q", search.value);
+      window.location.search = searchParams.toString();
+    }
+  }
+});
+
 // set attribute selected on the chosen options
 const mediaOption = urlParams.get('media');
 if (mediaOption != null) {
     document.getElementById(mediaOption).checked = true
+    if (mediaOption == "posts") {
+        document.getElementById("most_comments").textContent = "Most Comments"
+        document.getElementById("new").style.display = "block"
+    } else if (mediaOption == "communities") {
+        document.getElementById("most_comments").textContent = "Most Posts"
+        document.getElementById("new").style.display = "none"
+    } else if (mediaOption == "users") {
+        document.getElementById("most_comments").textContent = "Most Posts"
+        document.getElementById("new").style.display = "none"
+    }
 } else {
     if ('URLSearchParams' in window) {
         var searchParams = new URLSearchParams(window.location.search);

@@ -39,11 +39,15 @@ func GetFileFromForm(file multipart.File, handler *multipart.FileHeader, err err
 }
 
 func DeleteFile(path string) {
-	if _, err := os.Stat("." + path); errors.Is(err, os.ErrNotExist) {
+	if path == "/static/images/bannerTemplate.png" || path == "/static/images/profileTemplate.png" || path == "/static/images/medidaTemplate.png" {
 	} else {
-		e := os.Remove("." + path)
-		if e != nil {
-			log.Fatal(e)
+		if _, err := os.Stat("." + path); errors.Is(err, os.ErrNotExist) {
+		} else {
+			e := os.Remove("." + path)
+			if e != nil {
+				log.Fatal(e)
+			}
 		}
 	}
+
 }

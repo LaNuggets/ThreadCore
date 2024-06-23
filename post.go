@@ -111,7 +111,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	userInfo := UserPageInfo{
 		Connected: userUuid != "",
 		Profile:   user.Profile,
-		Username:  api.GetCookie("username", r),
+		Username:  user.Username,
 		Uuid:      user.Uuid,
 		Id:        user.Id,
 	}

@@ -26,14 +26,14 @@
             <span class="placeholder">Search on ThreadCore</span>
         </section>
         <section class="connect-or-user">
-            {{if .Connected}}
+            {{if .User.Connected}}
             <article id="connected">
                 <button class="logout" id="logout">
                     <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" version="1.1" style="enable-background:new 0 0 56.6934 56.6934;" id="Layer_1" class="icon"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg>
                     <form id="disconnect" action="/disconnect" method="post" hidden></form>
                 </button>
-                <a class="profile" href="/user/{{.Username}}">
-                    <img id="profilePicture" src="{{.Profile}}" alt="Profile Picture">
+                <a class="profile" href="/user/{{.User.Username}}">
+                    <img id="profilePicture" src="{{.User.Profile}}" alt="Profile Picture">
                 </a>
             </article>
             {{else}}
@@ -49,8 +49,8 @@
     <section class="content">
         <nav>
             <a href="/" id="home" class="menu">Home</a>
-            <a href="/search/" id="popular" class="menu">Popular</a>
-            <a href="/search/" id="all" class="menu">All</a>
+            <a href="/search/?media=posts&sort=popular" id="popular" class="menu">Popular</a>
+            <a href="/search/?media=posts&sort=new" id="all" class="menu">All</a>
             <div class="line"></div>
             <a id="createPostButton" class="menu">Create Post</a>
             <div class="line"></div>
@@ -68,85 +68,84 @@
                   <input class="media-input" type="radio" name="test" value="communities" id="communities">
                   <div class="btn">
                     <span class="span">Communities</span>
-                  </div>  </div>
+                  </div>  
+                </div>
                 <div class="optionUsers">
                   <input class="media-input" type="radio" name="test" value="users" id="users">
                   <div class="btn">
                     <span class="span">Users</span>
                   </div>  
                 </div>
-              </div>
-        <div class="sortAndTime">
-            <div class="sort-select">
-                <select class="sort">
-                    <option value="popular" id="popular">Popular</option>
-                    <option value="new" id="new">New</option>
-                    <option value="most_comments" id="most_comments">Most Comments</option>
-                </select>
             </div>
-            <div class="time-select">
-                <select class="time">
-                    <option value="all_time" id="all_time">All Time</option>
-                    <option value="year" id="year">Year</option>
-                    <option value="month" id="month">Month</option>
-                    <option value="week" id="week">Week</option>
-                    <option value="day" id="day">Day</option>
-                    <option value="hour" id="hour">Hour</option>
-                </select>
+            <div class="sortAndTime">
+                <div class="sort-select">
+                    <select class="sort">
+                        <option value="popular" id="popular">Popular</option>
+                        <option value="new" id="new">New</option>
+                        <option value="most_comments" id="most_comments">Most Comments</option>
+                    </select>
+                </div>
+                <div class="time-select">
+                    <select class="time">
+                        <option value="all_time" id="all_time">All Time</option>
+                        <option value="year" id="year">Year</option>
+                        <option value="month" id="month">Month</option>
+                        <option value="week" id="week">Week</option>
+                        <option value="day" id="day">Day</option>
+                        <option value="hour" id="hour">Hour</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        {{if .SortedPosts}}
-        <section class="post">
-        {{range .SortedPosts}}
-        <section class="postHover">
-            <a href="/post/{{.Uuid}}" class="link">
-            <section class="community">
-                <article class="info">
-                    {{if eq .Community_id 0}}
-                        <article class="name_time">
-                            <img class="PP" src="{{.Profile}}"></img>
-                            <p class="name">{{.Username}}</p>
-                            <p class="PostTime">- {{.Time}}</p>
-                        </article>
-                    {{else}}
-                        <article class="name_time">
-                            <img class="PP" src="{{.Profile}}"></img>
-                            <p class="name">{{.CommunityName}}</p>
-                            <p class="PostTime">- {{.Time}}</p>
-                        </article>
-                        <p class="username">{{.Username}}</p>
-                    {{end}}
-                </article>
-            </section>
-            <h1 class="post-title">{{.Title}}</h1>
-            <p class="post-content">{{.Content}}</p>
-                {{if .Media}}
-                    {{if eq .MediaType "image"}}
-                        <img class="media" src="{{.Media}}" alt="Media">
-                    {{else if eq .MediaType "video"}}
-                        <video class="media" src="{{.Media}}" controls>Your browser does not support the video tag.</video>
+            {{if .SortedPosts}}
+            <section class="post">
+            {{range .SortedPosts}}
+            <section class="postHover">
+                <a href="/post/{{.Uuid}}" class="link">
+                <section class="community">
+                    <article class="info">
+                        {{if eq .Community_id 0}}
+                            <article class="name_time">
+                                <img class="PP" src="{{.Profile}}"></img>
+                                <p class="name">{{.Username}}</p>
+                                <p class="PostTime">- {{.Time}}</p>
+                            </article>
                         {{else}}
-                        <img class="media" src="{{.Media}}" alt="Media">
+                            <article class="name_time">
+                                <img class="PP" src="{{.Profile}}"></img>
+                                <p class="name">{{.CommunityName}}</p>
+                                <p class="PostTime">- {{.Time}}</p>
+                            </article>
+                            <p class="username">{{.Username}}</p>
+                        {{end}}
+                    </article>
+                </section>
+                <h1 class="post-title">{{.Title}}</h1>
+                <p class="post-content">{{.Content}}</p>
+                    {{if .Media}}
+                        {{if eq .MediaType "image"}}
+                            <img class="media" src="{{.Media}}" alt="Media">
+                        {{else if eq .MediaType "video"}}
+                            <video class="media" src="{{.Media}}" controls>Your browser does not support the video tag.</video>
+                            {{else}}
+                            <img class="media" src="{{.Media}}" alt="Media">
+                        {{end}}
                     {{end}}
-                {{end}}
-                <div class="line"></div>
-            </a>
-        </section>
-            
+                    <div class="line"></div>
+                </a>
+            </section>
             {{end}}
             {{else if .SortedCommunities}}
                 {{range .SortedCommunities}}
                 <a href="/community/{{.Name}}" class="link">
-                <article class="filtred_Communities">
-                    <img class="communities_Banner" src="{{.Banner}}"></img>
-                    <img class="communities_Picture" src="{{.Profile}}"></img>
-                    <div class="name_Desc">
-                    <h1 class="communities_Name">{{.Name}}</h1>
-                <p class="communities_Description">{{.Description}}</p>
-            </div>
-                <div class="line_communities"></div>
-                </article>
-            </a>
+                    <article class="filtred_Communities">
+                        <img class="communities_Banner" src="{{.Banner}}"></img>
+                        <img class="communities_Picture" src="{{.Profile}}"></img>
+                        <div class="name_Desc">
+                        <h1 class="communities_Name">{{.Name}}</h1>
+                    <p class="communities_Description">{{.Description}}</p>
+                    <div class="line_communities"></div>
+                    </article>
+                </a>
             {{end}}
                 {{else if .SortedUsers}}
                 <article class="filtred_Users">
@@ -161,24 +160,22 @@
                 </a>
                 {{end}}
             </article>
-        {{end}}
-
-    
-        {{if not .SortedPosts}}
-            {{if not .SortedCommunities}}
-                {{if not .SortedUsers}}
-                    <div class="honeycomb">
-                        <div class="blackhoneycomb"></div>
-                        <div class="orangehoneycomb"></div>
-                        <div class="blackhoneycomb"></div>
-                        <div class="blackhoneycomb"></div>
-                        <div class="orangehoneycomb"></div>
-                        <div class="orangehoneycomb"></div>
-                        <div class="orangehoneycomb"></div>
-                    </div>
+            {{end}}
+            {{if not .SortedPosts}}
+                {{if not .SortedCommunities}}
+                    {{if not .SortedUsers}}
+                        <div class="honeycomb">
+                            <div class="blackhoneycomb"></div>
+                            <div class="orangehoneycomb"></div>
+                            <div class="blackhoneycomb"></div>
+                            <div class="blackhoneycomb"></div>
+                            <div class="orangehoneycomb"></div>
+                            <div class="orangehoneycomb"></div>
+                            <div class="orangehoneycomb"></div>
+                        </div>
+                    {{end}}
                 {{end}}
             {{end}}
-        {{end}}
         </main>
         <aside>
         </aside>

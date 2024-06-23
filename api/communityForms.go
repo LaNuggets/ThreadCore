@@ -19,13 +19,13 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/search/?type=error&message=User+not+connected+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/search/?type=error&message=User+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -33,7 +33,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	community := database.GetCommunityByName(name, w, r)
 	if (community != database.CommunityInfo{}) {
 		fmt.Println("Community already exists") // TO-DO : Send error message for invalid name
-		http.Redirect(w, r, "/search/?type=error&message=Community+name+already+exist+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=Community+name+already+exist+!", http.StatusSeeOther)
 		return
 	}
 
@@ -118,7 +118,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	community := database.GetCommunityById(id2, w, r)
 	if (community == database.CommunityInfo{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
-		http.Redirect(w, r, "/search/?type=error&message=Community+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=Community+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -242,7 +242,7 @@ func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
 	community := database.GetCommunityById(id2, w, r)
 	if (community == database.CommunityInfo{}) {
 		fmt.Println("community does not exist") // TO-DO : send error community not found
-		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=Community+does+not+exist+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=Community+does+not+exist+!", http.StatusSeeOther)
 		return
 	}
 

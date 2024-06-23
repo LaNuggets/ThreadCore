@@ -20,13 +20,13 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/search/?type=error&message=User+not+connected+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/search/?type=error&message=User+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -94,7 +94,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	post := database.GetPostById(id, w, r)
 	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
-		http.Redirect(w, r, "/search/?type=error&message=Post+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=Post+not+found+!", http.StatusSeeOther)
 		return
 	}
 
@@ -118,8 +118,6 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 	title := r.FormValue("title")
 	content := r.FormValue("content")
-	communityid := r.FormValue("communityId")
-	communityId, _ := strconv.Atoi(communityid)
 
 	r.ParseMultipartForm(10 << 20)
 
@@ -166,7 +164,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	updatedPost := database.Post{Id: post.Id, Uuid: post.Uuid, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: user.Id, Community_id: communityId, Created: post.Created}
+	updatedPost := database.Post{Id: post.Id, Uuid: post.Uuid, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: post.User_id, Community_id: post.Community_id, Created: post.Created}
 	database.UpdatePostInfo(updatedPost, w, r)
 
 	http.Redirect(w, r, "/post/"+post.Uuid+"?type=success&message=Post+successfully+update+!", http.StatusSeeOther)
@@ -184,7 +182,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	post := database.GetPostById(id, w, r)
 	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
-		http.Redirect(w, r, "/search/?type=error&message=Post+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/?type=error&message=Post+not+found+!", http.StatusSeeOther)
 		return
 	}
 

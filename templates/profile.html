@@ -9,6 +9,7 @@
     <link href="../static/assets/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
     <link href="../static/assets/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Zen+Dots&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
     <title>Profile</title>
 </head>
 <body class="wrapper">
@@ -19,7 +20,7 @@
     <!-- Header -->
     <header>
         <section class="logo">
-            <p class="name"><img src="/static/assets/logoForLightTheme.svg" class="logo-image" alt="Logo">ThreadCore</p>
+            <p class="name" onclick="window.location.href='/'"><img src="/static/assets/logoForLightTheme.svg" class="logo-image" alt="Logo">ThreadCore</p>
         </section>
         <section class="search-bar">
             <input placeholder="Search Communities, Posts or Users" class="input" id="search" value=""/>
@@ -49,8 +50,8 @@
     <section class="content">
         <nav>
             <a href="/" id="home" class="menu">Home</a>
-            <a href="/search/" id="popular" class="menu">Popular</a>
-            <a href="/search/" id="all" class="menu">All</a>
+            <a href="/search/?media=posts&sort=popular" id="popular" class="menu">Popular</a>
+            <a href="/search/?media=posts&sort=new" id="all" class="menu">All</a>
             <div class="line"></div>
             <a id="createPostButton" class="menu">Create Post</a>
             <div class="line"></div>
@@ -123,7 +124,7 @@
                         </section>
                         <a href="/post/{{.Post.Uuid}}" class="link">
                           <h1 class="post-title">{{.Post.Title}}</h1>
-                          <pre class="post-content">{{.Post.Content}}</pre>
+                          <p class="post-content">{{.Post.Content}}</p>
                           {{if .Post.Media}}
                               {{if eq .Post.MediaType "image"}}
                                   <img class="media" src="{{.Post.Media}}" alt="Media">

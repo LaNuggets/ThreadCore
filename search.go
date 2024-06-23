@@ -27,8 +27,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	*/
 	userUuid := api.GetCookie("uuid", r)
 	user := database.GetUserByUuid(userUuid, w, r)
-	userProfile := user.Profile
-	username := user.Username
 
 	search := r.URL.Query().Get("q")
 	media := r.URL.Query().Get("media") // media options  : posts, communities, users
@@ -252,17 +250,34 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	/*
 		!Structur to send data to html
 	*/
+
+	type UserPageInfo struct {
+		Connected bool
+		Profile   string
+		Username  string
+		Uuid      string
+	}
+	userInfo := UserPageInfo{
+		Connected: userUuid != "",
+		Profile:   user.Profile,
+		Username:  user.Username,
+		Uuid:      user.Uuid,
+	}
+
+	type ProfileInfo struct {
+		Uuid     string
+		Profile  string
+		Banner   string
+		Username string
+	}
+
 	searchPage := struct {
-		Connected         bool
-		Profile           string
-		Username          string
+		User              UserPageInfo
 		SortedPosts       []database.PostInfo
 		SortedCommunities []database.CommunityInfo
 		SortedUsers       []database.User
 	}{
-		Connected:         userUuid != "",
-		Profile:           userProfile,
-		Username:          username,
+		User:              userInfo,
 		SortedPosts:       sortedPosts,
 		SortedCommunities: sortedCommunities,
 		SortedUsers:       sortedUsers,

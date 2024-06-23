@@ -324,7 +324,7 @@ func GetCommunitiesByUser(userId int, w http.ResponseWriter, r *http.Request) []
 	defer db.Close()
 
 	id := strconv.Itoa(userId)
-	rows, err := db.Query("SELECT * FROM community INNER JOIN user_community ON community.id = user_community.community_id WHERE user_community.user_id='" + id + "'")
+	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id FROM community INNER JOIN user_community ON community.id = user_community.community_id WHERE user_community.user_id='" + id + "'")
 	defer rows.Close()
 
 	err = rows.Err()

@@ -32,7 +32,10 @@ func AddUser(user User, w http.ResponseWriter, r *http.Request) {
 	query, _ := db.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
 	query.Exec(user.Uuid, user.Profile, user.Banner, user.Email, user.Username, user.Password)
 	defer query.Close()
-	AddFriend(user.Id, user.Id, w, r)
+
+	query2, _ := db.Prepare("INSERT INTO friend (user_id, friend_id) VALUES (?, ?)")
+	query2.Exec(user.Id, user.Id)
+	defer query2.Close()
 }
 
 /*

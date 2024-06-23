@@ -43,19 +43,3 @@ if(document.getElementById("updatePostButton")){
       }
     });
     
-    document.querySelector("article.updateBannerOptions").addEventListener("click", function(evt){
-      if(evt.target.type === "radio"){
-        if (evt.target.value == "link") {
-          document.getElementById("updateBannerFile").style.display = 'none';
-          document.getElementById("updateBannerLink").style.display = 'flex';
-          document.getElementById("updateBannerLink").placeholder = 'Banner picture link';
-        } else if (evt.target.value == "file") {
-          document.getElementById("updateBannerFile").style.display = 'flex';
-          document.getElementById("updateBannerLink").style.display = 'none';
-        } else if (evt.target.value == "keep" || evt.target.value == "remove") {
-          document.getElementById("updateBannerFile").style.display = 'none';
-          document.getElementById("updateBannerLink").style.display = 'flex';
-          document.getElementById("updateBannerLink").placeholder = 'Keep this empty';
-        }
-      }
-    });

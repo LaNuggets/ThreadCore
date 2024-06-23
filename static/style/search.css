@@ -1,7 +1,7 @@
 .media-radio {
     position: relative;
-    width: 250px;
-    height: 36px;
+    width: 16em;
+    height: 2em;
     background-color: var(--varwhite);
     border: 2px solid var(--varblack);
     border-radius: 34px;
@@ -9,50 +9,32 @@
     flex-direction: row;
     box-shadow: 4px 4px var(--varblack);
     justify-content: space-between;
-    width: 30%;
     margin-left: 3%;
   }
-  
+
   .optionPosts {
-    width: 80.5px;
-    height: 28px;
+    width: 6em;
+    height: 1.7em;
     position: relative;
     top: 2px;
     left: 2px;
-    .btn{
-        width: 80%;
-        height: 100%;
-        background-color: var(--bg-color);
-        border-radius: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+
   }
 
   .optionCommunities{
-    width: 100.5px;
-    height: 28px;
+    width: 11em;
+    height: 1.7em;
     position: relative;
     top: 2px;
     left: 2px;
   }
   
   .optionUsers{
-    width: 80.5px;
-    height: 28px;
+    width: 6em;
+    height: 1.7em;
     position: relative;
     top: 2px;
     left: 2px;
-    .btn{
-        width: 80%;
-        height: 100%;
-        background-color: var(--bg-color);
-        border-radius: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
   }
 
   .media-input {
@@ -66,7 +48,7 @@
   }
   
   .btn {
-    width: 100%;
+    width: 90%;
     height: 100%;
     background-color: var(--bg-color);
     border-radius: 50px;
