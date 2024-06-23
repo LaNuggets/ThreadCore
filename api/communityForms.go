@@ -8,7 +8,14 @@ import (
 	"strings"
 )
 
-// CREATE NEW COMMUNITY
+/*
+! CreateCommunity collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! Saves the inputed files to the corresponding folders and renames them
+! create a community in a database.commmunity struct type
+! sends it to the database function to create it
+! redirects the user to the corresponding page
+*/
 func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -106,7 +113,14 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/community/"+name+"?type=success&message=Community+successfully+create+!", http.StatusSeeOther)
 }
 
-// UPDATE EXISTING COMMUNITY
+/*
+! UpdateCommunity collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! Saves the inputed files to the corresponding folders and renames them / deletes the previous ones if they are modified
+! create a community in a database.community struct type
+! sends it to the database function to update it
+! redirects the user to the corresponding page
+*/
 func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -230,7 +244,13 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/community/"+newName+"?type=success&message=Community+successfully+updated+!", http.StatusSeeOther)
 }
 
-// DELETE COMMUNITY
+/*
+! DeleteCommunity collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! Deletes the saved images linked to that community
+! sends it to the database function to delete it
+! redirects the user to the corresponding page
+*/
 func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -279,6 +299,12 @@ func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?type=success&message=Community+deleted+!", http.StatusSeeOther)
 }
 
+/*
+! FollowCommunity collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! calls for the database function to add it
+! redirects the user to the corresponding page
+*/
 func FollowCommunity(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -318,6 +344,12 @@ func FollowCommunity(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*
+! UnfollowCommunity collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! calls for the database function to remove it
+! redirects the user to the corresponding page
+*/
 func UnfollowCommunity(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)

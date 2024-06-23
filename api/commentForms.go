@@ -8,7 +8,13 @@ import (
 	"time"
 )
 
-// CREATE NEW COMMENT
+/*
+! CreateComment collects the user input from the corresponding form
+! Check if user is connected and other potential errors
+! create a comment in a database.comment struct type
+! sends it to the database function to store it
+! redirects the user to the corresponding page
+*/
 func CreateComment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -44,7 +50,13 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Comment+posted+!", http.StatusSeeOther)
 }
 
-// UPDATE EXISTING comment
+/*
+! UpdateComment collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! create a comment in a database.comment struct type
+! sends it to the database function to update it
+! redirects the user to the corresponding page
+*/
 func UpdateComment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -88,7 +100,12 @@ func UpdateComment(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/comment/"+commentId+"?type=success&message=Comment+successfully+update+!", http.StatusSeeOther)
 }
 
-// DELETE comment
+/*
+! DeleteComment collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! sends it to the database function to delete it
+! redirects the user to the corresponding page
+*/
 func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)

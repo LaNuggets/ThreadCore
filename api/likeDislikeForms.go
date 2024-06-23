@@ -7,6 +7,14 @@ import (
 	"strconv"
 )
 
+/*
+! LikeDislike collects the user input from the corresponding form
+! It handles everything for the like and disike functionality
+! Check if user is connected and has the rigth to do that action
+! Check witch action needs to be done (like / remove like / dislike / remove dislike)
+! sends it to the database function to modify it
+! redirects the user to the corresponding page
+*/
 func LikeDislike(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)

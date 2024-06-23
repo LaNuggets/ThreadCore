@@ -16,10 +16,17 @@ func (a post) Len() int {
 func (a post) Less(i, j int) bool { return a[j].Created.Before(a[i].Created) }
 func (a post) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 
+/*
+! NewestPost sorts the posts list by creation date from most recent to oldest
+*/
 func NewestPost(posts []database.PostInfo) {
 	sort.Sort(post(posts))
 }
 
+/*
+! GetFormatedDuration is used when displaying a time relative to the curretn time
+! reduces the lenght or the original time format into a shorter custom format
+*/
 func GetFormatedDuration(duration time.Duration) string {
 	if math.Trunc(duration.Hours()/24/365) != 0 {
 		return strconv.Itoa(int(math.Trunc(duration.Hours()/24/365))) + "yr. " + strconv.Itoa(int(math.Trunc(duration.Hours()/24/30))-(int(math.Trunc(duration.Hours()/24/365))*12)) + "mo. ago"

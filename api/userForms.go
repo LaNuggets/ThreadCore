@@ -7,7 +7,14 @@ import (
 	"strings"
 )
 
-// SIGNUP
+/*
+! Signup collects the user input from the corresponding form
+! Check if username and email are not already taken
+! create a user in a database.user struct type
+! sends it to the database function to create it
+! Add the new user Uuid to the cookies
+! redirects the user to the corresponding page
+*/
 func Signup(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -50,7 +57,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?type=success&message=Account+successfully+created+!", http.StatusSeeOther)
 }
 
-// LOGIN
+/*
+! Login collects the user input from the corresponding form
+! Check if user exists and has the right indentification info
+! Add the user Uuid to the cookies
+! redirects the user to the corresponding page
+*/
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -87,7 +99,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?type=success&message=Connection+successful+!", http.StatusSeeOther)
 }
 
-// DISCONNECT
+/*
+! Disconnect collects the user input from the corresponding form
+! Deletes the corresponding cookie from the browser
+! redirects the user to the corresponding page
+*/
 func Disconnect(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -98,7 +114,14 @@ func Disconnect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?type=success&message=Successfully+Disconnected+!", http.StatusSeeOther)
 }
 
-// UPDATE EXISTING user
+/*
+! UpdateUser collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! Saves the inputed files to the corresponding folders and renames them / deletes the previous ones if they are modified
+! create a user in a database.user struct type
+! sends it to the database function to update it
+! redirects the user to the corresponding page
+*/
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -253,7 +276,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user/"+username+"?type=success&message=Account+successfully+updated+!", http.StatusSeeOther)
 }
 
-// DELETE user
+/*
+! DeleteUser collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! Asks for the password as a double security
+! Deletes the saved images linked to that community
+! sends it to the database function to delete it
+! redirects the user to the corresponding page
+*/
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -308,6 +338,13 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?type=success&message=User+successfully+deleted+!", http.StatusSeeOther)
 }
 
+/*
+! FollowUser collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! check if the relation doesnt already exist in the database
+! calls for the database function to add it
+! redirects the user to the corresponding page
+*/
 func FollowUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -347,6 +384,12 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+/*
+! UnfollowUser collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! calls for the database function to add it
+! redirects the user to the corresponding page
+*/
 func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)

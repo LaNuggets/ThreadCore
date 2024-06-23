@@ -9,6 +9,13 @@ import (
 	"os"
 )
 
+/*
+! GetFileFromForm is called on when Creating or modifing a post, user or community
+! takes the file, filehandler and path
+! checks if the file dosent already exists to prevent errors
+! saves the file in the server with the corrseponding path wanted using the "os" standard go package
+! check for errors
+*/
 func GetFileFromForm(file multipart.File, handler *multipart.FileHeader, err error, path string) {
 	if err != nil {
 		fmt.Println("Error Retrieving the File")
@@ -38,6 +45,12 @@ func GetFileFromForm(file multipart.File, handler *multipart.FileHeader, err err
 	io.Copy(f, file)
 }
 
+/*
+! DeleteFile is called on when Creating or modifing a post, user or community
+! takes the path of the file we want to remove from the server to avoid taking to much space
+! removes the file using the "os" standard go package
+! Checks for potential errors
+*/
 func DeleteFile(path string) {
 	if path == "/static/images/bannerTemplate.png" || path == "/static/images/profileTemplate.png" || path == "/static/images/medidaTemplate.png" {
 	} else {

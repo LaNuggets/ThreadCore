@@ -9,7 +9,14 @@ import (
 	"time"
 )
 
-// CREATE NEW Post
+/*
+! CreatePost collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! Saves the inputed files to the corresponding folders and renames them
+! create a post in a database.post struct type
+! sends it to the database function to create it
+! redirects the user to the corresponding page
+*/
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -82,7 +89,14 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+created+!", http.StatusSeeOther)
 }
 
-// UPDATE EXISTING Post
+/*
+! UpdatePost collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! Saves the inputed files to the corresponding folders and renames them / deletes the previous ones if they are modified
+! create a post in a database.post struct type
+! sends it to the database function to update it
+! redirects the user to the corresponding page
+*/
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -170,7 +184,13 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/post/"+post.Uuid+"?type=success&message=Post+successfully+update+!", http.StatusSeeOther)
 }
 
-// DELETE Post
+/*
+! DeletePost collects the user input from the corresponding form
+! Check if user is connected and has the rigth to do that action
+! Deletes the saved images linked to that community
+! sends it to the database function to delete it
+! redirects the user to the corresponding page
+*/
 func DeletePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
