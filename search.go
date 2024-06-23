@@ -226,7 +226,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	case "communities":
 		switch sort {
 		case "popular":
-			sortedCommunities = database.GetCommunitiesByNMembers(search, w, r)
+			sortedCommunities = database.GetCommunitiesByMostMembers(search, w, r)
 		case "new":
 			sortedCommunities = database.GetCommunitiesByMostPost(search, w, r)
 		}

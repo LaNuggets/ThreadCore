@@ -15,6 +15,7 @@
 <body class="wrapper">
     <!-- Scripts -->
     <script src="/static/scripts/javascript.js" type="module"></script>
+    <script src="/static/scripts/post.js" type="module"></script>
 
     <!-- Header -->
     <header>
@@ -76,14 +77,14 @@
                                     <a class="usernameLink" href="/user/{{.Post.Username}}">
                                         <p class="name">{{.Post.Username}}</p>
                                     </a>
-                                    <p class="time">- {{.PostTime}}</p>
+                                    <p class="time">- {{.Post.Time}}</p>
                                 </article>
                             {{else}}
                                 <article class="name_time">
                                     <a class="usernameLink" href="/community/{{.Post.CommunityName}}">
                                         <p class="name">{{.Post.CommunityName}}</p>
                                     </a>
-                                    <p class="time">- {{.PostTime}}</p>
+                                    <p class="time">- {{.Post.Time}}</p>
                                 </article>
                                 <p class="username">{{.Post.Username}}</p>
                             {{end}}
@@ -287,6 +288,13 @@
         {{if .Post}}
             {{if .PostExists}}
             <section class="side-bar">
+                {{if eq .Post.User_uuid .User.Uuid}}
+                <section class="modifyPosts">
+                    <a id="updatePostButton" class="classic-button modifyPost">Modify Post</a>
+                    <a id="deletePostButton" class="classic-button modifyPost">Delete Post</a>
+                </section>
+                {{else}}
+                {{end}}
                 {{if eq .Post.Community_id 0}}
                 <article class="side-info">
                     <a class="profile" href="/user/{{.Post.Username}}">
@@ -295,7 +303,7 @@
                     <a class="usernameLink" href="/user/{{.Post.Username}}">
                         <p class="name">{{.Post.Username}}</p>
                     </a>
-                    {{if eq .Post.User_id .User.Id}}
+                    {{if eq .Post.User_uuid .User.Uuid}}
                     {{else}}
                         {{if .IsFollowing}}
                         <form method="post" action="/unfollowUser">
@@ -323,7 +331,7 @@
                         <img class="profilePicture" src="{{.Community.Profile}}" alt="Community Profile">
                     </a>
                     <p class="name">{{.Post.CommunityName}}</p>
-                    {{if eq .Community.User_id .User.Id}}
+                    {{if eq .Community.User_uuid .User.Uuid}}
                     {{else}}
                         {{if .IsFollowing}}
                         <form method="post" action="/unfollowCommunity">
@@ -345,7 +353,7 @@
                     {{end}}
                 </article>
                 <p class="following">{{.FollowCount}} Member{{if eq .FollowCount 1}}{{else}}s{{end}}</p>
-                <pre class="description">{{.Community.Description}}</pre>
+                <p class="description">{{.Community.Description}}</p>
                 {{end}}
             </section>
             {{end}}
@@ -353,9 +361,7 @@
         </aside>
     </section>
 
-    
-    <!-- HIDDEN FORMS -->
-
+<!-- CREATE POST -->
     <section id="createPostForm" class="form">
         <form enctype="multipart/form-data" method="post" action="/createPost">
             <h1 class="title">Create a Post</h1>
@@ -363,7 +369,7 @@
             <input class="textInput" type="text" placeholder="Post title" name="title" required>
             <textarea class="textInput textArea" placeholder="write something awsome here" name="content" required></textarea>
             
-            <!-- media -->
+            <!-- Media -->
             <p class="subtitle">Choose the picture or video you want to show off</p>
             <article class="options mediaOptions otherOptions">
                 <div class="option">
@@ -395,7 +401,7 @@
         </form>
     </section>
 
-
+<!-- CREATE COMMUNITY -->
     <section id="createCommunityForm" class="form">
         <form enctype="multipart/form-data" method="post" action="/createCommunity">
             <h1 class="title">Create a new Community</h1>
@@ -405,7 +411,7 @@
             
             <section class="fileInputs">
                 <article class="fileInput">
-                    <!-- profile -->
+                    <!-- Profile -->
                     <p class="subtitle">Choose the Profile Picture</p>
                     <article class="options profileOptions otherOptions">
                         <div class="option">
@@ -468,6 +474,89 @@
         </form>
     </section>
 
+    <!-- UPDATE THE CURRENT POST -->
+  <section id="updatePostForm" class="form">
+    <form enctype="multipart/form-data" method="post" action="/updatePost">
+        <h1 class="title">Modify Post</h1>
+        
+        <input class="textInput" type="text" placeholder="Post Title" name="title" value="{{.Post.Title}}" required>
+        <textarea class="textInput textArea" placeholder="Content" name="content">{{.Post.Content}}</textarea>
+        
+        <!-- Media -->
+        <p class="subtitle">Choose the Profile Picture</p>
+        <article class="options updateProfileOptions updateOptions">
+            <div class="option">
+                <input class="radioInput" type="radio" name="profileOption" value="link">
+                <div class="btn">
+                    <span class="span">Link</span>
+                </div>
+            </div>
+            <div class="option">
+                <input class="radioInput" type="radio" name="profileOption" value="file">
+                <div class="btn">
+                    <span class="span">File</span>
+                </div>
+            </div>
+            <div class="option">
+                <input class="radioInput" type="radio" name="profileOption" value="keep" checked>
+                <div class="btn">
+                    <span class="span">Keep</span>
+                </div>
+            </div>
+            <div class="option">
+                <input class="radioInput" type="radio" name="profileOption" value="remove">
+                <div class="btn">
+                    <span class="span">Remove</span>
+                </div>
+            </div>
+        </article>
+        <input id="updateProfileLink" class="textInput" type="text" placeholder="Profile picture link" name="profileLink">
+        <label id="updateProfileFile" class="custum-file-upload" for="profile2">
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24"><g stroke-width="0" id="SVGRepo_bgCarrier"></g><g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <path fill="" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" clip-rule="evenodd" fill-rule="evenodd"></path> </g></svg>
+            </div>
+            <div class="text">
+                <span>Click to upload image</span>
+            </div>
+            <input type="file" id="profile2" name="profile" accept="image/*, video/*">
+        </label>
+
+        <input type="text" name="postId" value="{{.Post.Id}}" hidden>
+        <input class="button" type="submit" value="Update" >
+    </form>
+</section>
+
+<!-- DELETE THE CURRENT POST -->
+<section id="deletePostForm" class="form">
+    <form enctype="multipart/form-data" method="post" action="/deletePost">
+        <h1 class="title">Delete Post</h1>
+
+        <section class="fileInputs">
+            <article class="fileInput">
+                <!-- profile -->
+                <p class="subtitle">Confirm Deletion of Post</p>
+                <article class="options profileOptions otherOptions">
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="confirm" value="false" checked>
+                        <div class="btn">
+                            <span class="span">No</span>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <input class="radioInput" type="radio" name="confirm" value="true">
+                        <div class="btn">
+                            <span class="span">Yes</span>
+                        </div>
+                    </div>
+                </article>
+            </article>
+        </section>
+        <input type="text" name="postId" value="{{.Post.Id}}" hidden>
+        <input class="button" type="submit" value="Delete" >
+    </form>
+</section>
+
+    <!-- CONNECTION -->
     <section id="connection">
         <label class="switch">
             <input type="checkbox" class="toggle">

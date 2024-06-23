@@ -112,7 +112,7 @@ func GetCommunityByName(communityName string, w http.ResponseWriter, r *http.Req
 	return community
 }
 
-func GetCommunitiesByNMembers(searchString string, w http.ResponseWriter, r *http.Request) []CommunityInfo {
+func GetCommunitiesByMostMembers(searchString string, w http.ResponseWriter, r *http.Request) []CommunityInfo {
 	//Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
@@ -166,30 +166,6 @@ func GetCommunitiesByMostPost(searchString string, w http.ResponseWriter, r *htt
 
 	return communityList
 }
-
-// func GetCommunitiesByNComment() []Community {
-
-// 	//, COUNT(user_community.community_id)
-// 	rows, err := db.Query("SELECT community.id, community.profile, community.banner, community.name, community.description, community.user_id FROM community JOIN comment ON comment.community_id = community.id GROUP BY community.id ORDER BY COUNT(comment.post_id) DESC")
-// 	defer rows.Close()
-
-// 	err = rows.Err()
-// 	CheckErr(err, w, r)
-
-// 	communityList := make([]Community, 0)
-
-// 	for rows.Next() {
-// 		community := Community{}
-// 		err = rows.Scan(&community.Id, &community.Profile, &community.Banner, &community.Name, &community.Description, &community.User_id)
-// 		CheckErr(err, w, r)
-// 		communityList = append(communityList, community)
-// 	}
-
-// 	err = rows.Err()
-// 	CheckErr(err, w, r)
-
-// 	return communityList
-// }
 
 func UpdateCommunityInfo(community Community, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection

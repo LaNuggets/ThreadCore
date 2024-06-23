@@ -124,6 +124,17 @@ aside{
         align-items: center;
         gap: 1.5em;
       }
+
+      .modifyPosts{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 1.5em;
+        .modifyPost{
+          font-size:0.9em;
+        }
+      }
+      
     
       .profilePicture:active{
           box-shadow: 0px 0px var(--varblack);
