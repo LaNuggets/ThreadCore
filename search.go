@@ -61,7 +61,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour * 8764)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
-						//Time formating for the post
+						//Time formating for the posts
 						difference = time.Now().Sub(searchedPost[i].Created)
 						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
