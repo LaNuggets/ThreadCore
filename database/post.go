@@ -367,7 +367,7 @@ func GetPostByPopular(searchString string, w http.ResponseWriter, r *http.Reques
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, err := db.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.media_type, post.user_id, user.uuid, user.username, user.profile, post.community_id, post.created FROM post JOIN user ON user.id = post.user_id JOIN community ON community.id = post.community_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' AND (post.title LIKE '%" + searchString + "%' OR post.content LIKE '%" + searchString + "%') GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
+	rows, err := db.Query("SELECT post.id, post.uuid, post.title, post.content, post.media, post.media_type, post.user_id, user.uuid, user.username, user.profile, post.created FROM post JOIN user ON user.id = post.user_id JOIN like ON like.post_id = post.id WHERE like.rating = 'like' AND (post.title LIKE '%" + searchString + "%' OR post.content LIKE '%" + searchString + "%') GROUP BY post.id ORDER BY COUNT(like.post_id) DESC")
 	defer rows.Close()
 
 	err = rows.Err()
@@ -377,7 +377,7 @@ func GetPostByPopular(searchString string, w http.ResponseWriter, r *http.Reques
 
 	for rows.Next() {
 		temppostInfo := TempPostInfo{}
-		err = rows.Scan(&temppostInfo.Id, &temppostInfo.Uuid, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.MediaType, &temppostInfo.User_id, &temppostInfo.User_uuid, &temppostInfo.Username, &temppostInfo.Profile, &temppostInfo.Community_id, &temppostInfo.Created)
+		err = rows.Scan(&temppostInfo.Id, &temppostInfo.Uuid, &temppostInfo.Title, &temppostInfo.Content, &temppostInfo.Media, &temppostInfo.MediaType, &temppostInfo.User_id, &temppostInfo.User_uuid, &temppostInfo.Username, &temppostInfo.Profile, &temppostInfo.Created)
 		CheckErr(err, w, r)
 		postInfo := PostInfo{Id: temppostInfo.Id, Uuid: temppostInfo.Uuid, Title: temppostInfo.Title, Content: temppostInfo.Content, Media: temppostInfo.Media, MediaType: temppostInfo.MediaType, User_id: temppostInfo.User_id, User_uuid: temppostInfo.User_uuid, Username: temppostInfo.Username, Profile: temppostInfo.Profile, Community_id: 0, CommunityName: "", Created: temppostInfo.Created}
 		if temppostInfo.Community_id != nil {

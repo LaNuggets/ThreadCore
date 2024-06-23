@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// !The Home function is used to create the home page which is the main page of the forums. She take as arguments a writer and a request.
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.Redirect(w, r, "/404", http.StatusSeeOther)

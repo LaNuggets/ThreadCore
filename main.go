@@ -9,11 +9,12 @@ import (
 
 var port = ":8080"
 
+// ! The main function is where the programme start. The function initialize all the page path. This is the root of the forums.
 func main() {
 	FileServer := http.FileServer(http.Dir("static"))
 
 	http.Handle("/static/", http.StripPrefix("/static/", FileServer))
-
+	//! All pages redirection path
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/community/", Community)
 	http.HandleFunc("/post/", Post)
@@ -22,7 +23,7 @@ func main() {
 	http.HandleFunc("/500", Error)
 	http.HandleFunc("/search/", Search)
 
-	// Forms routes
+	// !Forms routes
 	http.HandleFunc("/createCommunity", api.CreateCommunity)
 	http.HandleFunc("/updateCommunity", api.UpdateCommunity)
 	http.HandleFunc("/deleteCommunity", api.DeleteCommunity)

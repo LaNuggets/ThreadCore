@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// ! The Search function is used to create the search page. This page allow user find search poost, communities and other user by using filter and search bar. She take as argument a writer and a request.
 func Search(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/search/" {
 		http.Redirect(w, r, "/search/", http.StatusSeeOther)
@@ -58,7 +59,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 				var YearTime = (time.Now().Add(-(time.Hour * 8764)))
 				for i := 0; i < len(searchedPost); i++ {
 					if !(searchedPost[i].Created.Before(YearTime)) {
-						//Time formating for the post
+						//Time formating for the posts
 						difference = time.Now().Sub(searchedPost[i].Created)
 						searchedPost[i].Time = api.GetFormatedDuration(difference)
 						sortedPosts = append(sortedPosts, searchedPost[i])
@@ -232,7 +233,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		switch sort {
 		case "popular":
 			sortedCommunities = database.GetCommunitiesByMostMembers(search, w, r)
-		case "new":
+		case "most_comments":
 			sortedCommunities = database.GetCommunitiesByMostPost(search, w, r)
 		}
 
@@ -240,10 +241,8 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		switch sort {
 		case "popular":
 			sortedUsers = database.GetUserByMostPopular(search, w, r)
-		case "new":
-			sortedUsers = database.GetUserByMostPost(search, w, r)
 		case "most_comments":
-			sortedUsers = database.GetUserByMostComment(search, w, r)
+			sortedUsers = database.GetUserByMostPost(search, w, r)
 		}
 	}
 
