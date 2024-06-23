@@ -70,7 +70,7 @@
                     </select>
                 </div>
             </div>
-            {{if .User.Connected}}
+            {{if not .User.Connected}}
             <h2>You are not connected! To see a more personalized version of TreadCore, Login or Signup and follow your favorite accounts and communities!</h2>
             {{end}}
             {{if .SortedPosts}}
