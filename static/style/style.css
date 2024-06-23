@@ -79,7 +79,7 @@ img{
 }
 
 .classic-button{
-  padding: 0.5em 0.2em 0.5em 0.2em;
+  padding: 0.5em 1em 0.5em 1em;
     text-align: center;
     text-decoration: none;
     border-radius: 5px;
@@ -229,6 +229,7 @@ header{
 
     #profilePicture{
       height: 4em;
+      width: 4em;
       border-radius: 50%;
     }
 
@@ -324,6 +325,8 @@ header{
       font-weight: 900;
       font-size: 20px;
       margin-bottom: 25px;
+      text-align: center;
+      width:auto;
     }
     .textInput::placeholder {
       color: var(--varblack); 

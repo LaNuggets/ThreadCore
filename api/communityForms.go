@@ -154,12 +154,15 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
+		DeleteFile(community.Profile)
 		profilePath = "/static/images/profileTemplate.png.png"
 	} else if profileOption == "keep" {
 		profilePath = community.Profile
 	} else if profileOption == "link" {
+		DeleteFile(community.Profile)
 		profilePath = r.FormValue("profileLink")
 	} else {
+		DeleteFile(community.Profile)
 		profile, handler, err := r.FormFile("profile")
 
 		if err == http.ErrMissingFile {
@@ -188,12 +191,15 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 
 	bannerOption := r.FormValue("bannerOption")
 	if bannerOption == "remove" {
+		DeleteFile(community.Banner)
 		bannerPath = "/static/images/bannerTemplate.png"
 	} else if bannerOption == "keep" {
 		bannerPath = community.Banner
 	} else if bannerOption == "link" {
+		DeleteFile(community.Banner)
 		bannerPath = r.FormValue("bannerLink")
 	} else {
+		DeleteFile(community.Banner)
 		banner, handler, err := r.FormFile("banner")
 
 		if err == http.ErrMissingFile {
@@ -264,6 +270,8 @@ func DeleteCommunity(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/community/"+community.Name+"?type=error&message=Confirm+deletion+!", http.StatusSeeOther)
 		return
 	} else {
+		DeleteFile(community.Profile)
+		DeleteFile(community.Banner)
 		database.DeleteCommunity(community.Id, w, r)
 	}
 

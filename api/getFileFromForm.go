@@ -37,3 +37,13 @@ func GetFileFromForm(file multipart.File, handler *multipart.FileHeader, err err
 	defer f.Close()
 	io.Copy(f, file)
 }
+
+func DeleteFile(path string) {
+	if _, err := os.Stat("." + path); errors.Is(err, os.ErrNotExist) {
+	} else {
+		e := os.Remove("." + path)
+		if e != nil {
+			log.Fatal(e)
+		}
+	}
+}

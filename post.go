@@ -37,7 +37,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 
 	//Time formating for the post
 	difference := time.Now().Sub(post.Created)
-	postedTime := api.GetFormatedDuration(difference)
+	post.Time = api.GetFormatedDuration(difference)
 
 	type CommentsPageInfo struct {
 		Comment         database.CommentInfo
@@ -119,7 +119,6 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	postPage := struct {
 		User         UserPageInfo
 		Post         database.PostInfo
-		PostTime     string
 		PostExists   bool
 		PostLikes    int
 		PostDislikes int
@@ -131,7 +130,6 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	}{
 		User:         userInfo,
 		Post:         post,
-		PostTime:     postedTime,
 		PostExists:   post != database.PostInfo{},
 		PostLikes:    likes,
 		PostDislikes: dislikes,

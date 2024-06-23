@@ -18,25 +18,25 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	checkUsername := database.GetUserByUsername(username, w, r)
 	if (checkUsername != database.User{}) {
-		fmt.Println("username taken") // TO-DO : send error user not found
+		fmt.Println("username taken")
 		http.Redirect(w, r, "/?type=error&message=Username+taken%2C+please+choose+another+one+!", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
 	checkEmail := database.GetUserByEmail(email, w, r)
 	if (checkEmail != database.User{}) {
-		fmt.Println("email taken") // TO-DO : send error email not found
+		fmt.Println("email taken")
 		http.Redirect(w, r, "/?type=error&message=Email+taken%2C+please+choose+another+one+!", http.StatusSeeOther)
 		return
 	}
 	password := r.FormValue("password")
 	passwordConfirm := r.FormValue("passwordConfirm")
 	if passwordConfirm != password {
-		fmt.Println("password and passwordConfirm dont match") // TO-DO : Send error message for confirm password
+		fmt.Println("password and passwordConfirm dont match")
 		http.Redirect(w, r, "/?type=error&message=Password+confiramtion+is+wrong%2C+please+try+again+!", http.StatusSeeOther)
 		return
 	} else if password == "" {
-		fmt.Println("password is null") // TO-DO : Send error message for input password
+		fmt.Println("password is null")
 		http.Redirect(w, r, "/?type=error&message=Password+is+empty+!", http.StatusSeeOther)
 		return
 	}
@@ -47,7 +47,6 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	database.AddUser(user, w, r)
 
 	SetCookie("uuid", user.Uuid, w)
-	SetCookie("username", user.Username, w)
 	http.Redirect(w, r, "/?type=success&message=Account+successfully+created+!", http.StatusSeeOther)
 }
 
@@ -61,31 +60,30 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	user := database.GetUserByUsername(username, w, r)
 	if (user == database.User{}) {
-		fmt.Println("username not found") // TO-DO : send error user not found
+		fmt.Println("username not found")
 		http.Redirect(w, r, "/?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
 	email := r.FormValue("email")
 	user2 := database.GetUserByEmail(email, w, r)
 	if (user2 == database.User{}) {
-		fmt.Println("email not found") // TO-DO : send error user not found
+		fmt.Println("email not found")
 		http.Redirect(w, r, "/?type=error&message=Email+not+found+!", http.StatusSeeOther)
 		return
 	}
 	if user.Uuid != user2.Uuid {
-		fmt.Println("user not found check username or email") // TO-DO : send error user not found
+		fmt.Println("user not found check username or email")
 		http.Redirect(w, r, "/?type=error&message=Username+or+Email+invalid+!", http.StatusSeeOther)
 		return
 	}
 	password := r.FormValue("password")
 	if !CheckPasswordHash(password, user.Password) {
-		fmt.Println("Wrong password") // TO-DO : Send error message for wrong password
+		fmt.Println("Wrong password")
 		http.Redirect(w, r, "/?type=error&message=Wrong+Password+!", http.StatusSeeOther)
 		return
 	}
 
 	SetCookie("uuid", user.Uuid, w)
-	SetCookie("username", user.Username, w)
 	http.Redirect(w, r, "/?type=success&message=Connection+successful+!", http.StatusSeeOther)
 }
 
@@ -97,7 +95,6 @@ func Disconnect(w http.ResponseWriter, r *http.Request) {
 	}
 
 	DeleteCookie("uuid", w)
-	DeleteCookie("username", w)
 	http.Redirect(w, r, "/?type=success&message=Successfully+Disconnected+!", http.StatusSeeOther)
 }
 
@@ -150,31 +147,29 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	password := ""
-
 	oldPassword := r.FormValue("oldPassword")
-	password = r.FormValue("password")
-	passwordConfirm := r.FormValue("passwordConfirm")
+	password := r.FormValue("newPassword")
+	passwordConfirm := r.FormValue("newPasswordConfirm")
 
 	if oldPassword == "" {
 		password = user.Password
 	} else {
 		if !CheckPasswordHash(oldPassword, user.Password) {
-			fmt.Println("Wrong password") // TO-DO : Send error message for wrong password
+			fmt.Println("Wrong password")
 			http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=Wrong+Password+!", http.StatusSeeOther)
 			return
 		} else if passwordConfirm != password {
-			fmt.Println("password and passwordConfirm dont match") // TO-DO : Send error message for confirm password
+			fmt.Println("password and passwordConfirm dont match")
 			http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=Wrong+Password+confirmation+!", http.StatusSeeOther)
 			return
 		} else if password == "" {
-			fmt.Println("password is null") // TO-DO : Send error message for input password
+			fmt.Println("password is null")
 			http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=error&message=New+password+empty+!", http.StatusSeeOther)
 			return
+		} else {
+			password = HashPassword(password, w, r)
 		}
 	}
-
-	password = HashPassword(password, w, r)
 
 	r.ParseMultipartForm(10 << 20)
 
@@ -183,12 +178,15 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
+		DeleteFile(userToUpdate.Profile)
 		profilePath = "/static/images/profileTemplate.png"
 	} else if profileOption == "keep" {
 		profilePath = user.Profile
 	} else if profileOption == "link" {
+		DeleteFile(userToUpdate.Profile)
 		profilePath = r.FormValue("profileLink")
 	} else {
+		DeleteFile(userToUpdate.Profile)
 		profile, handler, err := r.FormFile("profile")
 
 		if err == http.ErrMissingFile {
@@ -217,12 +215,15 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	bannerOption := r.FormValue("bannerOption")
 	if bannerOption == "remove" {
+		DeleteFile(userToUpdate.Banner)
 		bannerPath = "/static/images/bannerTemplate.png"
 	} else if bannerOption == "keep" {
 		bannerPath = user.Banner
 	} else if bannerOption == "link" {
+		DeleteFile(userToUpdate.Banner)
 		bannerPath = r.FormValue("bannerLink")
 	} else {
+		DeleteFile(userToUpdate.Banner)
 		banner, handler, err := r.FormFile("banner")
 
 		if err == http.ErrMissingFile {
@@ -249,7 +250,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	user = database.User{Id: user.Id, Uuid: user.Uuid, Profile: profilePath, Banner: bannerPath, Email: email, Username: username, Password: password}
 	database.UpdateUserInfo(user, w, r)
 
-	http.Redirect(w, r, "/user/"+userToUpdate.Username+"?type=success&message=Account+successfully+update+!", http.StatusSeeOther)
+	http.Redirect(w, r, "/user/"+username+"?type=success&message=Account+successfully+updated+!", http.StatusSeeOther)
 }
 
 // DELETE user
@@ -262,7 +263,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	uuidToDelete := r.FormValue("uuid")
 	userToDelete := database.GetUserByUuid(uuidToDelete, w, r)
 	if (userToDelete == database.User{}) {
-		fmt.Println("user does not exist") // TO-DO : send error user not found
+		fmt.Println("user to delete does not exist")
 		http.Redirect(w, r, "/?type=error&message=User+does+not+exist+!", http.StatusSeeOther)
 		return
 	}
@@ -270,17 +271,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// Check if user connected and allowed to modify
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
-		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
+		fmt.Println("no uuid found in cookie")
 		http.Redirect(w, r, "/user/"+userToDelete.Username+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
-		fmt.Println("user not found") // TO-DO : Send error message for user not found
+		fmt.Println("user not found")
 		http.Redirect(w, r, "/user/"+userToDelete.Username+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	} else if userToDelete.Id != user.Id {
-		fmt.Println("user not author of user") // TO-DO : Send error message for user not allowed action
+		fmt.Println("user not author of user")
 		http.Redirect(w, r, "/user/"+userToDelete.Username+"?type=error&message=User+not+allowed+to+do+this+action+!", http.StatusSeeOther)
 		return
 	}
@@ -288,20 +289,22 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	confirm := r.FormValue("confirm")
 	password := r.FormValue("password")
 	if confirm != "true" {
-		fmt.Println("user did not confirm deletion") // TO-DO : Send error message need to confirm before submiting
+		fmt.Println("user did not confirm deletion")
 		http.Redirect(w, r, "/user/"+user.Username+"?type=error&message=Confirm+deletion+!", http.StatusSeeOther)
 		return
 	} else {
 		if !CheckPasswordHash(password, userToDelete.Password) {
-			fmt.Println("user did input the right password") // TO-DO : Send error message need to confirm before submiting
+			fmt.Println("Wrong Password")
 			http.Redirect(w, r, "/user/"+user.Username+"?type=error&message=Wrong+password+!", http.StatusSeeOther)
 			return
 		} else {
+			DeleteFile(userToDelete.Profile)
+			DeleteFile(userToDelete.Banner)
 			database.DeleteUser(user.Id, w, r)
 		}
 	}
 
-	//Send confirmation message
+	DeleteCookie("uuid", w)
 	http.Redirect(w, r, "/?type=success&message=User+successfully+deleted+!", http.StatusSeeOther)
 }
 
@@ -315,7 +318,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 	uuidToFollow := r.FormValue("uuid")
 	userToFollow := database.GetUserByUuid(uuidToFollow, w, r)
 	if (userToFollow == database.User{}) {
-		fmt.Println("community does not exist") // TO-DO : send error community not found
+		fmt.Println("community does not exist")
 		http.Redirect(w, r, action+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
 		return
 	}
@@ -323,13 +326,13 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 	// Check if user connected and allowed to modify
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
-		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
+		fmt.Println("no uuid found in cookie")
 		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
-		fmt.Println("user not found") // TO-DO : Send error message for user not found
+		fmt.Println("user not found")
 		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}
@@ -353,7 +356,7 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	uuidToFollow := r.FormValue("uuid")
 	userToFollow := database.GetUserByUuid(uuidToFollow, w, r)
 	if (userToFollow == database.User{}) {
-		fmt.Println("community does not exist") // TO-DO : send error community not found
+		fmt.Println("community does not exist")
 		http.Redirect(w, r, "/user/"+userToFollow.Username+"?type=error&message=Community+not+found+!", http.StatusSeeOther)
 		return
 	}
@@ -362,13 +365,13 @@ func UnfollowUser(w http.ResponseWriter, r *http.Request) {
 	// Check if user connected and allowed to modify
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
-		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
+		fmt.Println("no uuid found in cookie")
 		http.Redirect(w, r, action+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
-		fmt.Println("user not found") // TO-DO : Send error message for user not found
+		fmt.Println("user not found")
 		http.Redirect(w, r, action+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	}

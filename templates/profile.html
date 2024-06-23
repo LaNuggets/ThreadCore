@@ -363,7 +363,7 @@
       </aside>
     </section>
 
-  <!-- CREATE POST IN THIS COMMUNITY -->
+  <!-- CREATE POST -->
     <section id="createPostForm" class="form">
         <form enctype="multipart/form-data" method="post" action="/createPost">
             <h1 class="title">Create a Post</h1>
@@ -493,7 +493,7 @@
         </section>
         <p class="subtitle">Change your password (Optional)</p>
         <section class="updateUserSection">
-            <input class="textInput" name="password" placeholder="Old Password" type="password" autocomplete="on">
+            <input class="textInput" name="oldPassword" placeholder="Old Password" type="password" autocomplete="on">
             <input class="textInput" name="newPassword" placeholder="New Password" type="password" autocomplete="on">
             <input class="textInput" name="newPasswordConfirm" placeholder="Confirm New Password" type="password" autocomplete="on">
         </section>
@@ -504,7 +504,7 @@
                 <p class="subtitle">Choose the Profile Picture</p>
                 <article class="options updateProfileOptions updateOptions">
                     <div class="option">
-                        <input class="radioInput" type="radio" name="profileOption" value="link" checked>
+                        <input class="radioInput" type="radio" name="profileOption" value="link">
                         <div class="btn">
                             <span class="span">Link</span>
                         </div>
@@ -516,7 +516,7 @@
                         </div>
                     </div>
                     <div class="option">
-                        <input class="radioInput" type="radio" name="profileOption" value="keep">
+                        <input class="radioInput" type="radio" name="profileOption" value="keep" checked>
                         <div class="btn">
                             <span class="span">Keep</span>
                         </div>
@@ -544,7 +544,7 @@
                 <p class="subtitle">Choose the Banner</p>
                 <article class="options updateBannerOptions updateOptions">
                     <div class="option">
-                        <input class="radioInput" type="radio" name="bannerOption" value="link" checked>
+                        <input class="radioInput" type="radio" name="bannerOption" value="link">
                         <div class="btn">
                             <span class="span">Link</span>
                         </div>
@@ -556,7 +556,7 @@
                         </div>
                     </div>
                     <div class="option">
-                        <input class="radioInput" type="radio" name="bannerOption" value="keep">
+                        <input class="radioInput" type="radio" name="bannerOption" value="keep" checked>
                         <div class="btn">
                             <span class="span">Keep</span>
                         </div>

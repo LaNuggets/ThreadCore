@@ -244,7 +244,7 @@ func UpdateCommentInfo(comment Comment, w http.ResponseWriter, r *http.Request) 
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	query, err := db.Prepare("UPDATE comment set user_id = ?, post_id = ?, comment_id = ?, content = ?, created = ? where id = ?")
+	query, err := db.Prepare("UPDATE comment set user_id = ?, post_id = NULLIF(?, 0), comment_id = NULLIF(?, 0), content = ?, created = ? where id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 

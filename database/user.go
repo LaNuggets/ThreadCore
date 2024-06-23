@@ -32,6 +32,7 @@ func AddUser(user User, w http.ResponseWriter, r *http.Request) {
 	query, _ := db.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
 	query.Exec(user.Uuid, user.Profile, user.Banner, user.Email, user.Username, user.Password)
 	defer query.Close()
+	AddFriend(user.Id, user.Id, w, r)
 }
 
 /*
@@ -267,7 +268,7 @@ func UpdateUserInfo(user User, w http.ResponseWriter, r *http.Request) {
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	query, err := db.Prepare("UPDATE user set uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? where id = ?")
+	query, err := db.Prepare("UPDATE user SET uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? WHERE id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
@@ -292,7 +293,7 @@ func DeleteUser(userId int, w http.ResponseWriter, r *http.Request) {
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	query, err := db.Prepare("DELETE FROM user where id = ?")
+	query, err := db.Prepare("DELETE FROM user WHERE id = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 

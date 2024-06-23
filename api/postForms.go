@@ -89,8 +89,8 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postUuid := r.FormValue("postUuid")
-	id, _ := strconv.Atoi(postUuid)
+	postId := r.FormValue("postId")
+	id, _ := strconv.Atoi(postId)
 	post := database.GetPostById(id, w, r)
 	if (post == database.PostInfo{}) {
 		fmt.Println("post does not exist") // TO-DO : send error post not found
@@ -102,17 +102,17 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+post.Uuid+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=User+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+post.Uuid+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	} else if post.User_id != user.Id {
 		fmt.Println("user not author of post") // TO-DO : Send error message for user not allowed action
-		http.Redirect(w, r, "/post/"+postUuid+"?type=error&message=User+not+alowed+to+do+this+action+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+post.Uuid+"?type=error&message=User+not+alowed+to+do+this+action+!", http.StatusSeeOther)
 		return
 	}
 
@@ -129,12 +129,15 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
+		DeleteFile(post.Media)
 		mediaPath = "/static/images/mediaTemplate.png"
 	} else if profileOption == "keep" {
 		mediaPath = post.Media
 	} else if profileOption == "link" {
+		DeleteFile(post.Media)
 		mediaPath = r.FormValue("profileLink")
 	} else {
+		DeleteFile(post.Media)
 		profile, handler, err := r.FormFile("profile")
 
 		if err == http.ErrMissingFile {
@@ -149,11 +152,11 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 			ext := handler.Filename[extension:] //obtain the extension in ext variable
 			e := strings.ToLower(ext)
 			if e == ".png" || e == ".jpeg" || e == ".jpg" || e == ".gif" || e == ".svg" || e == ".avif" || e == ".apng" || e == ".webp" {
-				mediaPath = "/static/images/posts/" + postUuid + ext
+				mediaPath = "/static/images/posts/" + post.Uuid + ext
 				mediaType = "image"
 				GetFileFromForm(profile, handler, err, mediaPath)
 			} else if e == ".mp4" || e == ".webm" || e == ".ogg" {
-				mediaPath = "/static/images/posts/" + postUuid + ext
+				mediaPath = "/static/images/posts/" + post.Uuid + ext
 				mediaType = "video"
 				GetFileFromForm(profile, handler, err, mediaPath)
 			} else {
@@ -163,10 +166,10 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	updatedPost := database.Post{Id: 0, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: user.Id, Community_id: communityId, Created: post.Created}
+	updatedPost := database.Post{Id: post.Id, Uuid: post.Uuid, Title: title, Content: content, Media: mediaPath, MediaType: mediaType, User_id: user.Id, Community_id: communityId, Created: post.Created}
 	database.UpdatePostInfo(updatedPost, w, r)
 
-	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Post+successfully+update+!", http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+post.Uuid+"?type=success&message=Post+successfully+update+!", http.StatusSeeOther)
 }
 
 // DELETE Post
@@ -176,7 +179,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postId := r.FormValue("PostId")
+	postId := r.FormValue("postId")
 	id, _ := strconv.Atoi(postId)
 	post := database.GetPostById(id, w, r)
 	if (post == database.PostInfo{}) {
@@ -186,29 +189,30 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if user connected and allowed to modify
-	userUuid := GetCookie("Uuid", r)
+	userUuid := GetCookie("uuid", r)
 	if userUuid == "" {
 		fmt.Println("no uuid found in cookie") // TO-DO : Send error message for user not connected
-		http.Redirect(w, r, "/post/"+postId+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+post.Uuid+"?type=error&message=User+not+connected+!", http.StatusSeeOther)
 		return
 	}
 	user := database.GetUserByUuid(userUuid, w, r)
 	if (user == database.User{}) {
 		fmt.Println("user not found") // TO-DO : Send error message for user not found
-		http.Redirect(w, r, "/post/"+postId+"?type=error&message=User+not+found+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+post.Uuid+"?type=error&message=User+not+found+!", http.StatusSeeOther)
 		return
 	} else if post.User_id != user.Id {
 		fmt.Println("user not author of post") // TO-DO : Send error message for user not allowed action
-		http.Redirect(w, r, "/post/"+postId+"?type=error&message=User+not+alowed+to+do+this+action+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+post.Uuid+"?type=error&message=User+not+alowed+to+do+this+action+!", http.StatusSeeOther)
 		return
 	}
 
 	confirm := r.FormValue("confirm")
 	if confirm != "true" {
 		fmt.Println("user did not confirm deletion") // TO-DO : Send error message need to confirm before submiting
-		http.Redirect(w, r, "/post/"+postId+"?type=error&message=Confim+deletion+!", http.StatusSeeOther)
+		http.Redirect(w, r, "/post/"+post.Uuid+"?type=error&message=Confim+deletion+!", http.StatusSeeOther)
 		return
 	} else {
+		DeleteFile(post.Media)
 		database.DeletePost(post.Id, w, r)
 	}
 

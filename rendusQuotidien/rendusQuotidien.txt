@@ -64,6 +64,15 @@
 - Terminer la page Post avec fonctionalites de like et dilike + commentaires et informations
 - debut front end de la page Search
 
+13/06 --> 23/06 :
+- Front End complet des Pages Home, Post, Profile, Community et Search
+- Fonctionnalités Update et Delete pour les Posts, Community et Users
+- Filtrage pour les posts des pages Home, Community et Profile
+- Debbugging
+- Commentaires et Documentations
+
 24/6: 
+- Presentation Oral
+- Preparations
 
 25/6: ORAL

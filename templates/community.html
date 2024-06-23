@@ -341,7 +341,7 @@
                     {{end}}
                 </article>
                 <p class="following">{{.FollowCount}} Member{{if eq .FollowCount 1}}{{else}}s{{end}}</p>
-                <pre class="description">{{.Community.Description}}</pre>
+                <p class="description">{{.Community.Description}}</p>
                 <h1>Community Owner :</h1>
                 <section class="community-creator">
                     <a class="profile" href="/user/{{.Community.Username}}">
@@ -484,7 +484,7 @@
                 <p class="subtitle">Choose the Profile Picture</p>
                 <article class="options updateProfileOptions updateOptions">
                     <div class="option">
-                        <input class="radioInput" type="radio" name="profileOption" value="link" checked>
+                        <input class="radioInput" type="radio" name="profileOption" value="link">
                         <div class="btn">
                             <span class="span">Link</span>
                         </div>
@@ -496,7 +496,7 @@
                         </div>
                     </div>
                     <div class="option">
-                        <input class="radioInput" type="radio" name="profileOption" value="keep">
+                        <input class="radioInput" type="radio" name="profileOption" value="keep" checked>
                         <div class="btn">
                             <span class="span">Keep</span>
                         </div>
@@ -524,7 +524,7 @@
                 <p class="subtitle">Choose the Banner</p>
                 <article class="options updateBannerOptions updateOptions">
                     <div class="option">
-                        <input class="radioInput" type="radio" name="bannerOption" value="link" checked>
+                        <input class="radioInput" type="radio" name="bannerOption" value="link">
                         <div class="btn">
                             <span class="span">Link</span>
                         </div>
@@ -536,7 +536,7 @@
                         </div>
                     </div>
                     <div class="option">
-                        <input class="radioInput" type="radio" name="bannerOption" value="keep">
+                        <input class="radioInput" type="radio" name="bannerOption" value="keep" checked>
                         <div class="btn">
                             <span class="span">Keep</span>
                         </div>
