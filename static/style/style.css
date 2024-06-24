@@ -100,11 +100,15 @@ img{
 header{
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas: 
+      "logo search connection"
+    ;
   align-items: center;
   padding-bottom: 1em;
   position:static;
   .logo {
     justify-self: start;
+    grid-area: logo;
     .name{
       cursor: pointer;
       display: flex;
@@ -119,8 +123,10 @@ header{
     }
   }
   .search-bar{
+    padding-top: 0;
     justify-self: center;
     position: relative;
+    grid-area: search;
     .input {
       width: 35em;
       height: 30px;
@@ -173,7 +179,7 @@ header{
   .connect-or-user{
     justify-self: end;
     padding-right: 2em;
-
+    grid-area: connection;
     /* Login Button */
     .login {
       width: 120px;
@@ -255,6 +261,9 @@ header{
 .content{
   display: grid;
   grid-template-columns: 1fr 2.5fr 1fr;
+  grid-template-areas: 
+      "nav main aside"
+    ;
   padding-top: 1em;
   nav{
     display: flex;
@@ -262,6 +271,7 @@ header{
     justify-content: start;
     padding-right: 3em;
     gap: 20px;
+    grid-area: nav;
     border-right: 1px solid var(--varblack);
     .menu{
       padding: 0.5em 0 0.5em 0;
@@ -283,6 +293,7 @@ header{
   }
 
   main{
+    grid-area: main;
     .honeycomb {
       position: absolute;
       top: 30%;
@@ -291,7 +302,9 @@ header{
       width: 24px;
     }
   }
-  
+  aside{
+    grid-area: aside;
+  }
 }
 
 .form{
@@ -771,69 +784,41 @@ header{
 
 /* Media queries pour tablettes */
 @media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        height: auto;
-        padding: 10px;
-    border-bottom: 0px solid rgba(185, 168, 168, 0.769);
-
+  header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+      "logo connection"
+      "search search"
+    ;
+    .search-bar{
+      padding-top: 1em;
     }
-
-    .logoTheme {
-        height: 10%;
-        width: 10%;
-        margin-right: 50%;
+  }
+  .content{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr ;
+    grid-template-areas: 
+      "nav"
+      "aside"
+      "main"
+    ;
+    gap: 1em;
+    nav {
+      padding-right: 0;
+      border: none;
     }
-
-    .name {
-        margin-right: 0;
-        text-align: center;
-        font-size: 25px;
-        margin-right: 50%;
-        margin-top: -2%;
+    aside{
+      border: none;
     }
-
-    .input {
-        width: 70%;
-        margin: 10px auto;
-    }
-
-    .loginButton {
-        margin: 10px auto;
-        margin-top: -15%;
-        margin-right: 20%;
-    }
+  }
 }
 
 /* Media queries pour téléphones */
 @media (max-width: 480px) {
-    .header{
-    border-bottom: 0px solid rgba(185, 168, 168, 0.769);
-    }
-    .name {
-        font-size: 20px;
-        margin-right: 50%;
-    }
-
-    .input {
-        padding: 5px;
-    }
-
-    .loginButton {
-        padding: 10px;
-        margin-top: -35%;
-        margin-right: 20%;
-    }
-
-    .logoTheme {
-        height: 15%;
-        width: 15%;
-        margin-right: 50%;
-    }
-
-    .exit {
-        width: 12px;
-    }
+  
 }
 
 /* LIKES AND DISLIKES */
