@@ -46,7 +46,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(10 << 20)
 
 	// Get image or video file or link from user
-	mediaPath := ""
+	mediaPath := "/static/images/mediaTemplate.png"
 	mediaType := ""
 
 	profileOption := r.FormValue("mediaOption")
@@ -136,7 +136,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(10 << 20)
 
 	// Get image or video file or link from user
-	mediaPath := ""
+	mediaPath := "/static/images/mediaTemplate.png"
 	mediaType := ""
 
 	profileOption := r.FormValue("profileOption")

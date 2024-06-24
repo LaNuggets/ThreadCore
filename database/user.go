@@ -29,12 +29,14 @@ func AddUser(user User, w http.ResponseWriter, r *http.Request) {
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	query, _ := db.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
+	query, err2 := db.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
 	query.Exec(user.Uuid, user.Profile, user.Banner, user.Email, user.Username, user.Password)
+	CheckErr(err2, w, r)
 	defer query.Close()
 
-	query2, _ := db.Prepare("INSERT INTO friend (user_id, friend_id) VALUES (?, ?)")
+	query2, err3 := db.Prepare("INSERT INTO friend (user_id, friend_id) VALUES (?, ?)")
 	query2.Exec(user.Id, user.Id)
+	CheckErr(err3, w, r)
 	defer query2.Close()
 }
 
@@ -194,6 +196,32 @@ func GetUserByMostPopular(searchString string, w http.ResponseWriter, r *http.Re
 	err = rows.Err()
 	CheckErr(err, w, r)
 
+	//GET the rest of the users that have no followers
+	allrows, err2 := db.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user WHERE username LIKE '%" + searchString + "%'")
+	defer allrows.Close()
+
+	err2 = allrows.Err()
+	CheckErr(err2, w, r)
+
+	alluserList := make([]User, 0)
+
+	for allrows.Next() {
+		userDisplay := User{}
+		err2 = allrows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
+		CheckErr(err, w, r)
+
+		alluserList = append(alluserList, userDisplay)
+	}
+
+	err2 = allrows.Err()
+	CheckErr(err, w, r)
+
+	for i := 0; i < len(alluserList); i++ {
+		if !ContainsUser(userList, alluserList[i]) {
+			userList = append(userList, alluserList[i])
+		}
+	}
+
 	return userList
 }
 
@@ -225,6 +253,32 @@ func GetUserByMostPost(searchString string, w http.ResponseWriter, r *http.Reque
 
 	err = rows.Err()
 	CheckErr(err, w, r)
+
+	//GET the rest of the users that have no followers
+	allrows, err2 := db.Query("SELECT user.id, user.uuid, user.profile, user.banner, user.email, user.username, user.password FROM user WHERE username LIKE '%" + searchString + "%'")
+	defer allrows.Close()
+
+	err2 = allrows.Err()
+	CheckErr(err2, w, r)
+
+	alluserList := make([]User, 0)
+
+	for allrows.Next() {
+		userDisplay := User{}
+		err2 = allrows.Scan(&userDisplay.Id, &userDisplay.Uuid, &userDisplay.Profile, &userDisplay.Banner, &userDisplay.Email, &userDisplay.Username, &userDisplay.Password)
+		CheckErr(err, w, r)
+
+		alluserList = append(alluserList, userDisplay)
+	}
+
+	err2 = allrows.Err()
+	CheckErr(err, w, r)
+
+	for i := 0; i < len(alluserList); i++ {
+		if !ContainsUser(userList, alluserList[i]) {
+			userList = append(userList, alluserList[i])
+		}
+	}
 
 	return userList
 }

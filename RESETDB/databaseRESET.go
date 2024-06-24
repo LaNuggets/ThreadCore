@@ -58,7 +58,8 @@ CREATE TABLE community(
 	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE);
 
 CREATE TABLE friend(
-	user_id INTEGER, friend_id INTEGER, 
+	user_id INTEGER,
+	friend_id INTEGER, 
 	PRIMARY KEY(user_id, friend_id), 
 	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
 	FOREIGN KEY (friend_id) REFERENCES user(id) ON DELETE CASCADE);

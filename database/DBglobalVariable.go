@@ -20,3 +20,12 @@ func ContainsPost(postList []PostInfo, postToFind PostInfo) bool {
 	}
 	return false
 }
+
+func ContainsUser(userList []User, userToFind User) bool {
+	for _, user := range userList {
+		if user.Uuid == userToFind.Uuid {
+			return true
+		}
+	}
+	return false
+}

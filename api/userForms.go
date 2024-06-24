@@ -197,7 +197,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(10 << 20)
 
 	// Get profile file or link from user
-	profilePath := ""
+	profilePath := "/static/images/profileTemplate.png"
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
@@ -234,7 +234,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get profile file or link from user
-	bannerPath := ""
+	bannerPath := "/static/images/bannerTemplate.png"
 
 	bannerOption := r.FormValue("bannerOption")
 	if bannerOption == "remove" {

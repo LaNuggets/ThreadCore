@@ -47,7 +47,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(10 << 20)
 
 	// Get profile file or link from user
-	profilePath := ""
+	profilePath := "/static/images/profileTemplate.png"
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "link" {
@@ -77,7 +77,7 @@ func CreateCommunity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get banner file or link from user
-	bannerPath := ""
+	bannerPath := "/static/images/bannerTemplate.png"
 
 	bannerOption := r.FormValue("bannerOption")
 	if bannerOption == "link" {
@@ -164,12 +164,12 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(10 << 20)
 
 	// Get profile file or link from user
-	profilePath := ""
+	profilePath := "/static/images/profileTemplate.png"
 
 	profileOption := r.FormValue("profileOption")
 	if profileOption == "remove" {
 		DeleteFile(community.Profile)
-		profilePath = "/static/images/profileTemplate.png.png"
+		profilePath = "/static/images/profileTemplate.png"
 	} else if profileOption == "keep" {
 		profilePath = community.Profile
 	} else if profileOption == "link" {
@@ -201,7 +201,7 @@ func UpdateCommunity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get profile file or link from user
-	bannerPath := ""
+	bannerPath := "/static/images/bannerTemplate.png"
 
 	bannerOption := r.FormValue("bannerOption")
 	if bannerOption == "remove" {
