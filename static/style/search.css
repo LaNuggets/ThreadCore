@@ -110,6 +110,27 @@
     background-color: var(--button-bg-color);
   }
 
+  .profile{
+    border-radius: 100%;
+    border-radius: 50%;
+    border: 2px solid var(--varblack);
+    box-shadow: 4px 4px var(--varblack);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .profile:active{
+      box-shadow: 0px 0px var(--varblack);
+      transform: translate(3px, 3px);
+  }
+  #profilePicture{
+      height: 3em;
+      width: 3em;
+      border-radius: 50%;
+  }
 
   .post{
     justify-self: center;
@@ -118,49 +139,44 @@
     justify-content: center;
     padding: 2em;
     padding-top: 2%;
+    .postHover{
+      margin-bottom: 1em;
+      margin-top: 1em;
+      padding: 1em;
+    }
     .community{
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      gap: 1em;
+      padding-bottom: 1em;
+      .info{
         display: flex;
-        justify-content: start;
-        align-items: center;
-        gap: 1em;
-        padding-bottom: 1em;
-        .profile{
-            border-radius: 100%;
-            border-radius: 50%;
-            border: 2px solid var(--varblack);
-            box-shadow: 4px 4px var(--varblack);
+        flex-direction: column;
+        background-color:transparent;
+        .name_time{
             display: flex;
-            justify-content: center;
             align-items: center;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .info{
-            display: flex;
-            flex-direction: column;
-            background-color:transparent;
-            .name_time{
-                display: flex;
-                align-items: center;
-                gap: 0.5em;
-                margin-top: 2%;
-                .name{
-                    font-size: 1.5em;
-                }
-                .time{
-                    font-size: 0.8em;
-                }
+            gap: 0.5em;
+            .name{
+                font-size: 1.5em;
+            }
+            .post-time{
+                font-size: 0.8em;
             }
         }
+      }
 
     }
     .post-title{
+        width: 65%;
         font-size: 2em;
         padding-bottom: 0.5em;
         margin-left: 3%;
     }
 
     .post-content{
+        width: 65%;
         padding-bottom: 0.5em;
         margin-left: 3%;
     }
@@ -295,7 +311,7 @@ padding: 1em;
 
 .user_name{
   position: relative;
-  bottom: 100px;
+  bottom: 140px;
   display: flex;
   justify-content:space-between;
   align-items: center;

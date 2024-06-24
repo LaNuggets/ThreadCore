@@ -86,7 +86,9 @@
                                     </a>
                                     <p class="time">- {{.Post.Time}}</p>
                                 </article>
-                                <p class="username">{{.Post.Username}}</p>
+                                <a class="usernameLink" href="/user/{{.Post.Username}}">
+                                    <p class="name">{{.Post.Username}}</p>
+                                </a>
                             {{end}}
                         </article>
                     </section>

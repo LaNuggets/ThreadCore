@@ -54,6 +54,14 @@ if (sortOption != null) {
     }
 }
 
+if (sortOption == "new" && mediaOption != "posts"){
+    if ('URLSearchParams' in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("sort", "popular");
+        window.location.search = searchParams.toString();
+    }
+}
+
 const timeOption = urlParams.get('time');
 if (timeOption != null) {
     document.getElementById(timeOption).selected = true

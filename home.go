@@ -32,7 +32,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	user := database.GetUserByUuid(userUuid, w, r)
 	// Delete cookie if not existing in database
 	if (user == database.User{} && userUuid != "") {
-		api.DeleteCookie(userUuid, w)
+		api.DeleteCookie("uuid", w)
 	}
 
 	ChoosenTime := r.URL.Query().Get("time")

@@ -235,5 +235,5 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Send confirmation message
-	http.Redirect(w, r, "/?type=success&messagePost+succesfully+deleted+!", http.StatusSeeOther)
+	http.Redirect(w, r, "/?type=success&message=Post+succesfully+deleted+post+!", http.StatusSeeOther)
 }

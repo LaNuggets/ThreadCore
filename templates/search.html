@@ -101,24 +101,33 @@
             {{range .SortedPosts}}
             <section class="postHover">
                 <section class="community">
+                    {{if eq .Community_id 0}}
+                        <a class="profile" href="/user/{{.Username}}">
+                            <img id="profilePicture" src="{{.Profile}}" alt="User Profile">
+                        </a>
+                    {{else}}
+                        <a class="profile" href="/community/{{.CommunityName}}">
+                            <img id="profilePicture" src="{{.CommunityProfile}}" alt="Community Profile">
+                        </a>
+                    {{end}}
                     <article class="info">
                         {{if eq .Community_id 0}}
                             <article class="name_time">
-                                <a class="profile" href="/user/{{.Username}}">
-                                <img id="profilePicture" class="PP" src="{{.Profile}}"></img>
+                                <a class="usernameLink" href="/user/{{.Username}}">
+                                    <p class="name">{{.Username}}</p>
                                 </a>
-                                <p class="name">{{.Username}}</p>
-                                <p class="PostTime">- {{.Time}}</p>
+                                <p class="post-time">- {{.Time}}</p>
                             </article>
                         {{else}}
                             <article class="name_time">
-                                <a class="profile" href="/community/{{.CommunityName}}">
-                                <img id="profilePicture" class="PP" src="{{.CommunityProfile}}"></img>
+                                <a class="usernameLink" href="/community/{{.CommunityName}}">
+                                    <p class="name">{{.CommunityName}}</p>
                                 </a>
-                                <p class="name">{{.CommunityName}}</p>
-                                <p class="PostTime">- {{.Time}}</p>
+                                <p class="post-time">- {{.Time}}</p>
                             </article>
-                            <p class="username">{{.Username}}</p>
+                            <a class="usernameLink" href="/user/{{.Username}}">
+                                <p class="name">{{.Username}}</p>
+                            </a>
                         {{end}}
                     </article>
                 </section>
@@ -134,9 +143,10 @@
                             <img class="media" src="{{.Media}}" alt="Media">
                         {{end}}
                     {{end}}
-                    <div class="line"></div>
+                    
                 </a>
             </section>
+            <div class="line"></div>
             {{end}}
             {{else if .SortedCommunities}}
                 {{range .SortedCommunities}}
