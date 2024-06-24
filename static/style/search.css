@@ -257,7 +257,8 @@ cursor: pointer;
 .PP {
   margin-left: 5%;
   border-radius: 50%;
-  height: 30px;
+  height: 3em;
+  width: 3em;
 }
 
 .user_PP_name{

@@ -100,18 +100,21 @@
             <section class="post">
             {{range .SortedPosts}}
             <section class="postHover">
-                <a href="/post/{{.Uuid}}" class="link">
                 <section class="community">
                     <article class="info">
                         {{if eq .Community_id 0}}
                             <article class="name_time">
-                                <img class="PP" src="{{.Profile}}"></img>
+                                <a class="profile" href="/user/{{.Username}}">
+                                <img id="profilePicture" class="PP" src="{{.Profile}}"></img>
+                                </a>
                                 <p class="name">{{.Username}}</p>
                                 <p class="PostTime">- {{.Time}}</p>
                             </article>
                         {{else}}
                             <article class="name_time">
-                                <img class="PP" src="{{.Profile}}"></img>
+                                <a class="profile" href="/community/{{.CommunityName}}">
+                                <img id="profilePicture" class="PP" src="{{.CommunityProfile}}"></img>
+                                </a>
                                 <p class="name">{{.CommunityName}}</p>
                                 <p class="PostTime">- {{.Time}}</p>
                             </article>
@@ -119,6 +122,7 @@
                         {{end}}
                     </article>
                 </section>
+                <a href="/post/{{.Uuid}}" class="link">
                 <h1 class="post-title">{{.Title}}</h1>
                 <p class="post-content">{{.Content}}</p>
                     {{if .Media}}
