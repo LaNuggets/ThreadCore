@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="/static/style/style.css">
     <link rel="stylesheet" href="/static/style/home.css">
     <link rel="stylesheet" href="/static/style/notfound.css">
-    <link href="../static/assets/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
-    <link href="../static/assets/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
+    <link href="/static/assets/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
+    <link href="/static/assets/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Zen+Dots&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
     <title>Home</title>
@@ -71,7 +71,7 @@
                 </div>
             </div>
             {{if not .User.Connected}}
-            <h2>You are not connected! To see a more personalized version of TreadCore, Login or Signup and follow your favorite accounts and communities!</h2>
+            <h2>You are not connected! To see a more personalized version of ThreadCore, Login or Signup and follow your favorite accounts and communities!</h2>
             {{end}}
             {{if .SortedPosts}}
             <section class="posts">
@@ -103,7 +103,9 @@
                                   </a>
                                   <p class="post-time">- {{.Post.Time}}</p>
                               </article>
-                              <p class="username">{{.Post.Username}}</p>
+                              <a class="usernameLink" href="/user/{{.Post.Username}}">
+                                <p class="name">{{.Post.Username}}</p>
+                            </a>
                           {{end}}
                       </article>
                   </section>

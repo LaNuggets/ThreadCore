@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style/style.css">
     <link rel="stylesheet" href="/static/style/search.css">
+    <link rel="stylesheet" href="/static/style/notfound.css">
     <link href="/static/assets/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
     <link href="/static/assets/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
-
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Zen+Dots&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
     <title>Search</title>
 </head>
@@ -85,7 +86,7 @@
                         <option value="most_comments" id="most_comments">Most Comments</option>
                     </select>
                 </div>
-                <div class="time-select">
+                <div class="time-select" id="time-select">
                     <select class="time">
                         <option value="all_time" id="all_time">All Time</option>
                         <option value="year" id="year">Year</option>
@@ -178,15 +179,76 @@
             {{if not .SortedPosts}}
                 {{if not .SortedCommunities}}
                     {{if not .SortedUsers}}
-                        <div class="honeycomb">
-                            <div class="blackhoneycomb"></div>
-                            <div class="orangehoneycomb"></div>
-                            <div class="blackhoneycomb"></div>
-                            <div class="blackhoneycomb"></div>
-                            <div class="orangehoneycomb"></div>
-                            <div class="orangehoneycomb"></div>
-                            <div class="orangehoneycomb"></div>
+                    <section class="notfound">
+                        <h3>Nothing has been found that matches your search</h3>
+                        <button class="button" onclick="window.location.href='/search/'" >Explore other posts, communities and users on ThreadCore</button>
+                        <div class="main_wrapper">
+                            <div class="main">
+                                <div class="antenna">
+                                <div class="antenna_shadow"></div>
+                                <div class="a1"></div>
+                                <div class="a1d"></div>
+                                <div class="a2"></div>
+                                <div class="a2d"></div>
+                                <div class="a_base"></div>
+                                </div>
+                                <div class="tv">
+                                <div class="cruve">
+                                    <svg
+                                    xml:space="preserve"
+                                    viewBox="0 0 189.929 189.929"
+                                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    version="1.1"
+                                    class="curve_svg"
+                                    >
+                                    <path
+                                        d="M70.343,70.343c-30.554,30.553-44.806,72.7-39.102,115.635l-29.738,3.951C-5.442,137.659,11.917,86.34,49.129,49.13
+                                    C86.34,11.918,137.664-5.445,189.928,1.502l-3.95,29.738C143.041,25.54,100.895,39.789,70.343,70.343z"
+                                    ></path>
+                                    </svg>
+                                </div>
+                                <div class="display_div">
+                                    <div class="screen_out">
+                                    <div class="screen_out1">
+                                        <div class="screen">
+                                        <span class="notfound_text"> NOT FOUND</span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="lines">
+                                    <div class="line1"></div>
+                                    <div class="line2"></div>
+                                    <div class="line3"></div>
+                                </div>
+                                <div class="buttons_div">
+                                    <div class="b1"><div></div></div>
+                                    <div class="b2"></div>
+                                    <div class="speakers">
+                                    <div class="g1">
+                                        <div class="g11"></div>
+                                        <div class="g12"></div>
+                                        <div class="g13"></div>
+                                    </div>
+                                    <div class="g"></div>
+                                    <div class="g"></div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="bottom">
+                                <div class="base1"></div>
+                                <div class="base2"></div>
+                                <div class="base3"></div>
+                                </div>
+                            </div>
+                            <div class="text_404">
+                                <div class="text_4041">4</div>
+                                <div class="text_4042">0</div>
+                                <div class="text_4043">4</div>
+                            </div>
                         </div>
+                    </section>
                     {{end}}
                 {{end}}
             {{end}}

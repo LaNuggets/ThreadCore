@@ -123,6 +123,13 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	var allSortedPosts []database.PostInfo
+	for i := 0; i < len(sortedPosts); i++ {
+		if !database.ContainsPost(allSortedPosts, sortedPosts[i]) {
+			allSortedPosts = append(allSortedPosts, sortedPosts[i])
+		}
+	}
+
 	type SortedPostsInfo struct {
 		Post         database.PostInfo
 		PostLikes    int
@@ -132,10 +139,10 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	var sortedPostsInfo []SortedPostsInfo
 	//Get rating info on each posts
-	for i := 0; i < len(sortedPosts); i++ {
+	for i := 0; i < len(allSortedPosts); i++ {
 		likes := 0
 		dislikes := 0
-		allRatings := database.GetLikesByPost(sortedPosts[i].Id, w, r)
+		allRatings := database.GetLikesByPost(allSortedPosts[i].Id, w, r)
 		for i := 0; i < len(allRatings); i++ {
 			if allRatings[i].Rating == "like" {
 				likes += 1
@@ -144,7 +151,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		userRating := database.GetLikeByUserPost(user.Id, sortedPosts[i].Id, w, r).Rating
-		sortedPost := SortedPostsInfo{Post: sortedPosts[i], PostLikes: likes, PostDislikes: dislikes, UserRating: userRating}
+		sortedPost := SortedPostsInfo{Post: allSortedPosts[i], PostLikes: likes, PostDislikes: dislikes, UserRating: userRating}
 		sortedPostsInfo = append(sortedPostsInfo, sortedPost)
 	}
 

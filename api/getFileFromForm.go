@@ -52,7 +52,7 @@ func GetFileFromForm(file multipart.File, handler *multipart.FileHeader, err err
 ! Checks for potential errors
 */
 func DeleteFile(path string) {
-	if path == "/static/images/bannerTemplate.png" || path == "/static/images/profileTemplate.png" || path == "/static/images/medidaTemplate.png" {
+	if path == "/static/images/bannerTemplate.png" || path == "/static/images/profileTemplate.png" || path == "/static/images/medidaTemplate.png" || path == "" {
 	} else {
 		if _, err := os.Stat("." + path); errors.Is(err, os.ErrNotExist) {
 		} else {

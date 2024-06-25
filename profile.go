@@ -285,7 +285,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 
 	if profileExists {
 		profileInfo = ProfilePageInfo{
-			Uuid:     user.Uuid,
+			Uuid:     profile.Uuid,
 			Profile:  profile.Profile,
 			Banner:   profile.Banner,
 			Username: profile.Username,

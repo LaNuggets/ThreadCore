@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="/static/style/post.css">
     <link rel="stylesheet" href="/static/style/notfound.css">
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Zen+Dots&display=swap" rel="stylesheet">
-    <link href="../static/images/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
-    <link href="../static/images/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
+    <link href="/static/assets/logoForDarkTheme.svg" rel="icon" media="(prefers-color-scheme: dark)"/>
+    <link href="/static/assets/logoForLightTheme.svg" rel="icon" media="(prefers-color-scheme: light)"/>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
     <title>Post</title>
 </head>
@@ -309,7 +309,7 @@
                     {{else}}
                         {{if .IsFollowing}}
                         <form method="post" action="/unfollowUser">
-                            <input type="text" name="uuid" value="{{.User.Uuid}}" hidden>
+                            <input type="text" name="uuid" value="{{.Post.User_uuid}}" hidden>
                             <input type="text" name="action" value="/post/{{.Post.Uuid}}" hidden>
                             <button class="button" type="submit">
                                 Follow
@@ -317,7 +317,7 @@
                         </form>
                         {{else}}
                         <form method="post" action="/followUser">
-                            <input type="text" name="uuid" value="{{.User.Uuid}}" hidden>
+                            <input type="text" name="uuid" value="{{.Post.User_uuid}}" hidden>
                             <input type="text" name="action" value="/post/{{.Post.Uuid}}" hidden>
                             <button class="button" type="submit">
                                 Follow

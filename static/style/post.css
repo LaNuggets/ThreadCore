@@ -51,7 +51,8 @@
     gap: 1em;
     padding-bottom: 0.5em;
     .profilePicture{
-      height: 2em;
+      height: 3em;
+      width: 3em;
       border-radius: 50%;
     }
   }
@@ -184,7 +185,6 @@ aside{
     }
     
     .placeholder {
-      width: 35%;
       position: absolute;
       top: -16px;
       left: 20%;
